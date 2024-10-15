@@ -15,7 +15,7 @@ import com.typewritermc.engine.paper.plugin
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.logger
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.lang.reflect.Type
 import kotlin.time.Duration.Companion.milliseconds
 

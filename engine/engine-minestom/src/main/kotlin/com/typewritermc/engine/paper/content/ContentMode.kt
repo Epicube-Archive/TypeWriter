@@ -2,7 +2,7 @@ package com.typewritermc.engine.paper.content
 
 import com.typewritermc.engine.paper.content.components.IntractableItem
 import com.typewritermc.engine.paper.content.components.ItemsComponent
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 abstract class ContentMode(
     val context: ContentContext,

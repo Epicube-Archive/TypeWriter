@@ -18,6 +18,12 @@ import me.tofaa.entitylib.meta.display.ItemDisplayMeta
 import me.tofaa.entitylib.meta.other.InteractionMeta
 import me.tofaa.entitylib.wrapper.WrapperEntity
 import net.kyori.adventure.text.format.TextColor
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.entity.metadata.display.ItemDisplayMeta
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -30,13 +36,13 @@ const val NODE_SHOW_DISTANCE_SQUARED = 50 * 50
 
 fun <N> ComponentContainer.nodes(
     nodeFetcher: () -> Collection<N>,
-    nodeLocation: (N) -> Location,
+    nodeLocation: (N) -> Pos,
     builder: NodeDisplayBuilder.(N) -> Unit
 ) = +NodesComponent(nodeFetcher, nodeLocation, builder)
 
 class NodesComponent<N>(
     private val nodeFetcher: () -> Collection<N>,
-    private val nodeLocation: (N) -> Location,
+    private val nodeLocation: (N) -> Pos,
     private val builder: NodeDisplayBuilder.(N) -> Unit
 ) : ContentComponent, Listener {
     private val nodes = mutableMapOf<N, NodeDisplay>()
@@ -45,7 +51,7 @@ class NodesComponent<N>(
     private fun refreshNodes(player: Player) {
         val newNodes = nodeFetcher()
             .filter {
-                (nodeLocation(it).distanceSqrt(player.location) ?: Double.MAX_VALUE) < NODE_SHOW_DISTANCE_SQUARED
+                (nodeLocation(it).distanceSqrt(player.position) ?: Double.MAX_VALUE) < NODE_SHOW_DISTANCE_SQUARED
             }
             .toSet()
 
@@ -93,10 +99,10 @@ class NodesComponent<N>(
 }
 
 class NodeDisplayBuilder {
-    var item: ItemStack = ItemStack(Material.STONE)
+    var item: ItemStack = ItemStack.of(Material.STONE)
     var glow: TextColor? = null
     var interaction: () -> Unit = {}
-    var scale: Vector3f = Vector3f(1.0f, 1.0f, 1.0f)
+    var scale: Vec = Vec(1.0, 1.0, 1.0)
 
     fun onInteract(action: () -> Unit) {
         interaction = action
@@ -112,7 +118,7 @@ private class NodeDisplay {
     val entityId: Int
         get() = interaction.entityId
 
-    fun apply(builder: NodeDisplayBuilder, location: Location) {
+    fun apply(builder: NodeDisplayBuilder, location: Pos) {
         itemDisplay.meta<ItemDisplayMeta> {
             item = builder.item.toPacketItem()
             isGlowing = builder.glow != null
@@ -140,10 +146,10 @@ private class NodeDisplay {
         }
     }
 
-    fun show(player: Player, location: Location) {
-        itemDisplay.addViewer(player.uniqueId)
+    fun show(player: Player, location: Pos) {
+        itemDisplay.addViewer(player.uuid)
         itemDisplay.spawn(location.toPacketLocation())
-        interaction.addViewer(player.uniqueId)
+        interaction.addViewer(player.uuid)
         interaction.spawn(location.toPacketLocation())
     }
 

@@ -5,6 +5,7 @@ import com.typewritermc.engine.paper.content.inLastContentMode
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger
 import com.typewritermc.engine.paper.entry.triggerFor
 import com.typewritermc.engine.paper.plugin
+import com.typewritermc.engine.paper.utils.asMini
 import com.typewritermc.engine.paper.utils.loreString
 import com.typewritermc.engine.paper.utils.name
 import lirand.api.extensions.events.unregister
@@ -25,7 +26,7 @@ class ExitComponent(
         super.initialize(player)
         if (!doubleShiftExits) return
         plugin.registerEvents(this)
-        playerId = player.uniqueId
+        playerId = player.uuid
     }
 
     @EventHandler
@@ -51,7 +52,14 @@ class ExitComponent(
             ""
         }
         val item = if (player.inLastContentMode) {
-            ItemStack.of(Material.BARRIER).apply {
+            ItemStack.of(Material.BARRIER)
+                .withCustomName("<red><bold>Exit Editor".asMini())
+                .withLore("""
+                    |
+                    |<line> <gray>Click to exit the editor.
+                    |$sneakingLine
+                """.trimMargin().asMini())
+                .apply {
                 editMeta { meta ->
                     meta.name = "<red><bold>Exit Editor"
                     meta.loreString = """

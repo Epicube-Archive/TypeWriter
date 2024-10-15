@@ -25,6 +25,9 @@ import kotlinx.coroutines.launch
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.kyori.adventure.bossbar.BossBar
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -135,7 +138,7 @@ class SimulateCinematicComponent(
     }
 
     override fun items(player: Player): Map<Int, IntractableItem> {
-        val playbackSpeed = ItemStack(Material.CLOCK).apply {
+        val playbackSpeed = ItemStack.of(Material.CLOCK).apply {
             editMeta { meta ->
                 meta.name = "<yellow><bold>Playback Speed"
                 meta.loreString = """
@@ -160,7 +163,7 @@ class SimulateCinematicComponent(
             player.playSound("ui.button.click")
         }
 
-        val skip = ItemStack(Material.AMETHYST_SHARD).apply {
+        val skip = ItemStack.of(Material.AMETHYST_SHARD).apply {
             editMeta { meta ->
                 meta.name = "<yellow><bold>Skip Frame"
                 meta.loreString = """
@@ -182,7 +185,7 @@ class SimulateCinematicComponent(
                 SWAP -> {
                     scrollFrames = if (scrollFrames == null) {
                         player.playSound("block.amethyst_block.hit")
-                        player.uniqueId
+                        player.uuid
                     } else {
                         player.playSound("block.amethyst_block.fall")
                         null

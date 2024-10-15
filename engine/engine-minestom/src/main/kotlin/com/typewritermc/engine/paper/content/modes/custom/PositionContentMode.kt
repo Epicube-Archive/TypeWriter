@@ -5,7 +5,7 @@ import com.typewritermc.core.utils.point.World
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.modes.ImmediateFieldValueContentMode
 import com.typewritermc.engine.paper.utils.round
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.lang.reflect.Type
 
 class PositionContentMode(context: ContentContext, player: Player) :

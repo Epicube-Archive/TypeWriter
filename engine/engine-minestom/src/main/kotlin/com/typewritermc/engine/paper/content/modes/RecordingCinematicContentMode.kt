@@ -25,6 +25,9 @@ import com.typewritermc.core.utils.ok
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
@@ -57,7 +60,7 @@ class RecordingCinematicComponent<T : Any>(
 
     override fun items(player: Player): Map<Int, IntractableItem> {
         if (frameFetcher() > (context.endFrame ?: 0)) {
-            val item = ItemStack(Material.BARRIER).apply {
+            val item = ItemStack.of(Material.BARRIER).apply {
                 editMeta { meta ->
                     meta.name = "<red><b>Cannot Start Recording"
                     meta.loreString = """
@@ -72,7 +75,7 @@ class RecordingCinematicComponent<T : Any>(
             return mapOf(slot to item)
         }
 
-        val item = ItemStack(Material.BOOK).apply {
+        val item = ItemStack.of(Material.BOOK).apply {
             editMeta { meta ->
                 meta.name = "<green><b>Start Recording"
                 meta.loreString = "<line> <gray>Click to start recording the cinematic."

@@ -15,6 +15,8 @@ import com.typewritermc.engine.paper.utils.msg
 import com.typewritermc.engine.paper.utils.playSound
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -23,7 +25,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
-import org.bukkit.inventory.ItemStack
 import org.koin.java.KoinJavaComponent
 import java.util.concurrent.ConcurrentLinkedDeque
 
@@ -73,15 +74,17 @@ class ContentEditor(
         val removedSlots = previousSlots - currentSlots
         SYNC.switchContext {
             newSlots.forEach { slot ->
-                val originalItem = player.inventory.getItem(slot) ?: ItemStack.empty()
+                val originalItem = player.inventory.getItemStack(slot) ?: ItemStack.AIR
                 cachedOriginalItems.putIfAbsent(slot, originalItem)
             }
             items.forEach { (slot, item) ->
-                player.inventory.setItem(slot, item.item)
+                player.inventory.setItemStack(slot, item.item)
             }
             removedSlots.forEach { slot ->
                 val originalItem = cachedOriginalItems.remove(slot)
-                player.inventory.setItem(slot, originalItem)
+                if (originalItem != null) {
+                    player.inventory.setItemStack(slot, originalItem)
+                }
             }
         }
     }
@@ -114,7 +117,7 @@ class ContentEditor(
     suspend fun dispose() {
         unregister()
         cachedOriginalItems.forEach { (slot, item) ->
-            player.inventory.setItem(slot, item)
+            player.inventory.setItemStack(slot, item)
         }
         cachedOriginalItems.clear()
         val cache = stack.toList()
