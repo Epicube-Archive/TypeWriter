@@ -14,3 +14,4 @@ gradleEnterprise {
 include("engine-paper")
 include("engine-core")
 include("engine-loader")
+include("engine-minestom")
