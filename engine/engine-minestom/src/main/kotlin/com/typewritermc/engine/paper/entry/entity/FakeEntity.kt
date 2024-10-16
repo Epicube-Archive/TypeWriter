@@ -1,7 +1,7 @@
 package com.typewritermc.engine.paper.entry.entity
 
 import com.typewritermc.engine.paper.entry.entries.EntityProperty
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
 

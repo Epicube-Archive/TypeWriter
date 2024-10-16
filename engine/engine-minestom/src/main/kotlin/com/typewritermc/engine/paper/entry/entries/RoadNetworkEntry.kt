@@ -30,9 +30,10 @@ import com.typewritermc.engine.paper.utils.RuntimeTypeAdapterFactory
 import com.typewritermc.engine.paper.utils.playSound
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.Location
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
 
 val roadNetworkMaxDistance by snippet("road_network.distance.max", 30.0)
 
@@ -72,7 +73,7 @@ value class RoadNodeId(val id: Int) {
 
 data class RoadNode(
     val id: RoadNodeId,
-    val location: Location,
+    val location: Pos,
     val radius: Double,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -156,7 +157,7 @@ fun Collection<RoadModification>.containsAddition(start: RoadNodeId, end: RoadNo
     any { it is RoadModification.EdgeAddition && it.start == start && it.end == end }
 
 fun createRoadNetworkParser(): Gson = GsonBuilder()
-    .registerTypeAdapter(Location::class.java, LocationSerializer())
+    .registerTypeAdapter(Pos::class.java, LocationSerializer())
     .registerTypeAdapter(World::class.java, WorldSerializer())
     .registerTypeAdapterFactory(
         RuntimeTypeAdapterFactory.of(RoadModification::class.java)
@@ -194,9 +195,9 @@ class SelectRoadNodeContentMode(context: ContentContext, player: Player) : Conte
         }
 
         nodes({ network.nodes }, ::showingLocation) { node ->
-            item = ItemStack(node.material(network.modifications))
+            item = ItemStack.of(node.material(network.modifications))
             glow = NamedTextColor.WHITE
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
 
             onInteract {
                 val value = node.id.id
@@ -213,7 +214,7 @@ class SelectRoadNodeContentMode(context: ContentContext, player: Player) : Conte
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Location = node.location.clone().apply {
+    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
         yaw = (cycle % 360).toFloat()
     }
 }
@@ -253,7 +254,7 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
         }
 
         nodes({ network.nodes }, ::showingLocation) { node ->
-            item = ItemStack(node.material(network.modifications))
+            item = ItemStack.of(node.material(network.modifications))
             glow = when {
                 nodes.any { it.id == node.id.id } -> NamedTextColor.BLUE
                 else -> NamedTextColor.WHITE
@@ -281,7 +282,7 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Location = node.location.clone().apply {
+    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
         yaw = (cycle % 360).toFloat()
     }
 }

@@ -7,15 +7,13 @@ import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
 import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
+import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.loopingDistance
 import com.typewritermc.core.utils.ok
-import lirand.api.extensions.events.unregister
-import lirand.api.extensions.server.registerEvents
 import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.*
-import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.forceTriggerFor
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
@@ -26,17 +24,19 @@ import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
+import lirand.api.extensions.events.unregister
+import lirand.api.extensions.server.registerEvents
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
-import org.bukkit.Color
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerItemHeldEvent
-import org.bukkit.inventory.ItemStack
 import org.koin.core.component.KoinComponent
 import java.util.*
 import kotlin.collections.component1
@@ -102,7 +102,7 @@ class SelectedRoadNodeContentMode(
         +ModificationComponent(::selectedNode, ::network)
 
         nodes({ network.nodes }, ::showingLocation) { node ->
-            item = ItemStack(node.material(network.modifications))
+            item = ItemStack.of(node.material(network.modifications))
             glow = when {
                 node == selectedNode -> NamedTextColor.WHITE
                 network.edges.any { it.start == selectedNodeId && it.end == node.id } -> NamedTextColor.BLUE
@@ -120,14 +120,14 @@ class SelectedRoadNodeContentMode(
                 network.modifications.containsAddition(selectedNodeId, node.id) -> TextColor.color(0x4fec97)
                 else -> null
             }
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
             onInteract { interactWithNode(node) }
         }
 
         nodes({ network.negativeNodes }, ::showingLocation) {
-            item = ItemStack(Material.NETHERITE_BLOCK)
+            item = ItemStack.of(Material.NETHERITE_BLOCK)
             glow = NamedTextColor.BLACK
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
             onInteract {
                 ContentModeSwapTrigger(
                     context,
@@ -146,7 +146,7 @@ class SelectedRoadNodeContentMode(
         return ok(Unit)
     }
 
-    private fun showingLocation(node: RoadNode): Location = node.location.clone().apply {
+    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
         yaw = (cycle % 360).toFloat()
     }
 
@@ -265,7 +265,7 @@ class RemoveNodeComponent(
     private val onRemove: () -> Unit,
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        return slot to (ItemStack(Material.REDSTONE_BLOCK).apply {
+        return slot to (ItemStack.of(Material.REDSTONE_BLOCK).apply {
             editMeta { meta ->
                 meta.name = "<red><b>Remove Node"
                 meta.loreString = "<line> <gray>Careful! This action is irreversible."
@@ -359,7 +359,7 @@ class NodeRadiusComponent(
     private var scrolling: UUID? = null
 
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = if (scrolling != null) ItemStack(Material.CALIBRATED_SCULK_SENSOR).apply {
+        val item = if (scrolling != null) ItemStack.of(Material.CALIBRATED_SCULK_SENSOR).apply {
             editMeta { meta ->
                 meta.name = "<yellow><b>Selecting Radius"
                 meta.loreString = "<line> <gray>Right click to set the radius of the node."
@@ -373,10 +373,10 @@ class NodeRadiusComponent(
             }
         }
         return slot to (item onInteract {
-            scrolling = if (scrolling == player.uniqueId) {
+            scrolling = if (scrolling == player.uuid) {
                 null
             } else {
-                player.uniqueId
+                player.uuid
             }
             player.playSound("ui.button.click")
         })
@@ -388,7 +388,7 @@ class NodeRadiusComponent(
             // When we start out already selecting, we want to make sure the player is holding the correct item
             // So that they can stop changing the radius
             player.inventory.heldItemSlot = slot
-            scrolling = player.uniqueId
+            scrolling = player.uuid
         }
         plugin.registerEvents(this)
     }
@@ -435,7 +435,7 @@ private class ModificationComponent(
         val node = nodeFetcher() ?: return map
         val network = networkFetcher()
 
-        map[5] = ItemStack(Material.EMERALD).apply {
+        map[5] = ItemStack.of(Material.EMERALD).apply {
             editMeta { meta ->
                 meta.name = "<green><b>Add Fast Travel Connection"
                 meta.loreString = """
@@ -450,7 +450,7 @@ private class ModificationComponent(
 
         val hasEdges = network.edges.any { it.start == node.id }
         if (hasEdges) {
-            map[6] = ItemStack(Material.REDSTONE).apply {
+            map[6] = ItemStack.of(Material.REDSTONE).apply {
                 editMeta { meta ->
                     meta.name = "<red><b>Remove Edge"
                     meta.loreString = """

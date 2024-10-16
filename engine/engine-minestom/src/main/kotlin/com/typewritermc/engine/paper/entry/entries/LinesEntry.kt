@@ -4,7 +4,7 @@ import com.typewritermc.core.entries.PriorityEntry
 import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.PlaceholderEntry
 import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import kotlin.reflect.KClass
 
 @Tags("lines")

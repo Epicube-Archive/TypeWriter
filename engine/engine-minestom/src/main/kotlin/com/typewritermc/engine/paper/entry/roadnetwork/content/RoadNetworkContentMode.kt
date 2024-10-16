@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
 import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
+import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.content.ContentComponent
@@ -12,7 +13,6 @@ import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.*
 import com.typewritermc.engine.paper.content.entryId
-import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.triggerFor
@@ -23,11 +23,12 @@ import com.typewritermc.engine.paper.utils.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.Color
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.koin.core.component.KoinComponent
 import java.util.*
 import kotlin.math.pow
@@ -79,9 +80,9 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
         }
         +NetworkAddNodeComponent(::addRoadNode, ::addNegativeNode)
         nodes({ network.nodes }, ::showingLocation) {
-            item = ItemStack(it.material(network.modifications))
+            item = ItemStack.of(it.material(network.modifications))
             glow = if (highlighting) NamedTextColor.WHITE else null
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
             onInteract {
                 ContentModeTrigger(
                     context,
@@ -97,9 +98,9 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
         }
 
         nodes({ network.negativeNodes }, ::showingLocation) {
-            item = ItemStack(Material.NETHERITE_BLOCK)
+            item = ItemStack.of(Material.NETHERITE_BLOCK)
             glow = if (highlighting) NamedTextColor.BLACK else null
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
             onInteract {
                 ContentModeTrigger(
                     context,
@@ -170,7 +171,7 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
         super.dispose()
     }
 
-    private fun showingLocation(node: RoadNode): Location = node.location.clone().apply {
+    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
         yaw = (cycle % 360).toFloat()
     }
 }
@@ -191,7 +192,7 @@ private class NetworkAddNodeComponent(
     private val onAddNegative: () -> Unit = {},
 ) : ContentComponent, ItemsComponent {
     override fun items(player: Player): Map<Int, IntractableItem> {
-        val addNodeItem = ItemStack(Material.DIAMOND).apply {
+        val addNodeItem = ItemStack.of(Material.DIAMOND).apply {
             editMeta { meta ->
                 meta.name = "<green><b>Add Node"
                 meta.loreString = "<line> <gray>Click to add a new node to the road network"
@@ -200,7 +201,7 @@ private class NetworkAddNodeComponent(
             if (it.type.isClick) onAdd()
         }
 
-        val addNegativeNodeItem = ItemStack(Material.NETHERITE_INGOT).apply {
+        val addNegativeNodeItem = ItemStack.of(Material.NETHERITE_INGOT).apply {
             editMeta { meta ->
                 meta.name = "<red><b>Add Negative Node"
                 meta.loreString = """
@@ -227,7 +228,7 @@ private class NetworkHighlightComponent(
     private val onHighlight: () -> Unit = {}
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = ItemStack(Material.GLOWSTONE_DUST).apply {
+        val item = ItemStack.of(Material.GLOWSTONE_DUST).apply {
             editMeta { meta ->
                 meta.name = "<yellow><b>Highlight Nodes"
                 meta.loreString = "<line> <gray>Click to highlight all nodes"
@@ -246,7 +247,7 @@ private class NetworkRecalculateAllEdgesComponent(
     private val onRecalculate: () -> Unit = {}
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = ItemStack(Material.REDSTONE).apply {
+        val item = ItemStack.of(Material.REDSTONE).apply {
             editMeta { meta ->
                 meta.name = "<red><b>Recalculate Edges"
                 meta.loreString = "<line> <gray>Click to recalculate all edges, this might take a while."
@@ -275,7 +276,7 @@ internal class NetworkEdgesComponent(
         val nodes = fetchNodes().associateBy { it.id }
         showingEdges = fetchEdges()
             .filter {
-                (nodes[it.start]?.location?.distanceSqrt(player.location)
+                (nodes[it.start]?.location?.distanceSqrt(player.position)
                     ?: Double.MAX_VALUE) < (showEdgeDistance * showEdgeDistance)
             }
             .mapNotNull { edge ->
@@ -322,9 +323,9 @@ internal class NetworkEdgesComponent(
     override suspend fun dispose(player: Player) {}
 
     class ShowingEdge(
-        val startLocation: Location,
-        val endLocation: Location,
-        val color: Color = Color.RED,
+        val startLocation: Pos,
+        val endLocation: Pos,
+        val color: Color = Color.RE,
     )
 
     companion object {
@@ -354,7 +355,7 @@ class NegativeNodePulseComponent(
         if (cycle == 0) {
             showingNodes = negativeNodes()
                 .filter {
-                    (it.location.distanceSqrt(player.location)
+                    (it.location.distanceSqrt(player.position)
                         ?: Double.MAX_VALUE) < roadNetworkMaxDistance * roadNetworkMaxDistance
                 }
                 .map { Pulse(it.location, it.radius) }
@@ -372,7 +373,7 @@ class NegativeNodePulseComponent(
         }
     }
 
-    data class Pulse(val location: Location, val radius: Double)
+    data class Pulse(val location: Pos, val radius: Double)
 
     private fun Double.easeOutBack(): Double {
         val c1 = 1.70158

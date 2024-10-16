@@ -5,7 +5,7 @@ import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.engine.paper.entry.entries.EntityActivityEntry
 import com.typewritermc.engine.paper.entry.entries.EntityInstanceEntry
 import com.typewritermc.engine.paper.entry.entries.EntityProperty
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 interface ActivityCreator {
     fun create(context: ActivityContext, currentLocation: PositionProperty): EntityActivity<ActivityContext>

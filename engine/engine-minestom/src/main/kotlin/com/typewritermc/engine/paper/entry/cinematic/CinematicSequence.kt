@@ -17,7 +17,7 @@ import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent
 import java.time.Duration
 

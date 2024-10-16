@@ -1,13 +1,13 @@
 package com.typewritermc.engine.paper.entry.entity
 
-import lirand.api.extensions.server.server
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.paper.entry.entries.AudienceFilter
 import com.typewritermc.engine.paper.entry.entries.EntityInstanceEntry
 import com.typewritermc.engine.paper.entry.entries.PropertySupplier
 import com.typewritermc.engine.paper.entry.entries.TickableDisplay
-import org.bukkit.entity.Player
+import lirand.api.extensions.server.server
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -22,14 +22,14 @@ class IndividualActivityEntityDisplay(
     private val entities = ConcurrentHashMap<UUID, DisplayEntity>()
 
     override fun filter(player: Player): Boolean {
-        val activityManager = activityManagers[player.uniqueId] ?: return false
+        val activityManager = activityManagers[player.uuid] ?: return false
         val npcPosition = activityManager.position
-        val distance = npcPosition.distanceSqrt(player.location) ?: return false
+        val distance = npcPosition.distanceSqrt(player.position) ?: return false
         return distance <= entityShowRange * entityShowRange
     }
 
     override fun onPlayerAdd(player: Player) {
-        activityManagers.computeIfAbsent(player.uniqueId) {
+        activityManagers.computeIfAbsent(player.uuid) {
             val context = IndividualActivityContext(ref, player)
             val activity = activityCreator.create(context, spawnPosition.toProperty())
             val activityManager = ActivityManager(activity)
@@ -41,8 +41,8 @@ class IndividualActivityEntityDisplay(
 
     override fun onPlayerFilterAdded(player: Player) {
         super.onPlayerFilterAdded(player)
-        val activityManager = activityManagers[player.uniqueId] ?: return
-        entities.computeIfAbsent(player.uniqueId) {
+        val activityManager = activityManagers[player.uuid] ?: return
+        entities.computeIfAbsent(player.uuid) {
             DisplayEntity(player, creator, activityManager, suppliers.toCollectors())
         }
     }
@@ -61,12 +61,12 @@ class IndividualActivityEntityDisplay(
 
     override fun onPlayerFilterRemoved(player: Player) {
         super.onPlayerFilterRemoved(player)
-        entities.remove(player.uniqueId)?.dispose()
+        entities.remove(player.uuid)?.dispose()
     }
 
     override fun onPlayerRemove(player: Player) {
         super.onPlayerRemove(player)
-        activityManagers.remove(player.uniqueId)?.dispose(IndividualActivityContext(ref, player))
+        activityManagers.remove(player.uuid)?.dispose(IndividualActivityContext(ref, player))
     }
 
     override fun dispose() {

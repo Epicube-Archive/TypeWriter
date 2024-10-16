@@ -8,7 +8,7 @@ import com.typewritermc.engine.paper.entry.entries.EntryTrigger
 import com.typewritermc.engine.paper.entry.entries.EventTrigger
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger
 import com.typewritermc.engine.paper.interaction.InteractionHandler
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent.get
 
 @Tags("trigger")

@@ -17,7 +17,7 @@ import kotlinx.coroutines.delay
 import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

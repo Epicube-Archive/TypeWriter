@@ -2,8 +2,7 @@ package com.typewritermc.engine.paper.entry.entity
 
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.paper.entry.entries.EntityDefinitionEntry
-import org.bukkit.Location
-import java.util.UUID
+import java.util.*
 
 interface ActivityEntityDisplay {
     val creator: EntityCreator

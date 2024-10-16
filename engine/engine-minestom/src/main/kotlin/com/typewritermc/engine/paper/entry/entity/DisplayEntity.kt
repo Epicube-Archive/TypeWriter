@@ -5,8 +5,8 @@ import com.typewritermc.engine.paper.entry.entries.PropertyCollector
 import com.typewritermc.engine.paper.entry.entries.PropertyCollectorSupplier
 import com.typewritermc.engine.paper.entry.entries.PropertySupplier
 import com.typewritermc.engine.paper.utils.toBukkitLocation
+import net.minestom.server.entity.Player
 import org.bukkit.SoundCategory
-import org.bukkit.entity.Player
 import kotlin.reflect.full.companionObjectInstance
 
 internal class DisplayEntity(

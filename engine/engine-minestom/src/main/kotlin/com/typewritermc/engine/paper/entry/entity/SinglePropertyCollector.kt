@@ -4,7 +4,7 @@ import com.typewritermc.engine.paper.entry.entries.EntityProperty
 import com.typewritermc.engine.paper.entry.entries.PropertyCollector
 import com.typewritermc.engine.paper.entry.entries.PropertyCollectorSupplier
 import com.typewritermc.engine.paper.entry.entries.PropertySupplier
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import kotlin.reflect.KClass
 
 class SinglePropertyCollector<P : EntityProperty>(

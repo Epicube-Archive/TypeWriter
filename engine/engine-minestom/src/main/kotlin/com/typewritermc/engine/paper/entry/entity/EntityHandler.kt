@@ -5,15 +5,15 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
-import lirand.api.extensions.server.server
 import com.typewritermc.engine.paper.entry.AudienceManager
 import com.typewritermc.engine.paper.events.AsyncEntityDefinitionInteract
 import com.typewritermc.engine.paper.events.AsyncFakeEntityInteract
 import com.typewritermc.engine.paper.plugin
+import lirand.api.extensions.server.server
 import me.tofaa.entitylib.APIConfig
 import me.tofaa.entitylib.EntityLib
 import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

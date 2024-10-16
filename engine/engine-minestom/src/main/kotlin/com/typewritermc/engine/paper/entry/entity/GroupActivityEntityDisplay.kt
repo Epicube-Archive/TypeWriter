@@ -4,7 +4,7 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.paper.entry.entries.*
 import lirand.api.extensions.server.server
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,14 +24,14 @@ class GroupActivityEntityDisplay(
     }
 
     override fun filter(player: Player): Boolean {
-        val groupId = group.groupId(player) ?: GroupId(player.uniqueId)
+        val groupId = group.groupId(player) ?: GroupId(player.uuid)
         val npcLocation = activityManagers[groupId]?.position ?: return false
-        val distance = npcLocation.distanceSqrt(player.location) ?: return false
+        val distance = npcLocation.distanceSqrt(player.position) ?: return false
         return distance <= entityShowRange * entityShowRange
     }
 
     override fun onPlayerAdd(player: Player) {
-        val groupId = group.groupId(player) ?: GroupId(player.uniqueId)
+        val groupId = group.groupId(player) ?: GroupId(player.uuid)
         activityManagers.computeIfAbsent(groupId) {
             val viewers = groupViewers(groupId)
             val context = SharedActivityContext(ref, viewers)
@@ -46,9 +46,9 @@ class GroupActivityEntityDisplay(
 
     override fun onPlayerFilterAdded(player: Player) {
         super.onPlayerFilterAdded(player)
-        val groupId = group.groupId(player) ?: GroupId(player.uniqueId)
+        val groupId = group.groupId(player) ?: GroupId(player.uuid)
         val activityManager = activityManagers[groupId] ?: return
-        entities.computeIfAbsent(player.uniqueId) {
+        entities.computeIfAbsent(player.uuid) {
             DisplayEntity(player, creator, activityManager, suppliers.toCollectors())
         }
     }
@@ -63,7 +63,7 @@ class GroupActivityEntityDisplay(
             // When the state is different between players, it might look weird.
             // But there is no real solution to this.
             // So we pick the first entity's state and use to try and keep the state consistent.
-            val viewerId = viewers.firstOrNull()?.uniqueId
+            val viewerId = viewers.firstOrNull()?.uuid
             val entityState = if (viewerId != null) entities[viewerId]?.state ?: EntityState() else EntityState()
 
             val context = SharedActivityContext(ref, viewers, entityState)
@@ -75,12 +75,12 @@ class GroupActivityEntityDisplay(
 
     override fun onPlayerFilterRemoved(player: Player) {
         super.onPlayerFilterRemoved(player)
-        entities.remove(player.uniqueId)?.dispose()
+        entities.remove(player.uuid)?.dispose()
     }
 
     override fun onPlayerRemove(player: Player) {
         super.onPlayerRemove(player)
-        val groupId = group.groupId(player) ?: GroupId(player.uniqueId)
+        val groupId = group.groupId(player) ?: GroupId(player.uuid)
         // If no players are considered for this group, we can remove the activity manager
         if (consideredPlayers.none { groupId == group.groupId(it) }) {
             activityManagers.remove(groupId)?.dispose(SharedActivityContext(ref, emptyList()))

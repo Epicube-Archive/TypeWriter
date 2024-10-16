@@ -3,9 +3,10 @@ package com.typewritermc.engine.paper.entry.roadnetwork.pathfinding
 import com.extollit.gaming.ai.path.model.ColumnarOcclusionFieldList
 import com.extollit.gaming.ai.path.model.IColumnarSpace
 import com.extollit.gaming.ai.path.model.IInstanceSpace
-import org.bukkit.ChunkSnapshot
-import org.bukkit.Location
-import org.bukkit.World
+import com.typewritermc.core.utils.point.World
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.snapshot.ChunkSnapshot
+
 
 class PFColumnarSpace(
     val world: World,
@@ -15,7 +16,7 @@ class PFColumnarSpace(
     private val occlusionFieldList = ColumnarOcclusionFieldList(this)
 
     override fun blockAt(x: Int, y: Int, z: Int): PFBlock = PFBlock(
-        Location(world, x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f),
+        Pos(x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f),
         snapshot.getBlockType(x, y, z),
         snapshot.getBlockData(x, y, z),
     )

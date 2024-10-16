@@ -1,12 +1,11 @@
 package com.typewritermc.engine.paper.entry
 
 import com.typewritermc.core.entries.Ref
-import io.ktor.util.collections.*
 import com.typewritermc.engine.paper.entry.entries.EventTrigger
 import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.paper.interaction.InteractionHandler
-import com.typewritermc.engine.paper.utils.logErrorIfNull
-import org.bukkit.entity.Player
+import io.ktor.util.collections.*
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

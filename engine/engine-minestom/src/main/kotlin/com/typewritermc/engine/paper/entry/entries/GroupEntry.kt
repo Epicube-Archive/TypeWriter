@@ -3,7 +3,7 @@ package com.typewritermc.engine.paper.entry.entries
 import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.StaticEntry
 import lirand.api.extensions.server.server
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Tags("group")

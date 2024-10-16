@@ -7,8 +7,7 @@ import com.typewritermc.engine.paper.entry.entries.EntityInstanceEntry
 import com.typewritermc.engine.paper.entry.entries.PropertySupplier
 import com.typewritermc.engine.paper.entry.entries.TickableDisplay
 import com.typewritermc.engine.paper.utils.config
-import org.bukkit.Location
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -26,7 +25,7 @@ class SharedActivityEntityDisplay(
 
     override fun filter(player: Player): Boolean {
         val npcLocation = activityManager?.position ?: return false
-        val distance = npcLocation.distanceSqrt(player.location) ?: return false
+        val distance = npcLocation.distanceSqrt(player.position) ?: return false
         return distance <= entityShowRange * entityShowRange
     }
 
@@ -41,7 +40,7 @@ class SharedActivityEntityDisplay(
     override fun onPlayerFilterAdded(player: Player) {
         super.onPlayerFilterAdded(player)
         val activityManager = activityManager ?: return
-        entities.computeIfAbsent(player.uniqueId) {
+        entities.computeIfAbsent(player.uuid) {
             DisplayEntity(player, creator, activityManager, suppliers.toCollectors())
         }
     }
@@ -60,7 +59,7 @@ class SharedActivityEntityDisplay(
 
     override fun onPlayerFilterRemoved(player: Player) {
         super.onPlayerFilterRemoved(player)
-        entities.remove(player.uniqueId)?.dispose()
+        entities.remove(player.uuid)?.dispose()
     }
 
     override fun dispose() {

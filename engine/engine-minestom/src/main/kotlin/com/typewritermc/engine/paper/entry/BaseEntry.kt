@@ -10,7 +10,7 @@ import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.paper.entry.entries.WritableFactEntry
 import com.typewritermc.engine.paper.facts.FactData
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Tags("static")
 interface StaticEntry : Entry

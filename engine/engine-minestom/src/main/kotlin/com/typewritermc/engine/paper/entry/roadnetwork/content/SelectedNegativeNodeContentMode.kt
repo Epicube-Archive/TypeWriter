@@ -1,24 +1,24 @@
 package com.typewritermc.engine.paper.entry.roadnetwork.content
 
-import com.github.retrooper.packetevents.util.Vector3f
+import com.typewritermc.core.entries.Ref
+import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.bossBar
 import com.typewritermc.engine.paper.content.components.exit
 import com.typewritermc.engine.paper.content.components.nodes
-import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.forceTriggerFor
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.triggerFor
-import com.typewritermc.core.utils.ok
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import org.bukkit.Color
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class SelectedNegativeNodeContentMode(
     context: ContentContext,
@@ -69,9 +69,9 @@ class SelectedNegativeNodeContentMode(
         }
 
         nodes({ network.negativeNodes }, ::showingLocation) {
-            item = ItemStack(Material.NETHERITE_BLOCK)
+            item = ItemStack.of(Material.NETHERITE_BLOCK)
             glow = if (it.id == selectedNodeId) NamedTextColor.BLACK else null
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
             onInteract {
                 if (it.id == selectedNodeId) {
                     SystemTrigger.CONTENT_POP triggerFor player
@@ -98,7 +98,7 @@ class SelectedNegativeNodeContentMode(
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Location = node.location.clone().apply {
+    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
         yaw = (cycle % 360).toFloat()
     }
 }

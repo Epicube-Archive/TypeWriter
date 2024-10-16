@@ -11,7 +11,7 @@ import com.typewritermc.engine.paper.entry.entries.roadNetworkMaxDistance
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFEmptyEntity
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
 import com.typewritermc.engine.paper.utils.distanceSqrt
-import org.bukkit.Location
+import net.minestom.server.coordinate.Pos
 
 interface GPS {
     val roadNetwork: Ref<RoadNetworkEntry>
@@ -19,8 +19,8 @@ interface GPS {
 }
 
 data class GPSEdge(
-    val start: Location,
-    val end: Location,
+    val start: Pos,
+    val end: Pos,
     val weight: Double,
 ) {
     val isFastTravel: Boolean

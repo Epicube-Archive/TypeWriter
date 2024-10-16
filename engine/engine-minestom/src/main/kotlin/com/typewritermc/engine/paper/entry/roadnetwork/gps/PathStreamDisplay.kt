@@ -5,7 +5,6 @@ import com.extollit.gaming.ai.path.model.Passibility
 import com.extollit.linalg.immutable.Vec3d
 import com.github.retrooper.packetevents.protocol.particle.Particle
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
-import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entity.toProperty
@@ -27,8 +26,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import lirand.api.extensions.server.server
-import org.bukkit.Location
-import org.bukkit.entity.Player
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
@@ -41,16 +41,16 @@ private val pathStreamRefreshTime by snippet(
 
 class PathStreamDisplay(
     private val ref: Ref<RoadNetworkEntry>,
-    private val startLocation: (Player) -> Location = Player::getLocation,
-    private val endLocation: (Player) -> Location,
+    private val startLocation: (Player) -> Pos = Player::getPosition,
+    private val endLocation: (Player) -> Pos,
 ) : AudienceDisplay(), TickableDisplay {
     private val displays = mutableMapOf<UUID, PlayerPathStreamDisplay>()
     override fun onPlayerAdd(player: Player) {
-        displays[player.uniqueId] = PlayerPathStreamDisplay(ref, player, startLocation, endLocation)
+        displays[player.uuid] = PlayerPathStreamDisplay(ref, player, startLocation, endLocation)
     }
 
     override fun onPlayerRemove(player: Player) {
-        displays.remove(player.uniqueId)?.dispose()
+        displays.remove(player.uuid)?.dispose()
     }
 
     override fun tick() {
@@ -60,8 +60,8 @@ class PathStreamDisplay(
 
 class MultiPathStreamDisplay(
     private val ref: Ref<RoadNetworkEntry>,
-    private val startLocation: (Player) -> Location = Player::getLocation,
-    private val endLocations: (Player) -> List<Location>,
+    private val startLocation: (Player) -> Pos = Player::getPosition,
+    private val endLocations: (Player) -> List<Pos>,
 ) : AudienceDisplay(), TickableDisplay {
     private val displays = mutableMapOf<UUID, MutableList<StreamDisplay>>()
 
@@ -83,19 +83,19 @@ class MultiPathStreamDisplay(
     }
 
     override fun onPlayerAdd(player: Player) {
-        displays[player.uniqueId] = mutableListOf()
+        displays[player.uuid] = mutableListOf()
     }
 
     override fun onPlayerRemove(player: Player) {
-        displays.remove(player.uniqueId)?.forEach { it.display.dispose() }
+        displays.remove(player.uuid)?.forEach { it.display.dispose() }
     }
 }
 
 private class StreamDisplay(
     ref: Ref<RoadNetworkEntry>,
     player: Player,
-    startLocation: (Player) -> Location,
-    var location: Location,
+    startLocation: (Player) -> Pos,
+    var location: Pos,
 ) {
     val display = PlayerPathStreamDisplay(ref, player, startLocation) { location }
 }
@@ -103,8 +103,8 @@ private class StreamDisplay(
 private class PlayerPathStreamDisplay(
     ref: Ref<RoadNetworkEntry>,
     private val player: Player,
-    private val startLocation: (Player) -> Location,
-    private val endLocation: (Player) -> Location,
+    private val startLocation: (Player) -> Pos,
+    private val endLocation: (Player) -> Pos,
 ) : KoinComponent {
     private val roadNetworkManager: RoadNetworkManager by inject()
 
@@ -135,7 +135,7 @@ private class PlayerPathStreamDisplay(
                 Particle(ParticleTypes.TOTEM_OF_UNDYING),
                 true,
                 location.also { it.y += 0.5 }.toVector3d(),
-                Vector3f(0.3f, 0.0f, 0.3f),
+                Vec(0.3, 0.0, 0.3),
                 0f,
                 1
             ) sendPacketTo player
@@ -175,9 +175,9 @@ private class PlayerPathStreamDisplay(
     }
 
     private suspend fun findPath(
-        start: Location,
-        end: Location,
-    ): Iterable<Location> {
+        start: Pos,
+        end: Pos,
+    ): Iterable<Pos> {
         val roadNetwork = roadNetworkManager.getNetwork(gps.roadNetwork)
 
         val interestingNegativeNodes = roadNetwork.negativeNodes.filter {
@@ -202,7 +202,7 @@ private class PlayerPathStreamDisplay(
         val path = pathfinder.computePathTo(Vec3d(end.x, end.y, end.z)) ?: return emptyList()
         return path.map {
             val coordinate = it.coordinates()
-            Location(start.world, coordinate.x.toDouble(), coordinate.y.toDouble(), coordinate.z.toDouble())
+            Pos(coordinate.x.toDouble(), coordinate.y.toDouble(), coordinate.z.toDouble())
         }
     }
 
@@ -212,10 +212,10 @@ private class PlayerPathStreamDisplay(
 }
 
 private data class PathLine(
-    val path: List<Location>,
+    val path: List<Pos>,
     var index: Int = 0,
 ) {
-    val currentLocation: Location?
+    val currentLocation: Pos?
         get() = path.getOrNull(index)
 
     fun next(): Boolean {

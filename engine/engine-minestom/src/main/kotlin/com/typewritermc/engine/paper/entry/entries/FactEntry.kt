@@ -10,7 +10,7 @@ import com.typewritermc.engine.paper.facts.FactData
 import com.typewritermc.engine.paper.facts.FactDatabase
 import com.typewritermc.engine.paper.facts.FactId
 import lirand.api.extensions.server.server
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 
@@ -31,7 +31,7 @@ interface FactEntry : StaticEntry {
             entry.groupId(player) ?: return null
         } else {
             // If no group entry is set, we assume that the player is the group for backwards compatibility
-            com.typewritermc.engine.paper.entry.entries.GroupId(player.uniqueId)
+            com.typewritermc.engine.paper.entry.entries.GroupId(player.uuid)
         }
 
         return FactId(id, groupId)

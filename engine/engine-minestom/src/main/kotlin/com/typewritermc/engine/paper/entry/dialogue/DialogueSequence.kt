@@ -4,7 +4,6 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.priority
 import com.typewritermc.engine.paper.entry.TriggerableEntry
 import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.entry.entries.EmptyCinematicAction.setup
 import com.typewritermc.engine.paper.entry.entries.SpeakerEntry
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger.DIALOGUE_END
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger.DIALOGUE_NEXT_OR_COMPLETE
@@ -16,7 +15,7 @@ import com.typewritermc.engine.paper.facts.FactDatabase
 import com.typewritermc.engine.paper.interaction.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import com.typewritermc.engine.paper.utils.playSound
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent

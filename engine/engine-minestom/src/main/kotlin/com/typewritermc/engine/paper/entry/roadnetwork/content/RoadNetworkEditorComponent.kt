@@ -1,13 +1,13 @@
 package com.typewritermc.engine.paper.entry.roadnetwork.content
 
-import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.core.entries.Ref
+import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.entry.entries.RoadNetwork
 import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkManager
 import com.typewritermc.engine.paper.utils.ThreadType
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

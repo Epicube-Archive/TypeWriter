@@ -10,7 +10,7 @@ import com.typewritermc.engine.paper.events.AsyncQuestStatusUpdate
 import com.typewritermc.engine.paper.events.AsyncTrackedQuestUpdate
 import com.typewritermc.engine.paper.interaction.InteractionHandler
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.util.concurrent.ConcurrentHashMap
 

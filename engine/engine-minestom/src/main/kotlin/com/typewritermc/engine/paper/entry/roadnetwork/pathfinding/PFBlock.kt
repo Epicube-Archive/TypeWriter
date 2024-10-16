@@ -3,13 +3,13 @@ package com.typewritermc.engine.paper.entry.roadnetwork.pathfinding
 import com.extollit.gaming.ai.path.model.IBlockDescription
 import com.extollit.gaming.ai.path.model.IBlockObject
 import com.extollit.linalg.immutable.AxisAlignedBBox
-import org.bukkit.Location
-import org.bukkit.Material
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.item.Material
 import org.bukkit.block.data.BlockData
 import org.bukkit.util.VoxelShape
 
 class PFBlock(
-    val location: Location,
+    val location: Pos,
     val type: Material,
     val data: BlockData,
 ) : IBlockDescription, IBlockObject {

@@ -9,7 +9,7 @@ import com.typewritermc.engine.paper.entry.ManifestEntry
 import com.typewritermc.engine.paper.plugin
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.server
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.bukkit.event.Listener
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -66,7 +66,7 @@ abstract class AudienceDisplay : Listener {
     open val players: List<Player> get() = server.onlinePlayers.filter { it.uniqueId in playerIds }
 
     open fun displayState(player: Player): AudienceDisplayState {
-        if (player.uniqueId in playerIds) return AudienceDisplayState.IN_AUDIENCE
+        if (player.uuid in playerIds) return AudienceDisplayState.IN_AUDIENCE
         return AudienceDisplayState.NOT_CONSIDERED
     }
 
@@ -85,12 +85,12 @@ abstract class AudienceDisplay : Listener {
 
     fun addPlayer(player: Player) {
         if (playerIds.isEmpty()) initialize()
-        if (!playerIds.add(player.uniqueId)) return
+        if (!playerIds.add(player.uuid)) return
         onPlayerAdd(player)
     }
 
     fun removePlayer(player: Player) {
-        if (!playerIds.remove(player.uniqueId)) return
+        if (!playerIds.remove(player.uuid)) return
         onPlayerRemove(player)
         if (playerIds.isEmpty()) dispose()
     }
@@ -98,7 +98,7 @@ abstract class AudienceDisplay : Listener {
     abstract fun onPlayerAdd(player: Player)
     abstract fun onPlayerRemove(player: Player)
 
-    open operator fun contains(player: Player): Boolean = player.uniqueId in playerIds
+    open operator fun contains(player: Player): Boolean = player.uuid in playerIds
     open operator fun contains(uuid: UUID): Boolean = uuid in playerIds
 }
 
@@ -128,12 +128,12 @@ abstract class AudienceFilter(
     fun Player.updateFilter(isFiltered: Boolean) {
         val allow = !inverted == isFiltered && canConsider(this)
         if (allow) {
-            if (filteredPlayers.add(uniqueId)) {
+            if (filteredPlayers.add(uuid)) {
                 onPlayerFilterAdded(this)
                 get<AudienceManager>(AudienceManager::class.java).addPlayerToChildren(this, ref)
             }
         } else {
-            if (filteredPlayers.remove(uniqueId)) {
+            if (filteredPlayers.remove(uuid)) {
                 onPlayerFilterRemoved(this)
                 get<AudienceManager>(AudienceManager::class.java).removePlayerFromChildren(this, ref)
             }
@@ -159,7 +159,7 @@ abstract class AudienceFilter(
     fun canConsider(player: Player): Boolean = super.contains(player)
     fun canConsider(uuid: UUID): Boolean = super.contains(uuid)
 
-    override fun contains(player: Player): Boolean = contains(player.uniqueId)
+    override fun contains(player: Player): Boolean = contains(player.uuid)
     override fun contains(uuid: UUID): Boolean = uuid in filteredPlayers
 }
 
@@ -180,13 +180,13 @@ abstract class SingleFilter<E : AudienceFilterEntry, D : PlayerSingleDisplay<E>>
     // Map needs to be shared between all instances of the display
     protected abstract val displays: MutableMap<UUID, D>
 
-    override fun filter(player: Player): Boolean = displays[player.uniqueId]?.ref == ref
+    override fun filter(player: Player): Boolean = displays[player.uuid]?.ref == ref
     override fun tick() {
         displays.values.forEach { it.tick() }
     }
 
     override fun onPlayerAdd(player: Player) {
-        displays.computeIfAbsent(player.uniqueId)
+        displays.computeIfAbsent(player.uuid)
         {
             createDisplay(player)
                 .also { it.initialize() }
@@ -197,7 +197,7 @@ abstract class SingleFilter<E : AudienceFilterEntry, D : PlayerSingleDisplay<E>>
 
     override fun onPlayerRemove(player: Player) {
         super.onPlayerRemove(player)
-        displays.computeIfPresent(player.uniqueId) { _, display ->
+        displays.computeIfPresent(player.uuid) { _, display ->
             if (display.onRemovedBy(ref)) {
                 display.dispose()
                 null

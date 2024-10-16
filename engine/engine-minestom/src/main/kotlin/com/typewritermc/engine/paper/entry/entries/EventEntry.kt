@@ -10,7 +10,7 @@ import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.entry.TriggerEntry
 import com.typewritermc.engine.paper.entry.TriggerableEntry
 import dev.jorel.commandapi.CommandTree
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Tags("event")
 interface EventEntry : TriggerEntry
@@ -36,7 +36,7 @@ class Event(val player: Player, val triggers: List<EventTrigger>) {
 
     fun merge(other: Event?): Event {
         if (other == null) return this
-        if (player.uniqueId != other.player.uniqueId) return this
+        if (player.uuid != other.player.uuid) return this
         return Event(player, triggers + other.triggers)
     }
 
@@ -45,7 +45,7 @@ class Event(val player: Player, val triggers: List<EventTrigger>) {
         if (other !is Event) return false
 
         if (triggers != other.triggers) return false
-        return player.uniqueId == other.player.uniqueId
+        return player.uuid == other.player.uuid
     }
 
     override fun hashCode(): Int {

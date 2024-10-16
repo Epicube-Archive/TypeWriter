@@ -3,8 +3,7 @@ package com.typewritermc.engine.paper.entry.entries
 import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.PlaceholderEntry
 import com.typewritermc.engine.paper.entry.StaticEntry
-import net.kyori.adventure.sound.Sound
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Tags("sound_id")
 interface SoundIdEntry : StaticEntry, PlaceholderEntry {

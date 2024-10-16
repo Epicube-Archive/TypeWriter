@@ -1,18 +1,18 @@
 package com.typewritermc.engine.paper.entry.roadnetwork.gps
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import com.typewritermc.core.entries.Ref
+import com.typewritermc.core.utils.failure
+import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkManager
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
 import com.typewritermc.engine.paper.utils.ComputedMap
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import com.typewritermc.engine.paper.utils.distanceSqrt
-import com.typewritermc.core.utils.failure
-import com.typewritermc.core.utils.ok
-import org.bukkit.Location
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import net.minestom.server.coordinate.Pos
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
@@ -20,8 +20,8 @@ import kotlin.collections.set
 
 class PointToPointGPS(
     override val roadNetwork: Ref<RoadNetworkEntry>,
-    private val startFetcher: suspend (RoadNetwork) -> Location,
-    private val endFetcher: suspend (RoadNetwork) -> Location,
+    private val startFetcher: suspend (RoadNetwork) -> Pos,
+    private val endFetcher: suspend (RoadNetwork) -> Pos,
 ) : GPS, KoinComponent {
     private val roadNetworkManager: RoadNetworkManager by inject()
     private var previousStart: Pair<RoadNode, List<RoadEdge>?>? = null
@@ -170,7 +170,7 @@ class PointToPointGPS(
     }
 
     private fun insertInspecting(
-        targetLocation: Location,
+        targetLocation: Pos,
         startEndDistance: Double?,
         edge: RoadEdge,
         next: RoadNode,
@@ -220,7 +220,7 @@ class PointToPointGPS(
     private suspend fun getOrCreateNode(
         nodes: List<RoadNode>,
         negativeNodes: List<RoadNode>,
-        location: Location,
+        location: Pos,
         previous: Pair<RoadNode, List<RoadEdge>?>?,
         id: Int,
         asEnd: Boolean,
@@ -288,7 +288,7 @@ class PointToPointGPS(
         )
     }
 
-    private fun distanceWeight(startEnd: Double?, end: Location, current: Location): Double? {
+    private fun distanceWeight(startEnd: Double?, end: Pos, current: Pos): Double? {
         if (startEnd == null) return null
         val currentEnd = current.distanceSqrt(end) ?: return null
         if (currentEnd == 0.0) return 0.0

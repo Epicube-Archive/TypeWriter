@@ -2,7 +2,6 @@ package com.typewritermc.engine.paper.entry.roadnetwork.pathfinding
 
 import com.extollit.gaming.ai.path.model.IBlockObject
 import com.extollit.gaming.ai.path.model.IInstanceSpace
-import org.bukkit.World
 import java.util.concurrent.ConcurrentHashMap
 
 class PFInstanceSpace(val world: World) : IInstanceSpace {

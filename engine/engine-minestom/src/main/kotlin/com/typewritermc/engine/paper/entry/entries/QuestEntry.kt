@@ -1,11 +1,10 @@
 package com.typewritermc.engine.paper.entry.entries
 
 import com.typewritermc.core.entries.*
-import lirand.api.extensions.server.server
-import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Placeholder
+import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.*
 import com.typewritermc.engine.paper.entry.quest.QuestStatus
 import com.typewritermc.engine.paper.entry.quest.isQuestActive
@@ -16,8 +15,9 @@ import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.paper.snippets.snippet
 import com.typewritermc.engine.paper.utils.asMini
 import com.typewritermc.engine.paper.utils.asMiniWithResolvers
+import lirand.api.extensions.server.server
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.parsed
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.bukkit.event.EventHandler
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -94,7 +94,7 @@ class ObjectiveAudienceFilter(
         criteria.matches(player)
 
     override fun onPlayerAdd(player: Player) {
-        factWatcherSubscriptions.compute(player.uniqueId) { _, subscription ->
+        factWatcherSubscriptions.compute(player.uuid) { _, subscription ->
             subscription?.cancel(player)
             return@compute player.listenForFacts(
                 (criteria).map { it.fact },
@@ -111,7 +111,7 @@ class ObjectiveAudienceFilter(
 
     override fun onPlayerRemove(player: Player) {
         super.onPlayerRemove(player)
-        factWatcherSubscriptions.remove(player.uniqueId)?.cancel(player)
+        factWatcherSubscriptions.remove(player.uuid)?.cancel(player)
     }
 
     override fun onPlayerFilterAdded(player: Player) {
