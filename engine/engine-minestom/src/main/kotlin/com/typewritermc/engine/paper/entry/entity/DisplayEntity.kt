@@ -4,9 +4,7 @@ import com.typewritermc.engine.paper.entry.entries.EntityProperty
 import com.typewritermc.engine.paper.entry.entries.PropertyCollector
 import com.typewritermc.engine.paper.entry.entries.PropertyCollectorSupplier
 import com.typewritermc.engine.paper.entry.entries.PropertySupplier
-import com.typewritermc.engine.paper.utils.toBukkitLocation
 import net.minestom.server.entity.Player
-import org.bukkit.SoundCategory
 import kotlin.reflect.full.companionObjectInstance
 
 internal class DisplayEntity(
@@ -36,11 +34,12 @@ internal class DisplayEntity(
 
         // When the entity has moved far enough, play a sound
         // FIXME: Magic number
-        if ((lastSoundLocation.distanceSqrt(activityManager.position) ?: 0.0) > 1.7) {
+        // TODO: add support for soundgroups
+        /*if ((lastSoundLocation.distanceSqrt(activityManager.position) ?: 0.0) > 1.7) {
             lastSoundLocation = activityManager.position
             val sound = lastSoundLocation.toBukkitLocation().block.blockData.soundGroup.stepSound
             player.playSound(lastSoundLocation.toBukkitLocation(), sound, SoundCategory.NEUTRAL, 0.4f, 1.0f)
-        }
+        }*/
     }
 
     private fun applyProperties() {

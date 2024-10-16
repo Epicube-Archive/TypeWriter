@@ -1,6 +1,5 @@
 package com.typewritermc.engine.paper.entry.entries
 
-import com.github.retrooper.packetevents.util.Vector3f
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.typewritermc.core.entries.Entry
@@ -214,9 +213,7 @@ class SelectRoadNodeContentMode(context: ContentContext, player: Player) : Conte
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
-        yaw = (cycle % 360).toFloat()
-    }
+    private fun showingLocation(node: RoadNode): Pos = node.location.withYaw((cycle % 360).toFloat())
 }
 
 class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Player) : ContentMode(context, player) {
@@ -259,7 +256,7 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
                 nodes.any { it.id == node.id.id } -> NamedTextColor.BLUE
                 else -> NamedTextColor.WHITE
             }
-            scale = Vector3f(0.5f, 0.5f, 0.5f)
+            scale = Vec(0.5, 0.5, 0.5)
 
             onInteract {
                 val value = node.id.id
@@ -282,7 +279,5 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
-        yaw = (cycle % 360).toFloat()
-    }
+    private fun showingLocation(node: RoadNode): Pos = node.location.withYaw((cycle % 360).toFloat())
 }

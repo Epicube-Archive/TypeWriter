@@ -7,7 +7,6 @@ import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
 import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
-import com.typewritermc.engine.paper.TypewriterPaperPlugin
 import com.typewritermc.engine.paper.entry.roadnetwork.content.toPacketColor
 import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.logger
@@ -20,17 +19,20 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.event.Event
 import net.minestom.server.instance.InstanceManager
-import org.koin.java.KoinJavaComponent.get
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URI
 import java.time.Duration
 import java.util.*
 import kotlin.math.*
-import kotlin.reflect.KClass
 
 operator fun File.get(name: String): File = File(this, name)
+
+fun Event.callEvent() {
+    MinecraftServer.getGlobalEventHandler().call(this)
+}
 
 val Player.isFloodgate: Boolean
     get() {

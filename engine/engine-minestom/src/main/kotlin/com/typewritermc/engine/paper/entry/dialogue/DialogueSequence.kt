@@ -14,6 +14,7 @@ import com.typewritermc.engine.paper.events.AsyncDialogueSwitchEvent
 import com.typewritermc.engine.paper.facts.FactDatabase
 import com.typewritermc.engine.paper.interaction.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
+import com.typewritermc.engine.paper.utils.callEvent
 import com.typewritermc.engine.paper.utils.playSound
 import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent

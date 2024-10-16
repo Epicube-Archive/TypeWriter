@@ -2,7 +2,9 @@ package com.typewritermc.engine.paper.entry.entries
 
 import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.entry.StaticEntry
+import lirand.api.extensions.server.onlinePlayers
 import lirand.api.extensions.server.server
+import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import java.util.*
 
@@ -19,7 +21,7 @@ interface GroupEntry : StaticEntry {
      * Get the group for a given id
      */
     fun group(id: GroupId): Group {
-        return Group(server.onlinePlayers.filter { groupId(it) == id })
+        return Group(onlinePlayers.filter { groupId(it) == id })
     }
 
     /**

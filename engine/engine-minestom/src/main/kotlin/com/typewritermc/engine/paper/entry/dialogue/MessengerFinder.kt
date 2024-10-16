@@ -1,7 +1,7 @@
 package com.typewritermc.engine.paper.entry.dialogue
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
-import com.github.shynixn.mccoroutine.bukkit.ticks
+import com.github.shynixn.mccoroutine.minestom.ticks
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.Reloadable
 import com.typewritermc.engine.paper.entry.Modifier
@@ -18,10 +18,10 @@ import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player
+import net.minestom.server.event.trait.PlayerEvent
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
 import org.koin.core.component.KoinComponent
@@ -170,7 +170,7 @@ enum class ConfirmationKey(val keybind: String) {
             listener,
             EventPriority.HIGHEST,
         ) event@{ event: E ->
-            if (event.player.uniqueId != playerUUID) return@event
+            if (event.player.uuid != playerUUID) return@event
             if (event is PlayerToggleSneakEvent && !event.isSneaking) return@event // Otherwise the event is fired twice
             block()
             if (event is Cancellable) event.isCancelled = true

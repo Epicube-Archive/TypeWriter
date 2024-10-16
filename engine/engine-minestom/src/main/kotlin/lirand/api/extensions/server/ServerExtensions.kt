@@ -1,10 +1,12 @@
 package lirand.api.extensions.server
 
-import org.bukkit.Bukkit
-import org.bukkit.Server
+import com.typewritermc.engine.paper.adapt.Server
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 import org.bukkit.WorldCreator
 
-val server get() = Bukkit.getServer()
+val server get() = Server.instance
+val onlinePlayers: MutableCollection<Player> get() = MinecraftServer.getConnectionManager().onlinePlayers
 
 val craftBukkitPackage = server.javaClass.getPackage().name
 

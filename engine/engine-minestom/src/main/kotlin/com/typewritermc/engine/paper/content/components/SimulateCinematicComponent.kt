@@ -15,10 +15,7 @@ import com.typewritermc.engine.paper.interaction.startBlockingActionBar
 import com.typewritermc.engine.paper.interaction.stopBlockingActionBar
 import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.plugin
-import com.typewritermc.engine.paper.utils.digits
-import com.typewritermc.engine.paper.utils.loreString
-import com.typewritermc.engine.paper.utils.name
-import com.typewritermc.engine.paper.utils.playSound
+import com.typewritermc.engine.paper.utils.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -28,12 +25,9 @@ import net.kyori.adventure.bossbar.BossBar
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerItemHeldEvent
-import org.bukkit.inventory.ItemStack
 import java.util.*
 
 fun ContentMode.cinematic(context: ContentContext) = +SimulateCinematicComponent(context)
@@ -138,66 +132,62 @@ class SimulateCinematicComponent(
     }
 
     override fun items(player: Player): Map<Int, IntractableItem> {
-        val playbackSpeed = ItemStack.of(Material.CLOCK).apply {
-            editMeta { meta ->
-                meta.name = "<yellow><bold>Playback Speed"
-                meta.loreString = """
+        val playbackSpeed = ItemStack.of(Material.CLOCK)
+            .withCustomName("<yellow><bold>Playback Speed".asMini())
+            .withLore("""
                     |<line> <green><b>Right Click: </b><white>Increases speed by 1
                     |<line> <green>Shift + Right Click: <white>Increases speed by 0.25
                     |<line> <red><b>Left Click: </b><white>Decreases speed by 1
                     |<line> <red>Shift + Left Click: <white>Decreases speed by 0.25
                     |<line> <blue><b><key:key.swapOffhand>: </b><white>Pause/Resume
-                """.trimMargin()
-            }
-        } onInteract { (type) ->
-            when (type) {
-                RIGHT_CLICK -> playbackSpeed += 1
-                SHIFT_RIGHT_CLICK -> playbackSpeed += 0.25
-                LEFT_CLICK -> playbackSpeed -= 1
-                SHIFT_LEFT_CLICK -> playbackSpeed -= 0.25
-                SWAP, DROP -> playbackSpeed = if (playbackSpeed != 0.0) 0.0 else 1.0
-                else -> {
-                    return@onInteract
+                """.trimMargin().asMini())
+            .onInteract { (type) ->
+                when (type) {
+                    RIGHT_CLICK -> playbackSpeed += 1
+                    SHIFT_RIGHT_CLICK -> playbackSpeed += 0.25
+                    LEFT_CLICK -> playbackSpeed -= 1
+                    SHIFT_LEFT_CLICK -> playbackSpeed -= 0.25
+                    SWAP, DROP -> playbackSpeed = if (playbackSpeed != 0.0) 0.0 else 1.0
+                    else -> {
+                        return@onInteract
+                    }
                 }
+                player.playSound("ui.button.click")
             }
-            player.playSound("ui.button.click")
-        }
 
-        val skip = ItemStack.of(Material.AMETHYST_SHARD).apply {
-            editMeta { meta ->
-                meta.name = "<yellow><bold>Skip Frame"
-                meta.loreString = """
+        val skip = ItemStack.of(Material.AMETHYST_SHARD)
+            .withCustomName("<yellow><bold>Skip Frame".asMini())
+            .withLore("""
                     |<line> <green><b>Right Click: </b><white>Goes forward 20 frames
                     |<line> <green>Shift + Right Click: <white>Goes forward 1 frames
                     |<line> <red><b>Left Click: </b><white>Goes backwards 20 frames
                     |<line> <red>Shift + Left Click: <white>Goes backwards 1 frames
                     |<line> <yellow><b><key:key.drop>: </b><white>Rewind to start
                     |<line> <blue><b><key:key.swapOffhand>: </b><white>Go into advanced playback control mode
-                """.trimMargin()
-            }
-        } onInteract { (type) ->
-            when (type) {
-                RIGHT_CLICK -> partialFrame += 20
-                SHIFT_RIGHT_CLICK -> partialFrame += 1
-                LEFT_CLICK -> partialFrame -= 20
-                SHIFT_LEFT_CLICK -> partialFrame -= 1
-                DROP -> partialFrame = 0.0
-                SWAP -> {
-                    scrollFrames = if (scrollFrames == null) {
-                        player.playSound("block.amethyst_block.hit")
-                        player.uuid
-                    } else {
-                        player.playSound("block.amethyst_block.fall")
-                        null
+                """.trimMargin().asMini())
+            .onInteract { (type) ->
+                when (type) {
+                    RIGHT_CLICK -> partialFrame += 20
+                    SHIFT_RIGHT_CLICK -> partialFrame += 1
+                    LEFT_CLICK -> partialFrame -= 20
+                    SHIFT_LEFT_CLICK -> partialFrame -= 1
+                    DROP -> partialFrame = 0.0
+                    SWAP -> {
+                        scrollFrames = if (scrollFrames == null) {
+                            player.playSound("block.amethyst_block.hit")
+                            player.uuid
+                        } else {
+                            player.playSound("block.amethyst_block.fall")
+                            null
+                        }
+                    }
+
+                    else -> {
+                        return@onInteract
                     }
                 }
-
-                else -> {
-                    return@onInteract
-                }
+                player.playSound("ui.button.click")
             }
-            player.playSound("ui.button.click")
-        }
 
         return mapOf(
             0 to playbackSpeed,

@@ -59,27 +59,14 @@ class ExitComponent(
                     |<line> <gray>Click to exit the editor.
                     |$sneakingLine
                 """.trimMargin().asMini())
-                .apply {
-                editMeta { meta ->
-                    meta.name = "<red><bold>Exit Editor"
-                    meta.loreString = """
-                    |
-                    |<line> <gray>Click to exit the editor.
-                    |$sneakingLine
-                """.trimMargin()
-                }
-            }
         } else {
-            ItemStack(Material.END_CRYSTAL).apply {
-                editMeta { meta ->
-                    meta.name = "<yellow><bold>Previous Editor"
-                    meta.loreString = """
+            ItemStack.of(Material.END_CRYSTAL)
+                .withCustomName("<yellow><bold>Previous Editor".asMini())
+                .withLore("""
                     |
                     |<line> <gray>Click to go back to the previous editor.
                     |$sneakingLine
-                """.trimMargin()
-                }
-            }
+                """.trimMargin().asMini())
         }
 
         return 8 to item {

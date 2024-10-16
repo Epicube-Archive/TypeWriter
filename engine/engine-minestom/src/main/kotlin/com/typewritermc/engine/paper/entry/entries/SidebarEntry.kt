@@ -1,10 +1,5 @@
 package com.typewritermc.engine.paper.entry.entries
 
-import com.github.retrooper.packetevents.protocol.score.ScoreFormat
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisplayScoreboard
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerResetScore
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore
 import com.typewritermc.core.entries.PriorityEntry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.priority
@@ -13,12 +8,17 @@ import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Placeholder
 import com.typewritermc.core.extension.annotations.Tags
+import com.typewritermc.engine.paper.adapt.ObjectiveMode
 import com.typewritermc.engine.paper.entry.*
 import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.paper.utils.asMini
-import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.DisplayScoreboardPacket
+import net.minestom.server.network.packet.server.play.ResetScorePacket
+import net.minestom.server.network.packet.server.play.ScoreboardObjectivePacket
+import net.minestom.server.network.packet.server.play.UpdateScorePacket
+import net.minestom.server.scoreboard.Sidebar
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -102,61 +102,58 @@ private class PlayerSidebarDisplay(
     }
 
     private fun createSidebar(title: String) {
-        WrapperPlayServerScoreboardObjective(
+        player.sendPacket(ScoreboardObjectivePacket(
             SCOREBOARD_OBJECTIVE,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.CREATE,
+            ObjectiveMode.CREATE.id,
             title.asMini(),
-            WrapperPlayServerScoreboardObjective.RenderType.INTEGER,
-            ScoreFormat.blankScore(),
-        ).sendPacketTo(player)
+            ScoreboardObjectivePacket.Type.INTEGER,
+            Sidebar.NumberFormat.blank(),
+        ))
 
-        WrapperPlayServerDisplayScoreboard(1, SCOREBOARD_OBJECTIVE).sendPacketTo(player)
+        player.sendPacket(DisplayScoreboardPacket(1, SCOREBOARD_OBJECTIVE))
     }
 
     private fun disposeSidebar() {
-        WrapperPlayServerScoreboardObjective(
+        player.sendPacket(ScoreboardObjectivePacket(
             SCOREBOARD_OBJECTIVE,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.REMOVE,
-            Component.empty(),
+            ObjectiveMode.REMOVE.id,
             null,
-            null
-        ).sendPacketTo(player)
+            null,
+            null,
+        ))
     }
 
     private fun refreshSidebar(title: String, lines: List<String>) {
-        val packet = WrapperPlayServerScoreboardObjective(
+        player.sendPacket(ScoreboardObjectivePacket(
             SCOREBOARD_OBJECTIVE,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.UPDATE,
+            ObjectiveMode.UPDATE.id,
             title.asMini(),
-            WrapperPlayServerScoreboardObjective.RenderType.INTEGER,
-            ScoreFormat.blankScore(),
-        )
-        packet.sendPacketTo(player)
+            ScoreboardObjectivePacket.Type.INTEGER,
+            Sidebar.NumberFormat.blank(),
+        ))
 
-        val displayPacket = WrapperPlayServerDisplayScoreboard(1, SCOREBOARD_OBJECTIVE)
+        val displayPacket = DisplayScoreboardPacket(1, SCOREBOARD_OBJECTIVE)
         displayPacket.sendPacketTo(player)
-
 
         for ((index, line) in lines.withIndex().take(MAX_LINES)) {
             val lastLine = lastLines.getOrNull(index)
             if (lastLine == line) continue
 
-            WrapperPlayServerUpdateScore(
+            player.sendPacket(UpdateScorePacket(
                 "${SCOREBOARD_OBJECTIVE}_line_$index",
-                WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
                 SCOREBOARD_OBJECTIVE,
                 MAX_LINES - index,
                 line.asMini(),
-                ScoreFormat.blankScore(),
-            ).sendPacketTo(player)
+                Sidebar.NumberFormat.blank(),
+            ))
         }
 
         if (lines.size < lastLines.size) {
             for (i in lines.size until lastLines.size) {
-                WrapperPlayServerResetScore(
+                player.sendPacket(ResetScorePacket(
                     "${SCOREBOARD_OBJECTIVE}_line_$i",
                     SCOREBOARD_OBJECTIVE,
-                ).sendPacketTo(player)
+                ))
             }
         }
     }

@@ -39,11 +39,7 @@ import com.typewritermc.core.serialization.createDataSerializerGson
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkitConfig
 import kotlinx.coroutines.delay
-import lirand.api.architecture.KotlinPlugin
-import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
-import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.java.JavaPlugin
+import lirand.api.architecture.AbstractKotlinPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.GlobalContext.startKoin
@@ -60,22 +56,25 @@ import java.io.File
 import java.util.logging.Logger
 import kotlin.time.Duration.Companion.seconds
 import com.typewritermc.core.extension.InitializableManager
+import com.typewritermc.engine.paper.adapt.JavaPlugin
+import com.typewritermc.engine.paper.adapt.Plugin
 import com.typewritermc.engine.paper.loader.PaperDependencyChecker
+import com.typewritermc.engine.paper.utils.callEvent
 
-class TypewriterPaperPlugin : KotlinPlugin(), KoinComponent, Listener {
+class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent, Listener {
     override fun onLoad() {
         super.onLoad()
         val modules = module {
-            single { this@TypewriterPaperPlugin } withOptions
+            single { this@TypewriterMinestom } withOptions
                     {
                         named("plugin")
                         bind<Plugin>()
                         bind<JavaPlugin>()
-                        bind<TypewriterPaperPlugin>()
+                        bind<TypewriterMinestom>()
                         createdAtStart()
                     }
 
-            single<Logger> { this@TypewriterPaperPlugin.logger } withOptions {
+            single<Logger> { this@TypewriterMinestom.logger } withOptions {
                 named("logger")
                 createdAtStart()
             }
@@ -244,4 +243,4 @@ fun java.util.logging.Level?.convertLogger(): Level {
 
 val logger: Logger by lazy { plugin.logger }
 
-val plugin: TypewriterPaperPlugin by lazy { KoinJavaComponent.get(JavaPlugin::class.java) }
+val plugin: TypewriterMinestom by lazy { KoinJavaComponent.get(JavaPlugin::class.java) }

@@ -1,6 +1,7 @@
 package com.typewritermc.engine.paper.extensions.placeholderapi
 
 import com.typewritermc.core.entries.Query
+import com.typewritermc.engine.paper.adapt.OfflinePlayer
 import com.typewritermc.engine.paper.entry.PlaceholderEntry
 import lirand.api.extensions.server.server
 import me.clip.placeholderapi.PlaceholderAPI
@@ -44,13 +45,16 @@ object PlaceholderExpansion : PlaceholderExpansion(), KoinComponent {
     }
 }
 
-fun String.parsePlaceholders(player: OfflinePlayer?): String {
+// TODO: implement placeholder support
+/*fun String.parsePlaceholders(player: OfflinePlayer?): String {
     return if (server.pluginManager.isPluginEnabled("PlaceholderAPI")) {
         PlaceholderAPI.setPlaceholders(player, this)
     } else this
 }
 
-fun String.parsePlaceholders(player: Player?): String = parsePlaceholders(player as OfflinePlayer?)
+fun String.parsePlaceholders(player: Player?): String = parsePlaceholders(player as OfflinePlayer?)*/
+
+fun String.parsePlaceholders(player: Player?): String = "placeholders not implemented yet"
 
 fun String.parsePlaceholders(playerId: UUID): String = parsePlaceholders(server.getOfflinePlayer(playerId))
 

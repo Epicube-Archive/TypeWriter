@@ -2,6 +2,7 @@ package com.typewritermc.engine.paper.entry.entity
 
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.point.Position
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.entries.*
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
@@ -26,7 +27,7 @@ class GroupActivityEntityDisplay(
     override fun filter(player: Player): Boolean {
         val groupId = group.groupId(player) ?: GroupId(player.uuid)
         val npcLocation = activityManagers[groupId]?.position ?: return false
-        val distance = npcLocation.distanceSqrt(player.position) ?: return false
+        val distance = npcLocation.distanceSqrt(Location(player.instance, player.position)) ?: return false
         return distance <= entityShowRange * entityShowRange
     }
 
@@ -103,7 +104,7 @@ class GroupActivityEntityDisplay(
 
     override fun position(playerId: UUID): Position? {
         val player = server.getPlayer(playerId) ?: return null
-        val groupId = group.groupId(player) ?: GroupId(player.uniqueId)
+        val groupId = group.groupId(player) ?: GroupId(player.uuid)
         return activityManagers[groupId]?.position
     }
 

@@ -1,35 +1,29 @@
 package com.typewritermc.engine.paper.content.components
 
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes
-import com.github.retrooper.packetevents.protocol.player.InteractionHand
-import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
+import com.typewritermc.engine.paper.adapt.Location
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import com.typewritermc.engine.paper.content.ComponentContainer
 import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.events.AsyncFakeEntityInteract
-import com.typewritermc.engine.paper.extensions.packetevents.meta
 import com.typewritermc.engine.paper.extensions.packetevents.toPacketItem
 import com.typewritermc.engine.paper.extensions.packetevents.toPacketLocation
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.distanceSqrt
-import me.tofaa.entitylib.meta.display.ItemDisplayMeta
-import me.tofaa.entitylib.meta.other.InteractionMeta
-import me.tofaa.entitylib.wrapper.WrapperEntity
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Entity
+import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
+import net.minestom.server.entity.Player.Hand
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta
+import net.minestom.server.entity.metadata.other.InteractionMeta
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.inventory.ItemStack
 import kotlin.math.max
 
 const val NODE_SHOW_DISTANCE_SQUARED = 50 * 50
@@ -67,7 +61,7 @@ class NodesComponent<N>(
                     display.apply(this, nodeLocation(n))
                     display
                 }
-                .also { it.show(player, nodeLocation(n)) }
+                .also { it.show(player, Location(player.instance, nodeLocation(n))) }
         }
         toRefresh.forEach { n -> nodes[n]?.apply(NodeDisplayBuilder().apply { builder(n) }, nodeLocation(n)) }
         lastRefresh = 0
@@ -86,7 +80,7 @@ class NodesComponent<N>(
 
     @EventHandler
     private fun onFakeEntityInteract(event: AsyncFakeEntityInteract) {
-        if (event.hand != InteractionHand.MAIN_HAND || event.action == WrapperPlayClientInteractEntity.InteractAction.INTERACT_AT) return
+        if (event.hand != Hand.MAIN_HAND || event.action == WrapperPlayClientInteractEntity.InteractAction.INTERACT_AT) return
         val entityId = event.entityId
         nodes.values.firstOrNull { it.entityId == entityId }?.interact()
     }
@@ -110,47 +104,44 @@ class NodeDisplayBuilder {
 }
 
 private class NodeDisplay {
-    private val itemDisplay =
-        WrapperEntity(EntityTypes.ITEM_DISPLAY)
-    private val interaction =
-        WrapperEntity(EntityTypes.INTERACTION)
+    private val itemDisplay = Entity(EntityType.ITEM_DISPLAY)
+    private val interaction = Entity(EntityType.INTERACTION)
     private var onInteract: () -> Unit = {}
     val entityId: Int
         get() = interaction.entityId
 
     fun apply(builder: NodeDisplayBuilder, location: Pos) {
-        itemDisplay.meta<ItemDisplayMeta> {
-            item = builder.item.toPacketItem()
-            isGlowing = builder.glow != null
-            glowColorOverride = builder.glow?.value() ?: -1
-            scale = builder.scale
-            positionRotationInterpolationDuration = 30
+        itemDisplay.editEntityMeta(ItemDisplayMeta::class.java) {
+            it.itemStack = builder.item.toPacketItem()
+            it.isHasGlowingEffect = builder.glow != null
+            it.glowColorOverride = builder.glow?.value() ?: -1
+            it.scale = builder.scale
+            it.posRotInterpolationDuration = 30
         }
-        interaction.meta<InteractionMeta> {
-            width = max(builder.scale.x, builder.scale.z)
-            height = builder.scale.y
+
+        interaction.editEntityMeta(InteractionMeta::class.java) {
+            it.width = max(builder.scale.x, builder.scale.z).toFloat()
+            it.height = builder.scale.y.toFloat()
         }
+
         onInteract = builder.interaction
-        if (itemDisplay.isSpawned) {
+        if (itemDisplay.isActive) {
             itemDisplay.teleport(location.toPacketLocation())
         }
-        if (interaction.isSpawned &&
-            (interaction.location.x != location.x
-                    || interaction.location.y != (location.y - builder.scale.y / 2)
-                    || interaction.location.z != location.z)
+        if (interaction.isActive &&
+            (interaction.position.x != location.x
+                    || interaction.position.y != (location.y - builder.scale.y / 2)
+                    || interaction.position.z != location.z)
         ) {
-            interaction.teleport(location
-                .clone()
-                .apply { y -= builder.scale.y / 2 }
-                .toPacketLocation())
+            interaction.teleport(location.withY(location.y - builder.scale.y / 2))
         }
     }
 
-    fun show(player: Player, location: Pos) {
-        itemDisplay.addViewer(player.uuid)
-        itemDisplay.spawn(location.toPacketLocation())
-        interaction.addViewer(player.uuid)
-        interaction.spawn(location.toPacketLocation())
+    fun show(player: Player, location: Location) {
+        itemDisplay.addViewer(player)
+        itemDisplay.setInstance(location.instance, location.position)
+        interaction.addViewer(player)
+        interaction.setInstance(location.instance, location.position)
     }
 
     fun interact() {
@@ -158,9 +149,7 @@ private class NodeDisplay {
     }
 
     fun dispose() {
-        itemDisplay.despawn()
         itemDisplay.remove()
-        interaction.despawn()
         interaction.remove()
     }
 }

@@ -2,9 +2,13 @@ package com.typewritermc.engine.paper.entry.entity
 
 import com.typewritermc.core.utils.point.Point
 import com.typewritermc.core.utils.point.Position
+import com.typewritermc.core.utils.point.Vector
 import com.typewritermc.core.utils.point.World
+import com.typewritermc.engine.paper.adapt.Location
+import com.typewritermc.engine.paper.adapt.uid
 import com.typewritermc.engine.paper.entry.entries.EntityProperty
 import com.typewritermc.engine.paper.utils.toPosition
+import net.minestom.server.coordinate.Pos
 
 class PositionProperty(
     world: World,
@@ -14,14 +18,22 @@ class PositionProperty(
     yaw: Float,
     pitch: Float,
 ) : EntityProperty, Position(world, x, y, z, yaw, pitch) {
-    fun distanceSqrt(other: Position): Double? {
-        //TODO convert world to instance
+    fun distanceSqrt(other: Location): Double? {
+        // TODO convert world to instance
         if (world.identifier != other.world.uid.toString()) return null
         return distanceSqrt(other.toPosition())
     }
 
     fun distanceSqrt(other: Position): Double? {
         if (world.identifier != other.world.identifier) return null
+        return distanceSquared(other)
+    }
+
+    fun distanceSqrt(other: Pos): Double {
+        return distanceSquared(Vector(other.x, other.y, other.z))
+    }
+
+    fun distanceSqrt(other: Point): Double {
         return distanceSquared(other)
     }
 
@@ -97,7 +109,7 @@ class PositionProperty(
     companion object : SinglePropertyCollectorSupplier<PositionProperty>(PositionProperty::class)
 }
 
-fun Position.toProperty(): PositionProperty {
+fun Location.toProperty(): PositionProperty {
     return PositionProperty(World(world.uid.toString()), x, y, z, yaw, pitch)
 }
 

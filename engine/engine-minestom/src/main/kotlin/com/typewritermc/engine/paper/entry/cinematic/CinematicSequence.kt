@@ -14,13 +14,13 @@ import com.typewritermc.engine.paper.events.AsyncCinematicStartEvent
 import com.typewritermc.engine.paper.events.AsyncCinematicTickEvent
 import com.typewritermc.engine.paper.interaction.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
+import com.typewritermc.engine.paper.utils.callEvent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent
 import java.time.Duration
-
 
 class CinematicSequence(
     val pageId: String,

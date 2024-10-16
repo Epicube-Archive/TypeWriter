@@ -1,6 +1,6 @@
 package lirand.api
 
-import org.bukkit.plugin.Plugin
+import com.typewritermc.engine.paper.adapt.Plugin
 
 class LirandAPI internal constructor(internal val plugin: Plugin) {
 
