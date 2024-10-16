@@ -2,11 +2,10 @@ package lirand.api.extensions.inventory
 
 import lirand.api.extensions.server.server
 import com.typewritermc.engine.paper.utils.asMini
-import org.bukkit.Material
+import net.minestom.server.inventory.Inventory
+import net.minestom.server.item.ItemStack
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
-import org.bukkit.inventory.ItemStack
 
 fun Inventory(
 	type: InventoryType,
@@ -30,8 +29,8 @@ fun Inventory(
 		server.createInventory(owner, size)
 }
 
-operator fun Inventory.get(slot: Int): ItemStack? = getItem(slot)
+operator fun Inventory.get(slot: Int): ItemStack = getItemStack(slot)
 
 operator fun Inventory.set(slot: Int, itemStack: ItemStack?) {
-	setItem(slot, itemStack)
+	setItemStack(slot, itemStack ?: ItemStack.AIR)
 }

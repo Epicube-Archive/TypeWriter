@@ -1,24 +1,16 @@
 package lirand.api.extensions.world
 
-import org.bukkit.Effect
-import org.bukkit.Instrument
-import org.bukkit.Location
-import org.bukkit.Note
-import org.bukkit.Particle
-import org.bukkit.Sound
-import org.bukkit.SoundCategory
-import org.bukkit.block.data.BlockData
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.PlayerInventory
-import org.bukkit.plugin.Plugin
-import org.bukkit.util.Vector
+import net.minestom.server.inventory.PlayerInventory
+import net.minestom.server.item.ItemStack
 
 fun PlayerInventory.clearArmor() {
-	armorContents = arrayOfNulls(4)
+	helmet = ItemStack.AIR
+	chestplate = ItemStack.AIR
+	leggings = ItemStack.AIR
+	boots = ItemStack.AIR
 }
 
 fun PlayerInventory.clearAll() {
-	clear()
 	clearArmor()
+	clear()
 }

@@ -1,6 +1,6 @@
 package lirand.api.extensions.server
 
-import org.bukkit.permissions.Permissible
+import net.minestom.server.permission.PermissionHandler
 
-fun Permissible.hasPermissionOrStar(permission: String): Boolean =
+fun PermissionHandler.hasPermissionOrStar(permission: String): Boolean =
 	hasPermission(permission) || hasPermission(permission.replaceAfterLast('.', "*"))
