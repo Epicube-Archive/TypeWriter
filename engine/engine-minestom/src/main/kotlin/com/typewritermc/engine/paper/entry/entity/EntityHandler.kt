@@ -9,6 +9,7 @@ import com.typewritermc.engine.paper.entry.AudienceManager
 import com.typewritermc.engine.paper.events.AsyncEntityDefinitionInteract
 import com.typewritermc.engine.paper.events.AsyncFakeEntityInteract
 import com.typewritermc.engine.paper.plugin
+import com.typewritermc.engine.paper.utils.callEvent
 import lirand.api.extensions.server.server
 import me.tofaa.entitylib.APIConfig
 import me.tofaa.entitylib.EntityLib

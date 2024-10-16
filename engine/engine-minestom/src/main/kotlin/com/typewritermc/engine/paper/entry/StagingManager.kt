@@ -14,6 +14,7 @@ import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.ui.ClientSynchronizer
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import com.typewritermc.engine.paper.utils.Timeout
+import com.typewritermc.engine.paper.utils.callEvent
 import com.typewritermc.engine.paper.utils.get
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

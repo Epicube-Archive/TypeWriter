@@ -11,6 +11,7 @@ import com.typewritermc.engine.paper.interaction.InteractionHandler
 import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.ThreadType.SYNC
+import com.typewritermc.engine.paper.utils.callEvent
 import com.typewritermc.engine.paper.utils.msg
 import com.typewritermc.engine.paper.utils.playSound
 import lirand.api.extensions.events.unregister
