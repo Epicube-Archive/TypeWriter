@@ -16,7 +16,7 @@ import com.typewritermc.engine.paper.entry.triggerFor
 import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.utils.ThreadType.SYNC
 import com.typewritermc.loader.ExtensionLoader
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named

@@ -2,24 +2,13 @@ package com.typewritermc.engine.paper.events
 
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.QuestEntry
-import org.bukkit.entity.Player
-import org.bukkit.event.HandlerList
-import org.bukkit.event.player.PlayerEvent
-
+import net.minestom.server.entity.Player
+import net.minestom.server.event.trait.PlayerEvent
 
 class AsyncTrackedQuestUpdate(
-    player: Player,
+    private val player: Player,
     val from: Ref<QuestEntry>?,
     val to: Ref<QuestEntry>?,
-) :
-    PlayerEvent(player, true) {
-    override fun getHandlers(): HandlerList = HANDLER_LIST
-
-    companion object {
-        @JvmStatic
-        val HANDLER_LIST = HandlerList()
-
-        @JvmStatic
-        fun getHandlerList(): HandlerList = HANDLER_LIST
-    }
+) : PlayerEvent {
+    override fun getPlayer(): Player = player
 }

@@ -16,7 +16,7 @@ import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import com.typewritermc.engine.paper.utils.logErrorIfNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.ConcurrentHashMap

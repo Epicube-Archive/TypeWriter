@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import lirand.api.extensions.server.registerEvents
 import lirand.api.extensions.server.registerSuspendingEvents
 import lirand.api.extensions.server.server
+import net.minestom.server.entity.Player
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

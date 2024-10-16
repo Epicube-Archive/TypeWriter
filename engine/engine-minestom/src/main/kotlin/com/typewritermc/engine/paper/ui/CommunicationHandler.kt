@@ -10,16 +10,14 @@ import com.typewritermc.engine.paper.entry.StagingManager
 import com.typewritermc.engine.paper.events.StagingChangeEvent
 import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.plugin
-import com.typewritermc.engine.paper.utils.config
-import com.typewritermc.engine.paper.utils.logErrorIfNull
-import com.typewritermc.engine.paper.utils.optionalConfig
-import org.bukkit.entity.Player
+import com.typewritermc.engine.paper.utils.*
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.Instant
 import java.util.*
 import kotlin.collections.set
-
 
 class CommunicationHandler : KoinComponent {
     private val clientSynchronizer: ClientSynchronizer by inject()
@@ -179,7 +177,7 @@ class CommunicationHandler : KoinComponent {
     fun getPlayer(client: SocketIOClient): Player? {
         val token = getSessionToken(client.handshakeData) ?: return null
         val session = sessionTokens[token] ?: return null
-        return session.playerId?.let { plugin.server.getPlayer(it) }
+        return session.playerId?.let { MinecraftServer.getInstanceManager().findGlobalPlayerByUuid(it) }
     }
 
     fun getIconUrl(sessionId: String): String? {

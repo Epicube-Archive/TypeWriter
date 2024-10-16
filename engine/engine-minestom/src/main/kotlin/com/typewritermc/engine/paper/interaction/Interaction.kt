@@ -19,11 +19,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.Duration
-
 
 class Interaction(val player: Player) : KoinComponent {
     private var job: Job

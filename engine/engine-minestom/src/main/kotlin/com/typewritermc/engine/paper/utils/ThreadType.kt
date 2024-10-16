@@ -1,8 +1,8 @@
 package com.typewritermc.engine.paper.utils
 
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
+import com.github.shynixn.mccoroutine.minestom.asyncDispatcher
+import com.github.shynixn.mccoroutine.minestom.launch
+import com.github.shynixn.mccoroutine.minestom.minecraftDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking

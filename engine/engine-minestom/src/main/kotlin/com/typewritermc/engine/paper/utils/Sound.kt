@@ -1,10 +1,5 @@
 package com.typewritermc.engine.paper.utils
 
-import com.github.retrooper.packetevents.protocol.sound.SoundCategory
-import com.github.retrooper.packetevents.protocol.sound.Sounds
-import com.github.retrooper.packetevents.protocol.sound.StaticSound
-import com.github.retrooper.packetevents.resources.ResourceLocation
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.extension.annotations.Default
 import com.typewritermc.core.extension.annotations.Help
@@ -16,10 +11,9 @@ import com.typewritermc.engine.paper.logger
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
 import net.kyori.adventure.sound.SoundStop
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.utils.NamespaceID
 import net.kyori.adventure.sound.Sound as AdventureSound
-
 
 data class Sound(
     val soundId: SoundId = SoundId.EMPTY,
@@ -56,7 +50,7 @@ data class Sound(
                 }
                 audience.viewers.forEach { viewer ->
                     val emitter = entry.getEmitter(viewer)
-                    val packetSound = StaticSound(ResourceLocation(key.namespace, key.key), 16f)
+                    val packetSound = StaticSound(ResourceLocation(key.namespace(), key.key()), 16f)
                     val category = SoundCategory.fromId(track.ordinal)
                     WrapperPlayServerEntitySoundEffect(packetSound, category, emitter.entityId, volume, pitch) sendPacketTo viewer
                 }
@@ -78,22 +72,22 @@ sealed interface SoundId {
         val EMPTY = DefaultSoundId(null)
     }
 
-    val namespacedKey: NamespacedKey?
+    val namespacedKey: NamespaceID?
 }
 
-class DefaultSoundId(override val namespacedKey: NamespacedKey?) : SoundId {
-    constructor(key: String) : this(if (key.isEmpty()) null else NamespacedKey.fromString(key))
+class DefaultSoundId(override val namespacedKey: NamespaceID?) : SoundId {
+    constructor(key: String) : this(if (key.isEmpty()) null else NamespaceID.from(key))
 }
 
 class EntrySoundId(val entryId: String) : SoundId {
-    override val namespacedKey: NamespacedKey?
+    override val namespacedKey: NamespaceID?
         get() {
             val entry = Query.findById<SoundIdEntry>(entryId)
             if (entry == null) {
                 logger.warning("Could not find sound entry with id $entryId")
                 return null
             }
-            return NamespacedKey.fromString(entry.soundId)
+            return NamespaceID.from(entry.soundId)
         }
 }
 

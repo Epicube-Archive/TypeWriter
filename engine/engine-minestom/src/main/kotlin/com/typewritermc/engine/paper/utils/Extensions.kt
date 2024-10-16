@@ -16,9 +16,11 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
+import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.instance.InstanceManager
 import org.koin.java.KoinJavaComponent.get
 import java.io.File
 import java.net.MalformedURLException
@@ -26,6 +28,7 @@ import java.net.URI
 import java.time.Duration
 import java.util.*
 import kotlin.math.*
+import kotlin.reflect.KClass
 
 operator fun File.get(name: String): File = File(this, name)
 
@@ -58,6 +61,11 @@ fun Audience.playSound(
     pitch: Float = 1.0f
 ) = playSound(Sound.sound(Key.key(sound), source, volume, pitch))
 
+fun InstanceManager.findGlobalPlayerByUuid(uuid: UUID): Player? {
+    return instances
+        .flatMap { it.players }
+        .find { it.uuid == uuid }
+}
 
 fun Pos.distanceSqrt(other: Pos): Double? {
     val dx = x - other.x

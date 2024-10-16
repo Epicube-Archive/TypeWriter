@@ -1,8 +1,8 @@
 package com.typewritermc.engine.paper
 
 import com.github.retrooper.packetevents.PacketEvents
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.github.shynixn.mccoroutine.minestom.launch
+import com.github.shynixn.mccoroutine.minestom.registerSuspendingEvents
 import com.google.gson.Gson
 import com.typewritermc.core.TypewriterCore
 import com.typewritermc.core.entries.Library

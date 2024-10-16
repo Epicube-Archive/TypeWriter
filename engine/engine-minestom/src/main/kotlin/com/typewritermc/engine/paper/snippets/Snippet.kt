@@ -6,7 +6,6 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-
 inline fun <reified T : Any> snippet(path: String, defaultValue: T, comment: String = ""): ReadOnlyProperty<Nothing?, T> {
     return snippet(path, T::class, defaultValue, comment)
 }
