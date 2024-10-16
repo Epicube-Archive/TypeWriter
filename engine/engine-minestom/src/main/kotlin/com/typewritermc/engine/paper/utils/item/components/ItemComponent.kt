@@ -1,8 +1,8 @@
 package com.typewritermc.engine.paper.utils.item.components
 
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
 
 sealed interface ItemComponent {
-    fun apply(player: Player?, item: ItemStack)
+    fun apply(player: Player?, item: ItemStack): ItemStack
 }

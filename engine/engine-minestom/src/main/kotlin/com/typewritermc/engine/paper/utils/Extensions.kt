@@ -16,16 +16,9 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
-import org.bukkit.Color
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.profile.PlayerTextures
-import org.geysermc.floodgate.api.FloodgateApi
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.entity.GameMode
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.io.File
 import java.net.MalformedURLException
@@ -34,20 +27,18 @@ import java.time.Duration
 import java.util.*
 import kotlin.math.*
 
-
 operator fun File.get(name: String): File = File(this, name)
 
 val Player.isFloodgate: Boolean
     get() {
-        if (!get<TypewriterPaperPlugin>(TypewriterPaperPlugin::class.java).isFloodgateInstalled) return false
-        return FloodgateApi.getInstance().isFloodgatePlayer(this.uniqueId)
+        return false
     }
 
 /**
  * Can an entity look at this player?
  */
 val Player.isLookable: Boolean
-    get() = this.isValid && this.gameMode != GameMode.SPECTATOR && !this.isInvisible
+    get() = !this.isDead && this.isOnline && this.gameMode != GameMode.SPECTATOR && !this.isInvisible
 
 fun <T> T?.logErrorIfNull(message: String): T? {
     if (this == null) logger.severe(message)
@@ -68,37 +59,36 @@ fun Audience.playSound(
 ) = playSound(Sound.sound(Key.key(sound), source, volume, pitch))
 
 
-fun Location.distanceSqrt(other: Location): Double? {
-    if (world != other.world) return null
+fun Pos.distanceSqrt(other: Pos): Double? {
     val dx = x - other.x
     val dy = y - other.y
     val dz = z - other.z
     return dx * dx + dy * dy + dz * dz
 }
 
-fun Location.lerp(other: Location, amount: Double): Location {
+fun Pos.lerp(other: Pos, amount: Double): Pos {
     val percentage = amount.coerceIn(0.0, 1.0)
     val x = this.x + (other.x - this.x) * percentage
     val y = this.y + (other.y - this.y) * percentage
     val z = this.z + (other.z - this.z) * percentage
-    return Location(world, x, y, z)
+    return Pos(x, y, z)
 }
 
-val Location.up: Location
-    get() = clone().apply { y += 1 }
+val Pos.up: Pos
+    get() = Pos(x, y + 1, z)
 
-val Location.firstWalkableLocationBelow: Location
+val Pos.firstWalkableLocationBelow: Pos
     get() = clone().apply {
         while (block.isPassable) y--
         // We want to be on top of the block
         y++
     }
 
-operator fun Location.component1(): Double = x
-operator fun Location.component2(): Double = y
-operator fun Location.component3(): Double = z
+operator fun Pos.component1(): Double = x
+operator fun Pos.component2(): Double = y
+operator fun Pos.component3(): Double = z
 
-fun Location.particleSphere(
+fun Pos.particleSphere(
     player: Player,
     radius: Double,
     color: Color,

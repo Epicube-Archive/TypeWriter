@@ -8,8 +8,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import com.typewritermc.engine.paper.entry.entries.trackedShowingObjectives
 import com.typewritermc.engine.paper.entry.quest.trackedQuest
 import com.typewritermc.engine.paper.snippets.snippet
-import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.bukkit.plugin.Plugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

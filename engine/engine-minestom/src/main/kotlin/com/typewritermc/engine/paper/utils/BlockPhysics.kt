@@ -9,14 +9,12 @@ import com.typewritermc.core.utils.point.Point
 import com.typewritermc.core.utils.point.Vector
 import com.typewritermc.core.utils.point.toVector
 import com.typewritermc.engine.paper.entry.entity.PositionProperty
-import org.bukkit.World
-import org.bukkit.block.Block
-import org.bukkit.util.BoundingBox
+import net.minestom.server.collision.BoundingBox
+import net.minestom.server.instance.block.Block
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.sign
-
 
 object BlockCollision {
     private const val STEP_HEIGHT = 0.5
@@ -31,7 +29,7 @@ object BlockCollision {
     fun handlePhysics(
         boundingBox: BoundingBox,
         velocity: Vector, entityPosition: PositionProperty,
-        getter: BukkitBlockGetter,
+        getter: MinestomBlockGetter,
         singleCollision: Boolean
     ): PhysicsResult {
         // Expensive AABB computation
@@ -41,7 +39,7 @@ object BlockCollision {
     private fun stepPhysics(
         boundingBox: BoundingBox,
         velocity: Vector, entityPosition: PositionProperty,
-        getter: BukkitBlockGetter, singleCollision: Boolean
+        getter: MinestomBlockGetter, singleCollision: Boolean
     ): PhysicsResult {
         // Allocate once and update values
         val finalResult = SweepResult(1 - Vector.EPSILON, 0.0, 0.0, 0.0, 0.0, null, null)
@@ -123,7 +121,7 @@ object BlockCollision {
         boundingBox: BoundingBox,
         velocity: Vector,
         entityPosition: PositionProperty,
-        getter: BukkitBlockGetter,
+        getter: MinestomBlockGetter,
         allFaces: Array<Vector?>,
         finalResult: SweepResult
     ): PhysicsResult {
@@ -173,7 +171,7 @@ object BlockCollision {
         boundingBox: BoundingBox,
         velocity: Vector,
         entityPosition: PositionProperty,
-        getter: BukkitBlockGetter,
+        getter: MinestomBlockGetter,
         allFaces: Array<Vector?>,
         finalResult: SweepResult
     ) {
@@ -209,7 +207,7 @@ object BlockCollision {
         boundingBox: BoundingBox,
         velocity: Vector,
         entityPosition: PositionProperty,
-        getter: BukkitBlockGetter,
+        getter: MinestomBlockGetter,
         allFaces: Array<Vector?>,
         finalResult: SweepResult
     ) {
@@ -460,7 +458,7 @@ object BlockCollision {
     fun checkBoundingBox(
         blockX: Int, blockY: Int, blockZ: Int,
         entityVelocity: Vector, entityPosition: PositionProperty, boundingBox: BoundingBox,
-        getter: BukkitBlockGetter, finalResult: SweepResult,
+        getter: MinestomBlockGetter, finalResult: SweepResult,
     ): Boolean {
         val currentBlock: Block = getter.getBlock(blockX, blockY, blockZ)
         val currentShape: Shape = currentBlock.collisionShape()
@@ -586,9 +584,9 @@ object BlockCollision {
         val queryY = sign(queryVector.y).toInt()
         val queryZ = sign(queryVector.z).toInt()
 
-        val ceilWidth = ceil(boundingBox.widthX).toInt()
-        val ceilHeight = ceil(boundingBox.height).toInt()
-        val ceilDepth = ceil(boundingBox.widthZ).toInt()
+        val ceilWidth = ceil(boundingBox.width()).toInt()
+        val ceilHeight = ceil(boundingBox.height()).toInt()
+        val ceilDepth = ceil(boundingBox.depth()).toInt()
         var facePoints: Array<Vector?>
         // Compute array length
         run {
@@ -631,14 +629,14 @@ object BlockCollision {
                 for (j in startJOffset..ceilHeight - endJOffset) {
                     var cellI = i.toDouble()
                     var cellJ = j.toDouble()
-                    var cellK: Double = if (queryX < 0) 0.0 else boundingBox.widthX
+                    var cellK: Double = if (queryX < 0) 0.0 else boundingBox.width()
 
-                    if (i >= boundingBox.widthZ) cellI = boundingBox.widthZ
-                    if (j >= boundingBox.height) cellJ = boundingBox.height
+                    if (i >= boundingBox.depth()) cellI = boundingBox.depth()
+                    if (j >= boundingBox.height()) cellJ = boundingBox.height()
 
-                    cellI += boundingBox.minZ
-                    cellJ += boundingBox.minY
-                    cellK += boundingBox.minX
+                    cellI += boundingBox.minZ()
+                    cellJ += boundingBox.minY()
+                    cellK += boundingBox.minX()
 
                     facePoints[insertIndex++] = Vector(cellK, cellJ, cellI)
                 }
@@ -656,14 +654,14 @@ object BlockCollision {
                 for (j in 0..ceilWidth) {
                     var cellI = i.toDouble()
                     var cellJ = j.toDouble()
-                    var cellK: Double = if (queryY < 0) 0.0 else boundingBox.height
+                    var cellK: Double = if (queryY < 0) 0.0 else boundingBox.height()
 
-                    if (i >= boundingBox.widthZ) cellI = boundingBox.widthZ
-                    if (j >= boundingBox.widthX) cellJ = boundingBox.widthX
+                    if (i >= boundingBox.depth()) cellI = boundingBox.depth()
+                    if (j >= boundingBox.width()) cellJ = boundingBox.width()
 
-                    cellI += boundingBox.minZ
-                    cellJ += boundingBox.minX
-                    cellK += boundingBox.minY
+                    cellI += boundingBox.minZ()
+                    cellJ += boundingBox.minX()
+                    cellK += boundingBox.minY()
 
                     facePoints[insertIndex++] = Vector(cellJ, cellK, cellI)
                 }
@@ -675,14 +673,14 @@ object BlockCollision {
                 for (j in 0..ceilWidth) {
                     var cellI = i.toDouble()
                     var cellJ = j.toDouble()
-                    var cellK: Double = if (queryZ < 0) 0.0 else boundingBox.widthZ
+                    var cellK: Double = if (queryZ < 0) 0.0 else boundingBox.depth()
 
-                    if (i >= boundingBox.height) cellI = boundingBox.height
-                    if (j >= boundingBox.widthX) cellJ = boundingBox.widthX
+                    if (i >= boundingBox.height()) cellI = boundingBox.height()
+                    if (j >= boundingBox.width()) cellJ = boundingBox.width()
 
-                    cellI += boundingBox.minY
-                    cellJ += boundingBox.minX
-                    cellK += boundingBox.minZ
+                    cellI += boundingBox.minY()
+                    cellJ += boundingBox.minX()
+                    cellK += boundingBox.minZ()
 
                     facePoints[insertIndex++] = Vector(cellJ, cellI, cellK)
                 }
@@ -763,7 +761,7 @@ interface Shape {
 class BukkitBlockShape(
     val block: Block
 ) : Shape {
-    private val collidedShape by lazy(LazyThreadSafetyMode.NONE) { block.collisionShape }
+    private val collidedShape by lazy(LazyThreadSafetyMode.NONE) { block.collisionShape() }
 
     override fun intersectBoxSwept(
         rayStart: Point,
@@ -773,7 +771,7 @@ class BukkitBlockShape(
         finalResult: SweepResult
     ): Boolean {
         var hitBlock = false
-        for (blockSection in collidedShape.boundingBoxes) {
+        for (blockSection in collidedShape.boundingBoxes()) {
             // Update final result if the temp result collision is sooner than the current final result
             if (boundingBoxIntersectionCheck(
                     moving,
@@ -788,7 +786,7 @@ class BukkitBlockShape(
                 val collidedPos = rayStart.add(rayDirection.mul(finalResult.res))
                 finalResult.collidedPos = collidedPos
                 val relativePos = collidedPos.sub(shapePos)
-                finalResult.collidedHeightDiff = blockSection.maxY - relativePos.y
+                finalResult.collidedHeightDiff = blockSection.maxY() - relativePos.y
 
                 hitBlock = true
             }
@@ -796,17 +794,17 @@ class BukkitBlockShape(
         return hitBlock
     }
 
-    override fun boundingBoxes(): Collection<BoundingBox> = collidedShape.boundingBoxes
+    override fun boundingBoxes(): Collection<BoundingBox> = collidedShape.boundingBoxes()
 
     override fun relativeEnd(): Point {
         var maxX = 0.0
         var maxY = 0.0
         var maxZ = 0.0
 
-        for (bounding in collidedShape.boundingBoxes) {
-            maxX = maxOf(maxX, bounding.maxX)
-            maxY = maxOf(maxY, bounding.maxY)
-            maxZ = maxOf(maxZ, bounding.maxZ)
+        for (bounding in collidedShape.boundingBoxes()) {
+            maxX = maxOf(maxX, bounding.maxX())
+            maxY = maxOf(maxY, bounding.maxY())
+            maxZ = maxOf(maxZ, bounding.maxZ())
         }
 
         return Vector(maxX, maxY, maxZ)
@@ -830,22 +828,22 @@ class BukkitBlockShape(
         finalResult: SweepResult
     ): Boolean {
         val bbCentre: Point = Vector(
-            moving.minX + moving.widthX / 2,
-            moving.minY + moving.height / 2,
-            moving.minZ + moving.widthZ / 2
+            moving.minX() + moving.width() / 2,
+            moving.minY() + moving.height() / 2,
+            moving.minZ() + moving.depth() / 2
         )
         val rayCentre = rayStart.add(bbCentre)
 
         // Translate bounding box
         val bbOffMin = Vector(
-            collidableStatic.minX - rayCentre.x + staticCollidableOffset.x - moving.widthX / 2,
-            collidableStatic.minY - rayCentre.y + staticCollidableOffset.y - moving.height / 2,
-            collidableStatic.minZ - rayCentre.z + staticCollidableOffset.z - moving.widthZ / 2
+            collidableStatic.minX() - rayCentre.x + staticCollidableOffset.x - moving.width() / 2,
+            collidableStatic.minY() - rayCentre.y + staticCollidableOffset.y - moving.height() / 2,
+            collidableStatic.minZ() - rayCentre.z + staticCollidableOffset.z - moving.depth() / 2
         )
         val bbOffMax = Vector(
-            collidableStatic.maxX - rayCentre.x + staticCollidableOffset.x + moving.widthX / 2,
-            collidableStatic.maxY - rayCentre.y + staticCollidableOffset.y + moving.height / 2,
-            collidableStatic.maxZ - rayCentre.z + staticCollidableOffset.z + moving.widthZ / 2
+            collidableStatic.maxX() - rayCentre.x + staticCollidableOffset.x + moving.width() / 2,
+            collidableStatic.maxY() - rayCentre.y + staticCollidableOffset.y + moving.height() / 2,
+            collidableStatic.maxZ() - rayCentre.z + staticCollidableOffset.z + moving.depth() / 2
         )
 
         // This check is done in 2d. it can be visualised as a rectangle (the face we are checking), and a point.
@@ -868,10 +866,10 @@ class BukkitBlockShape(
 
                 // Check if ray passes through y/z plane
                 if (((yix - rayCentre.y) * signumRayY) >= 0 && (((zix - rayCentre.z) * signumRayZ) >= 0
-                            ) && (yix >= collidableStatic.minY + staticCollidableOffset.y - moving.height / 2
-                            ) && (yix <= collidableStatic.maxY + staticCollidableOffset.y + moving.height / 2
-                            ) && (zix >= collidableStatic.minZ + staticCollidableOffset.z - moving.widthZ / 2
-                            ) && (zix <= collidableStatic.maxZ + staticCollidableOffset.z + moving.widthZ / 2)
+                            ) && (yix >= collidableStatic.minY() + staticCollidableOffset.y - moving.height() / 2
+                            ) && (yix <= collidableStatic.maxY() + staticCollidableOffset.y + moving.height() / 2
+                            ) && (zix >= collidableStatic.minZ() + staticCollidableOffset.z - moving.depth() / 2
+                            ) && (zix <= collidableStatic.maxZ() + staticCollidableOffset.z + moving.depth() / 2)
                 ) {
                     isHit = true
                     percentage = xFac
@@ -887,10 +885,10 @@ class BukkitBlockShape(
                 val zix: Double = rayDirection.z * xFac + rayCentre.z
 
                 if (((yix - rayCentre.y) * signumRayY) >= 0 && (((zix - rayCentre.z) * signumRayZ) >= 0
-                            ) && (yix >= collidableStatic.minY + staticCollidableOffset.y - moving.height / 2
-                            ) && (yix <= collidableStatic.maxY + staticCollidableOffset.y + moving.height / 2
-                            ) && (zix >= collidableStatic.minZ + staticCollidableOffset.z - moving.widthZ / 2
-                            ) && (zix <= collidableStatic.maxZ + staticCollidableOffset.z + moving.widthZ / 2)
+                            ) && (yix >= collidableStatic.minY() + staticCollidableOffset.y - moving.height() / 2
+                            ) && (yix <= collidableStatic.maxY() + staticCollidableOffset.y + moving.height() / 2
+                            ) && (zix >= collidableStatic.minZ() + staticCollidableOffset.z - moving.depth() / 2
+                            ) && (zix <= collidableStatic.maxZ() + staticCollidableOffset.z + moving.depth() / 2)
                 ) {
                     isHit = true
                     percentage = xFac
@@ -907,10 +905,10 @@ class BukkitBlockShape(
                 val yiz: Double = rayDirection.y * zFac + rayCentre.y
 
                 if (((yiz - rayCentre.y) * signumRayY) >= 0 && (((xiz - rayCentre.x) * signumRayX) >= 0
-                            ) && (xiz >= collidableStatic.minX + staticCollidableOffset.x - moving.widthX / 2
-                            ) && (xiz <= collidableStatic.maxX + staticCollidableOffset.x + moving.widthX / 2
-                            ) && (yiz >= collidableStatic.minY + staticCollidableOffset.y - moving.height / 2
-                            ) && (yiz <= collidableStatic.maxY + staticCollidableOffset.y + moving.height / 2)
+                            ) && (xiz >= collidableStatic.minX() + staticCollidableOffset.x - moving.width() / 2
+                            ) && (xiz <= collidableStatic.maxX() + staticCollidableOffset.x + moving.width() / 2
+                            ) && (yiz >= collidableStatic.minY() + staticCollidableOffset.y - moving.height() / 2
+                            ) && (yiz <= collidableStatic.maxY() + staticCollidableOffset.y + moving.height() / 2)
                 ) {
                     isHit = true
                     percentage = zFac
@@ -925,10 +923,10 @@ class BukkitBlockShape(
                 val yiz: Double = rayDirection.y * zFac + rayCentre.y
 
                 if (((yiz - rayCentre.y) * signumRayY) >= 0 && (((xiz - rayCentre.x) * signumRayX) >= 0
-                            ) && (xiz >= collidableStatic.minX + staticCollidableOffset.x - moving.widthX / 2
-                            ) && (xiz <= collidableStatic.maxX + staticCollidableOffset.x + moving.widthX / 2
-                            ) && (yiz >= collidableStatic.minY + staticCollidableOffset.y - moving.height / 2
-                            ) && (yiz <= collidableStatic.maxY + staticCollidableOffset.y + moving.height / 2)
+                            ) && (xiz >= collidableStatic.minX() + staticCollidableOffset.x - moving.width() / 2
+                            ) && (xiz <= collidableStatic.maxX() + staticCollidableOffset.x + moving.width() / 2
+                            ) && (yiz >= collidableStatic.minY() + staticCollidableOffset.y - moving.height() / 2
+                            ) && (yiz <= collidableStatic.maxY() + staticCollidableOffset.y + moving.height() / 2)
                 ) {
                     isHit = true
                     percentage = zFac
@@ -945,10 +943,10 @@ class BukkitBlockShape(
                 val ziy: Double = rayDirection.z * yFac + rayCentre.z
 
                 if (((ziy - rayCentre.z) * signumRayZ) >= 0 && (((xiy - rayCentre.x) * signumRayX) >= 0
-                            ) && (xiy >= collidableStatic.minX + staticCollidableOffset.x - moving.widthX / 0
-                            ) && (xiy <= collidableStatic.maxX + staticCollidableOffset.x + moving.widthX / 2
-                            ) && (ziy >= collidableStatic.minZ + staticCollidableOffset.z - moving.widthZ / 2
-                            ) && (ziy <= collidableStatic.maxZ + staticCollidableOffset.z + moving.widthZ / 2)
+                            ) && (xiy >= collidableStatic.minX() + staticCollidableOffset.x - moving.width() / 0
+                            ) && (xiy <= collidableStatic.maxX() + staticCollidableOffset.x + moving.width() / 2
+                            ) && (ziy >= collidableStatic.minZ() + staticCollidableOffset.z - moving.depth() / 2
+                            ) && (ziy <= collidableStatic.maxZ() + staticCollidableOffset.z + moving.depth() / 2)
                 ) {
                     isHit = true
                     percentage = yFac
@@ -964,10 +962,10 @@ class BukkitBlockShape(
                 val ziy: Double = rayDirection.z * yFac + rayCentre.z
 
                 if (((ziy - rayCentre.z) * signumRayZ) >= 0 && (((xiy - rayCentre.x) * signumRayX) >= 0
-                            ) && (xiy >= collidableStatic.minX + staticCollidableOffset.x - moving.widthX / 2
-                            ) && (xiy <= collidableStatic.maxX + staticCollidableOffset.x + moving.widthX / 2
-                            ) && (ziy >= collidableStatic.minZ + staticCollidableOffset.z - moving.widthZ / 2
-                            ) && (ziy <= collidableStatic.maxZ + staticCollidableOffset.z + moving.widthZ / 2)
+                            ) && (xiy >= collidableStatic.minX() + staticCollidableOffset.x - moving.width() / 2
+                            ) && (xiy <= collidableStatic.maxX() + staticCollidableOffset.x + moving.width() / 2
+                            ) && (ziy >= collidableStatic.minZ() + staticCollidableOffset.z - moving.depth() / 2
+                            ) && (ziy <= collidableStatic.maxZ() + staticCollidableOffset.z + moving.depth() / 2)
                 ) {
                     isHit = true
                     percentage = yFac
@@ -1005,11 +1003,11 @@ class BukkitBlockShape(
 
 fun Block.collisionShape(): Shape = BukkitBlockShape(this)
 
-class BukkitBlockGetter(
-    private val world: World,
+class MinestomBlockGetter(
+    private val getter: Block.Getter,
 ) {
     fun getBlock(x: Int, y: Int, z: Int): Block {
-        return world.getBlockAt(x, y, z)
+        return getter.getBlock(x, y, z)
     }
 
     fun getBlock(pos: Vector): Block = getBlock(pos.x.toInt(), pos.y.toInt(), pos.z.toInt())

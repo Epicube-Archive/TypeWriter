@@ -1,17 +1,12 @@
 package com.typewritermc.engine.paper.utils
 
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTimeUpdate
-import io.github.retrooper.packetevents.util.SpigotReflectionUtil
 import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.plugin
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.entity.Player
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.entity.EquipmentSlot
+import net.minestom.server.entity.GameMode
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
 
 interface PlayerStateProvider {
     fun store(player: Player): Any
@@ -24,11 +19,11 @@ data class PlayerState(
 
 enum class GenericPlayerStateProvider(private val store: Player.() -> Any, private val restore: Player.(Any) -> Unit) :
     PlayerStateProvider {
-    LOCATION({ location }, { teleport(it as Location) }),
+    LOCATION({ position }, { teleport(it as Pos) }),
     GAME_MODE({ gameMode }, { gameMode = it as GameMode }),
     EXP({ exp }, { exp = it as Float }),
     LEVEL({ level }, { level = it as Int }),
-    ALLOW_FLIGHT({ allowFlight }, { allowFlight = it as Boolean }),
+    ALLOW_FLIGHT({ isAllowFlying }, { isAllowFlying = it as Boolean }),
     FLYING({ isFlying }, { isFlying = it as Boolean }),
     GAME_TIME({ playerTime }, {
         resetPlayerTime()
@@ -79,16 +74,16 @@ data class InventorySlotStateProvider(
 ) : PlayerStateProvider {
 
     override fun store(player: Player): Any {
-        EquipmentSlot.HAND
-        return player.inventory.getItem(slot) ?: return false
+        EquipmentSlot.MAIN_HAND
+        return player.inventory.getItemStack(slot) ?: return false
     }
 
     override fun restore(player: Player, value: Any) {
         if (value !is ItemStack) {
-            player.inventory.setItem(slot, null)
+            player.inventory.setItemStack(slot, ItemStack.AIR)
             return
         }
-        player.inventory.setItem(slot, value)
+        player.inventory.setItemStack(slot, value)
     }
 }
 
@@ -97,15 +92,15 @@ data class EquipmentSlotStateProvider(
 ) : PlayerStateProvider {
 
     override fun store(player: Player): Any {
-        return player.inventory.getItem(slot)
+        return player.inventory.getEquipment(slot)
     }
 
     override fun restore(player: Player, value: Any) {
         if (value !is ItemStack) {
-            player.inventory.setItem(slot, null)
+            player.inventory.setEquipment(slot, ItemStack.AIR)
             return
         }
-        player.inventory.setItem(slot, value)
+        player.inventory.setEquipment(slot, value)
     }
 }
 
@@ -122,8 +117,8 @@ fun Player.restore(state: PlayerState?) {
 
 fun Player.fakeClearInventory() {
     for (i in 0..46) {
-        val item = inventory.getItem(i) ?: continue
-        if (item.type.isAir) continue
+        val item = inventory.getItemStack(i) ?: continue
+        if (item.isAir) continue
 
         val packet = WrapperPlayServerSetSlot(-2, 0, i, com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY)
         packet.sendPacketTo(this)
@@ -132,8 +127,8 @@ fun Player.fakeClearInventory() {
 
 fun Player.restoreInventory() {
     for (i in 0..46) {
-        val item = inventory.getItem(i) ?: continue
-        if (item.type.isAir) continue
+        val item = inventory.getItemStack(i) ?: continue
+        if (item.isAir) continue
 
         val packet = WrapperPlayServerSetSlot(-2, 0, i, SpigotReflectionUtil.decodeBukkitItemStack(item))
         packet.sendPacketTo(this)

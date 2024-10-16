@@ -4,16 +4,16 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.AlgebraicTypeInfo
 import com.typewritermc.core.extension.annotations.MaterialProperties
 import com.typewritermc.core.extension.annotations.MaterialProperty
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 
 @AlgebraicTypeInfo("material", Colors.BLUE, "fa6-solid:cube")
 class ItemMaterialComponent(
     @MaterialProperties(MaterialProperty.ITEM)
     val material: Material = Material.STONE,
 ) : ItemComponent {
-    override fun apply(player: Player?, item: ItemStack) {
-        item.type = material
+    override fun apply(player: Player?, item: ItemStack): ItemStack {
+        return item.withMaterial(material)
     }
 }

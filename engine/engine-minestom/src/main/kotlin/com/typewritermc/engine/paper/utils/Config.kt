@@ -6,7 +6,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.safeCast
 
-
 inline fun <reified T : Any> config(key: String, default: T, comment: String? = null) =
     ConfigPropertyDelegate(key, T::class, default, comment)
 

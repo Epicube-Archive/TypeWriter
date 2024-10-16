@@ -13,8 +13,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.bukkit.ChatColor
-import org.bukkit.command.CommandSender
+import net.minestom.server.command.CommandSender
 
 private val mm = MiniMessage.builder()
     .tags(
@@ -57,7 +56,7 @@ fun CommandSender.sendMiniWithResolvers(message: String, vararg resolvers: TagRe
 
 fun CommandSender.msg(message: String) = sendMini("<red><bold>Typewriter »<reset><white> $message")
 
-fun Component.plainText(): String = ChatColor.stripColor(PlainTextComponentSerializer.plainText().serialize(this)) ?: ""
+fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this.style(Style.empty()))
 
 fun Component.legacy(): String = LegacyComponentSerializer.legacy('§').serialize(this)
 

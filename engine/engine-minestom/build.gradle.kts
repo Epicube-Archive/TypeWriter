@@ -44,6 +44,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
     implementation("com.extollit.gaming:hydrazine-path-engine:1.8.1")
 
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 }
 

@@ -4,8 +4,8 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.*
 import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.paper.utils.asMini
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
 
 @AlgebraicTypeInfo("lore", Colors.ORANGE, "flowbite:file-lines-solid")
 class ItemLoreComponent(
@@ -14,9 +14,7 @@ class ItemLoreComponent(
     @MultiLine
     val lore: String,
 ) : ItemComponent {
-    override fun apply(player: Player?, item: ItemStack) {
-        item.editMeta { meta ->
-            meta.lore(lore.parsePlaceholders(player).split("\n").map { it.asMini() })
-        }
+    override fun apply(player: Player?, item: ItemStack): ItemStack {
+        return item.withLore(lore.parsePlaceholders(player).split("\n").map { it.asMini() })
     }
 }

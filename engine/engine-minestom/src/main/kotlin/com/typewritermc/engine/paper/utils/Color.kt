@@ -17,7 +17,7 @@ class Color(
     val green: Int get() = (color shr 8) and 0xFF
     val blue: Int get() = color and 0xFF
 
-    fun toBukkitColor(): org.bukkit.Color {
-        return org.bukkit.Color.fromARGB(alpha, red, green, blue)
+    fun toMinestomColor(): net.minestom.server.color.AlphaColor {
+        return net.minestom.server.color.AlphaColor(alpha, red, green, blue)
     }
 }
