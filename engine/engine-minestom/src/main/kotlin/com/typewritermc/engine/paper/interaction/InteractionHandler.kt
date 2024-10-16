@@ -2,6 +2,8 @@ package com.typewritermc.engine.paper.interaction
 
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.utils.Reloadable
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.entry.entries.CustomCommandEntry
 import com.typewritermc.engine.paper.entry.entries.Event
 import com.typewritermc.engine.paper.entry.entries.EventTrigger
@@ -12,17 +14,14 @@ import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.snippets.snippet
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import kotlinx.coroutines.runBlocking
+import lirand.api.extensions.server.onlinePlayers
 import lirand.api.extensions.server.registerEvents
 import lirand.api.extensions.server.registerSuspendingEvents
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
+import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerSpawnEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.koin.core.component.KoinComponent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -35,7 +34,7 @@ class InteractionHandler : Listener, KoinComponent {
     private val interactions = ConcurrentHashMap<UUID, Interaction>()
 
     val Player.interaction: Interaction?
-        get() = interactions[uniqueId]
+        get() = interactions[uuid]
 
 
     /** Some triggers start dialogue. Though we don't want to trigger the starting of dialogue multiple times,
@@ -103,23 +102,23 @@ class InteractionHandler : Listener, KoinComponent {
     }
 
     // When a player joins the server, we need to create an interaction for them.
-    @EventHandler(priority = EventPriority.LOWEST)
-    fun onPlayerJoin(event: PlayerJoinEvent) {
+    @EventHandler(priority = -5)
+    fun onPlayerJoin(event: PlayerSpawnEvent) {
         val interaction = Interaction(event.player)
-        interactions[event.player.uniqueId] = interaction
+        interactions[event.player.uuid] = interaction
         interaction.setup()
     }
 
     // When a player leaves the server, we need to end the interaction.
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun onPlayerQuit(event: PlayerQuitEvent) {
+    @EventHandler(priority = 10)
+    fun onPlayerQuit(event: PlayerDisconnectEvent) {
         runBlocking {
-            interactions.remove(event.player.uniqueId)?.end()
+            interactions.remove(event.player.uuid)?.end()
         }
     }
 
     fun load() {
-        interactions.putAll(server.onlinePlayers.map { it.uniqueId to Interaction(it) })
+        interactions.putAll(onlinePlayers.map { it.uuid to Interaction(it) })
         interactions.forEach { (_, interaction) ->
             interaction.setup()
         }
@@ -133,7 +132,7 @@ class InteractionHandler : Listener, KoinComponent {
     }
 
     // When a player tries to execute a command, we need to end the dialogue.
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = 10)
     fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) {
         val command = event.message.removePrefix("/")
         // We don't want to end the dialogue if the player is running a typewriter command

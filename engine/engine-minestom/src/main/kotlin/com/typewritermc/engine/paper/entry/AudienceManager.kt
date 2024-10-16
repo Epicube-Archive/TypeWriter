@@ -4,6 +4,8 @@ import com.typewritermc.core.entries.Query
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.ref
 import com.typewritermc.core.utils.Reloadable
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.interaction.AVERAGE_SCHEDULING_DELAY_MS
 import com.typewritermc.engine.paper.interaction.TICK_MS
@@ -11,13 +13,11 @@ import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import lirand.api.extensions.server.onlinePlayers
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerSpawnEvent
 import org.koin.java.KoinJavaComponent.get
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
@@ -29,7 +29,7 @@ class AudienceManager : Listener, Reloadable {
     private var job: Job? = null
 
     fun initialize() {
-        server.pluginManager.registerEvents(this, plugin)
+        server.registerEvents(this)
         job = DISPATCHERS_ASYNC.launch {
             while (plugin.isEnabled) {
                 val startTime = System.currentTimeMillis()
@@ -75,7 +75,7 @@ class AudienceManager : Listener, Reloadable {
 
         displays = entries.associate { it.ref() to it.display() }
 
-        server.onlinePlayers.forEach { player ->
+        onlinePlayers.forEach { player ->
             addPlayerForRoots(player)
         }
     }
@@ -125,12 +125,12 @@ class AudienceManager : Listener, Reloadable {
     }
 
     @EventHandler
-    private fun onPlayerJoin(event: PlayerJoinEvent) {
+    private fun onPlayerJoin(event: PlayerSpawnEvent) {
         addPlayerForRoots(event.player)
     }
 
     @EventHandler
-    private fun onPlayerQuit(event: PlayerQuitEvent) {
+    private fun onPlayerQuit(event: PlayerDisconnectEvent) {
         removePlayerForRoots(event.player)
     }
 
@@ -138,7 +138,6 @@ class AudienceManager : Listener, Reloadable {
         job?.cancel()
         job = null
         unload()
-        HandlerList.unregisterAll(this)
     }
 }
 

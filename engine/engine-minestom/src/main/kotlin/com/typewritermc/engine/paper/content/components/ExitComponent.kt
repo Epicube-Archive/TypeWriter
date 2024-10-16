@@ -1,5 +1,7 @@
 package com.typewritermc.engine.paper.content.components
 
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.inLastContentMode
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger

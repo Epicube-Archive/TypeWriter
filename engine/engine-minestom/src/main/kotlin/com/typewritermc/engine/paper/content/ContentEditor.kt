@@ -1,5 +1,7 @@
 package com.typewritermc.engine.paper.content
 
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.content.components.IntractableItem
 import com.typewritermc.engine.paper.content.components.ItemInteraction
 import com.typewritermc.engine.paper.content.components.ItemInteractionType
@@ -17,12 +19,9 @@ import com.typewritermc.engine.paper.utils.playSound
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player
+import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.item.ItemStack
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
@@ -133,9 +132,9 @@ class ContentEditor(
     fun isInLastMode(): Boolean = stack.size == 1
 
     @EventHandler
-    fun onInventoryClick(event: InventoryClickEvent) {
-        if (event.whoClicked != player) return
-        if (event.clickedInventory != player.inventory) return
+    fun onInventoryClick(event: InventoryPreClickEvent) {
+        if (event.player != player) return
+        if (event.inventory != player.openInventory) return
         val item = items[event.slot] ?: return
         item.action(
             ItemInteraction(ItemInteractionType.INVENTORY_CLICK, event.slot),

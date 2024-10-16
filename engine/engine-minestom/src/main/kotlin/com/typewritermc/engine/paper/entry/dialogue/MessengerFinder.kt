@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import com.github.shynixn.mccoroutine.minestom.ticks
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.Reloadable
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.entry.Modifier
 import com.typewritermc.engine.paper.entry.TriggerableEntry
 import com.typewritermc.engine.paper.entry.entries.DialogueEntry

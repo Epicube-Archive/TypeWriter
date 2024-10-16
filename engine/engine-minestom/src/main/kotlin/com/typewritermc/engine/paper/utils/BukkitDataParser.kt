@@ -1,11 +1,11 @@
 package com.typewritermc.engine.paper.utils
 
 import com.google.gson.*
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.logger
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
+import net.minestom.server.MinecraftServer
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
 import java.lang.reflect.Type
 import java.util.*
 
@@ -20,7 +20,7 @@ class ItemStackSerializer : JsonSerializer<ItemStack>, JsonDeserializer<ItemStac
     @Throws(JsonParseException::class)
     override fun deserialize(jsonElement: JsonElement, type: Type?, context: JsonDeserializationContext?): ItemStack {
         val data = jsonElement.asString
-        if (data.isEmpty()) return ItemStack(Material.AIR, 0)
+        if (data.isEmpty()) return ItemStack.of(Material.AIR, 0)
         return ItemStack.deserializeBytes(Base64.getDecoder().decode(data))
     }
 
@@ -39,7 +39,7 @@ class LocationSerializer : JsonSerializer<Location>, JsonDeserializer<Location> 
         val split = json.asString.split(",")
         return Location(
             split[0].let { worldName ->
-                val world = Bukkit.getWorld(worldName)
+                val world = MinecraftServer.getInstanceManager().getInstance(UUID.fromString(worldName))
                 if (world == null) {
                     logger.severe("World $worldName not found!")
                 }

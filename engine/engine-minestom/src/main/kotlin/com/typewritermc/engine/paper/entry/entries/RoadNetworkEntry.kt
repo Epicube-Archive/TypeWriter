@@ -11,6 +11,7 @@ import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
 import com.typewritermc.core.utils.point.World
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.bossBar
@@ -29,7 +30,6 @@ import com.typewritermc.engine.paper.utils.RuntimeTypeAdapterFactory
 import com.typewritermc.engine.paper.utils.playSound
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -72,7 +72,7 @@ value class RoadNodeId(val id: Int) {
 
 data class RoadNode(
     val id: RoadNodeId,
-    val location: Pos,
+    val location: Location,
     val radius: Double,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -156,7 +156,7 @@ fun Collection<RoadModification>.containsAddition(start: RoadNodeId, end: RoadNo
     any { it is RoadModification.EdgeAddition && it.start == start && it.end == end }
 
 fun createRoadNetworkParser(): Gson = GsonBuilder()
-    .registerTypeAdapter(Pos::class.java, LocationSerializer())
+    .registerTypeAdapter(Location::class.java, LocationSerializer())
     .registerTypeAdapter(World::class.java, WorldSerializer())
     .registerTypeAdapterFactory(
         RuntimeTypeAdapterFactory.of(RoadModification::class.java)
@@ -213,7 +213,7 @@ class SelectRoadNodeContentMode(context: ContentContext, player: Player) : Conte
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.withYaw((cycle % 360).toFloat())
+    private fun showingLocation(node: RoadNode): Location = node.location.withYaw((cycle % 360).toFloat())
 }
 
 class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Player) : ContentMode(context, player) {
@@ -279,5 +279,5 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.withYaw((cycle % 360).toFloat())
+    private fun showingLocation(node: RoadNode): Location = node.location.withYaw((cycle % 360).toFloat())
 }

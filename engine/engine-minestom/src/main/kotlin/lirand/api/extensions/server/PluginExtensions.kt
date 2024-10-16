@@ -1,14 +1,20 @@
 package lirand.api.extensions.server
 
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import org.bukkit.NamespacedKey
-import org.bukkit.event.Listener
-import org.bukkit.plugin.Plugin
+import com.typewritermc.engine.paper.adapt.Plugin
+import com.typewritermc.engine.paper.adapt.event.EventListenerScanner
+import com.typewritermc.engine.paper.adapt.event.Listener
+import net.minestom.server.MinecraftServer
 
 fun Plugin.registerEvents(
 	vararg listeners: Listener
-) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
+) = listeners.forEach {
+	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it)
+}
 
 fun Plugin.registerSuspendingEvents(
 	vararg listeners: Listener
-) = listeners.forEach { server.pluginManager.registerSuspendingEvents(it, this) }
+) = listeners.forEach {
+	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it)
+	// TODO: suspending events ?
+	//server.pluginManager.registerSuspendingEvents(it, this)
+}

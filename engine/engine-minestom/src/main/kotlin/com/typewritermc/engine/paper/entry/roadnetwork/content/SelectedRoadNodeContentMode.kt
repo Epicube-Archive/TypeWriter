@@ -10,6 +10,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPa
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.loopingDistance
 import com.typewritermc.core.utils.ok
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
@@ -34,8 +36,8 @@ import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.koin.core.component.KoinComponent
 import java.util.*
@@ -265,14 +267,12 @@ class RemoveNodeComponent(
     private val onRemove: () -> Unit,
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        return slot to (ItemStack.of(Material.REDSTONE_BLOCK).apply {
-            editMeta { meta ->
-                meta.name = "<red><b>Remove Node"
-                meta.loreString = "<line> <gray>Careful! This action is irreversible."
-            }
-        } onInteract {
-            onRemove()
-        })
+        return slot to (ItemStack.of(Material.REDSTONE_BLOCK)
+            .withCustomName("<red><b>Remove Node".asMini())
+            .withLore("<line> <gray>Careful! This action is irreversible.".asMini())
+            .onInteract {
+                onRemove()
+            })
     }
 }
 
@@ -330,17 +330,14 @@ private class SelectedNodePathsComponent(
 
         paths?.forEach { (edge, path) ->
             path.forEach {
-                WrapperPlayServerParticle(
-                    Particle(
-                        ParticleTypes.DUST,
-                        ParticleDustData(1f, NetworkEdgesComponent.colorFromHash(edge.end.hashCode()).toPacketColor())
-                    ),
+                player.sendPacket(ParticlePacket(
+                    Particle.DUST.withProperties(NetworkEdgesComponent.colorFromHash(edge.end.hashCode()).toPacketColor(), 1f),
                     true,
-                    Vector3d(it.coordinates().x + 0.5, it.coordinates().y + 0.5, it.coordinates().z + 0.5),
-                    Vector3f.zero(),
+                    Vec(it.coordinates().x + 0.5, it.coordinates().y + 0.5, it.coordinates().z + 0.5),
+                    Vec.ZERO,
                     0f,
                     1
-                ) sendPacketTo player
+                ))
             }
         }
     }
@@ -359,18 +356,16 @@ class NodeRadiusComponent(
     private var scrolling: UUID? = null
 
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = if (scrolling != null) ItemStack.of(Material.CALIBRATED_SCULK_SENSOR).apply {
-            editMeta { meta ->
-                meta.name = "<yellow><b>Selecting Radius"
-                meta.loreString = "<line> <gray>Right click to set the radius of the node."
-                meta.unClickable()
-            }
-        } else ItemStack(Material.SCULK_SENSOR).apply {
-            editMeta { meta ->
-                meta.name = "<yellow><b>Change Radius"
-                meta.loreString = "<line> <gray>Current radius: <white>${nodeFetcher()?.radius}"
-                meta.unClickable()
-            }
+        val item = if (scrolling != null) {
+            ItemStack.of(Material.CALIBRATED_SCULK_SENSOR)
+                .withCustomName("<yellow><b>Selecting Radius".asMini())
+                .withLore("<line> <gray>Right click to set the radius of the node.".asMini())
+                //.unclickable() // TODO: what is this ?
+        } else {
+            ItemStack.of(Material.SCULK_SENSOR)
+                .withCustomName("<yellow><b>Change Radius".asMini())
+                .withLore("<line> <gray>Current radius: <white>${nodeFetcher()?.radius}".asMini())
+                //.unclickable() // TODO: what is this ?
         }
         return slot to (item onInteract {
             scrolling = if (scrolling == player.uuid) {

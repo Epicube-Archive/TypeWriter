@@ -9,6 +9,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.snippets.snippet
 import com.typewritermc.engine.paper.utils.asMiniWithResolvers
@@ -18,11 +20,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerQuitEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerDisconnectEvent
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -86,7 +85,7 @@ class ChatHistoryHandler :
         return histories.getOrPut(pid) { ChatHistory() }
     }
 
-    fun getHistory(player: Player): ChatHistory = getHistory(player.uniqueId)
+    fun getHistory(player: Player): ChatHistory = getHistory(player.uuid)
 
     fun blockMessages(player: Player) {
         getHistory(player).startBlocking()
@@ -96,9 +95,9 @@ class ChatHistoryHandler :
         getHistory(player).stopBlocking()
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun onQuit(event: PlayerQuitEvent) {
-        histories.remove(event.player.uniqueId)
+    @EventHandler(priority = 10)
+    fun onQuit(event: PlayerDisconnectEvent) {
+        histories.remove(event.player.uuid)
     }
 
     fun shutdown() {

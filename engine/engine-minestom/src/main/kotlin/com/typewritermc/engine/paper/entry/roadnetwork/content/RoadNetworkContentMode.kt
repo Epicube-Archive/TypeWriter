@@ -1,13 +1,10 @@
 package com.typewritermc.engine.paper.entry.roadnetwork.content
 
-import com.github.retrooper.packetevents.protocol.particle.Particle
-import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData
-import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
-import com.github.retrooper.packetevents.util.Vector3f
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
+import com.typewritermc.engine.paper.adapt.Location
+import com.typewritermc.engine.paper.adapt.type
 import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
@@ -23,12 +20,12 @@ import com.typewritermc.engine.paper.utils.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.Color
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import org.koin.core.component.KoinComponent
 import java.util.*
 import kotlin.math.pow
@@ -127,15 +124,13 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
 
     private fun createNode(): RoadNode {
         val location = player.location.toCenterLocation().apply {
-            if (block.type.isSolid) {
+            if (block?.isSolid == true) {
                 // If you are standing on a slab or something, we want to place the node on top of it
-                if (!up.block.type.isSolid) {
+                if (up.block?.isSolid == false) {
                     add(0.0, 1.0, 0.0)
                 }
             }
-            yaw = 0.0f
-            pitch = 0.0f
-        }
+        }.withYaw(0f).withPitch(0f)
         var id: Int
         do {
             id = Random().nextInt(Int.MAX_VALUE)
@@ -171,9 +166,7 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
         super.dispose()
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
-        yaw = (cycle % 360).toFloat()
-    }
+    private fun showingLocation(node: RoadNode): Location = node.location.withYaw((cycle % 360).toFloat())
 }
 
 fun RoadNode.material(modifications: List<RoadModification>): Material {
@@ -192,26 +185,22 @@ private class NetworkAddNodeComponent(
     private val onAddNegative: () -> Unit = {},
 ) : ContentComponent, ItemsComponent {
     override fun items(player: Player): Map<Int, IntractableItem> {
-        val addNodeItem = ItemStack.of(Material.DIAMOND).apply {
-            editMeta { meta ->
-                meta.name = "<green><b>Add Node"
-                meta.loreString = "<line> <gray>Click to add a new node to the road network"
+        val addNodeItem = ItemStack.of(Material.DIAMOND)
+            .withCustomName("<green><b>Add Node".asMini())
+            .withLore("<line> <gray>Click to add a new node to the road network".asMini())
+            .onInteract {
+                if (it.type.isClick) onAdd()
             }
-        } onInteract {
-            if (it.type.isClick) onAdd()
-        }
 
-        val addNegativeNodeItem = ItemStack.of(Material.NETHERITE_INGOT).apply {
-            editMeta { meta ->
-                meta.name = "<red><b>Add Negative Node"
-                meta.loreString = """
+        val addNegativeNodeItem = ItemStack.of(Material.NETHERITE_INGOT)
+            .withCustomName("<red><b>Add Negative Node".asMini())
+            .withLore("""
                 |<line> <gray>Click to add a new negative node to the road network
                 |<line> <gray>Blocking pathfinding through its radius
-                """.trimMargin()
+                """.trimMargin().asMini())
+            .onInteract {
+                if (it.type.isClick) onAddNegative()
             }
-        } onInteract {
-            if (it.type.isClick) onAddNegative()
-        }
 
         return mapOf(
             4 to addNodeItem,
@@ -228,16 +217,14 @@ private class NetworkHighlightComponent(
     private val onHighlight: () -> Unit = {}
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = ItemStack.of(Material.GLOWSTONE_DUST).apply {
-            editMeta { meta ->
-                meta.name = "<yellow><b>Highlight Nodes"
-                meta.loreString = "<line> <gray>Click to highlight all nodes"
+        val item = ItemStack.of(Material.GLOWSTONE_DUST)
+            .withCustomName("<yellow><b>Highlight Nodes".asMini())
+            .withLore("<line> <gray>Click to highlight all nodes".asMini())
+            .onInteract {
+                if (!it.type.isClick) return@onInteract
+                onHighlight()
+                player.playSound("ui.button.click")
             }
-        } onInteract {
-            if (!it.type.isClick) return@onInteract
-            onHighlight()
-            player.playSound("ui.button.click")
-        }
 
         return 0 to item
     }
@@ -247,16 +234,14 @@ private class NetworkRecalculateAllEdgesComponent(
     private val onRecalculate: () -> Unit = {}
 ) : ItemComponent {
     override fun item(player: Player): Pair<Int, IntractableItem> {
-        val item = ItemStack.of(Material.REDSTONE).apply {
-            editMeta { meta ->
-                meta.name = "<red><b>Recalculate Edges"
-                meta.loreString = "<line> <gray>Click to recalculate all edges, this might take a while."
+        val item = ItemStack.of(Material.REDSTONE)
+            .withCustomName("<red><b>Recalculate Edges".asMini())
+            .withLore("<line> <gray>Click to recalculate all edges, this might take a while.".asMini())
+            .onInteract {
+                if (!it.type.isClick) return@onInteract
+                onRecalculate()
+                player.playSound("ui.button.click")
             }
-        } onInteract {
-            if (!it.type.isClick) return@onInteract
-            onRecalculate()
-            player.playSound("ui.button.click")
-        }
 
         return 1 to item
     }
@@ -298,14 +283,15 @@ internal class NetworkEdgesComponent(
             for (i in 0..1) {
                 val percentage = progress - i * 0.05
                 val location = start.lerp(end, percentage)
-                WrapperPlayServerParticle(
-                    Particle(ParticleTypes.DUST, ParticleDustData(1f, edge.color.toPacketColor())),
+
+                player.sendPacket(ParticlePacket(
+                    Particle.DUST.withProperties(edge.color.toPacketColor(), 1f),
                     true,
                     location.toVector3d(),
-                    Vector3f.zero(),
+                    Vec.ZERO,
                     0f,
                     1
-                ) sendPacketTo player
+                ))
             }
         }
 
@@ -323,9 +309,9 @@ internal class NetworkEdgesComponent(
     override suspend fun dispose(player: Player) {}
 
     class ShowingEdge(
-        val startLocation: Pos,
-        val endLocation: Pos,
-        val color: Color = Color.RE,
+        val startLocation: Location,
+        val endLocation: Location,
+        val color: Color = Color.fromRGB(200, 50, 50),
     )
 
     companion object {
@@ -355,8 +341,7 @@ class NegativeNodePulseComponent(
         if (cycle == 0) {
             showingNodes = negativeNodes()
                 .filter {
-                    (it.location.distanceSqrt(player.position)
-                        ?: Double.MAX_VALUE) < roadNetworkMaxDistance * roadNetworkMaxDistance
+                    it.location.position.distanceSqrt(player.position) < roadNetworkMaxDistance * roadNetworkMaxDistance
                 }
                 .map { Pulse(it.location, it.radius) }
         }
@@ -373,7 +358,7 @@ class NegativeNodePulseComponent(
         }
     }
 
-    data class Pulse(val location: Pos, val radius: Double)
+    data class Pulse(val location: Location, val radius: Double)
 
     private fun Double.easeOutBack(): Double {
         val c1 = 1.70158
@@ -386,6 +371,7 @@ class NegativeNodePulseComponent(
     }
 }
 
-fun Color.toPacketColor(): com.github.retrooper.packetevents.protocol.color.Color {
-    return com.github.retrooper.packetevents.protocol.color.Color(red, green, blue)
+// FIXME: useless
+fun Color.toPacketColor(): Color {
+    return Color.fromRGB(red, green, blue)
 }

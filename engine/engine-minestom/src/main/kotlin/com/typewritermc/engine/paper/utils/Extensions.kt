@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
 import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.util.Vector3f
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.roadnetwork.content.toPacketColor
 import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.logger
@@ -16,10 +17,12 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
+import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
+import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
 import java.io.File
 import java.net.MalformedURLException
@@ -69,7 +72,18 @@ fun InstanceManager.findGlobalPlayerByUuid(uuid: UUID): Player? {
         .find { it.uuid == uuid }
 }
 
-fun Pos.distanceSqrt(other: Pos): Double? {
+fun Point.distanceSqrt(other: Point): Double {
+    val dx = x() - other.x()
+    val dy = y() - other.y()
+    val dz = z() - other.z()
+    return dx * dx + dy * dy + dz * dz
+}
+
+fun Location.distanceSqrt(other: Point): Double {
+    return position.distanceSqrt(other)
+}
+
+fun Pos.distanceSqrt(other: Pos): Double {
     val dx = x - other.x
     val dy = y - other.y
     val dz = z - other.z
@@ -84,8 +98,28 @@ fun Pos.lerp(other: Pos, amount: Double): Pos {
     return Pos(x, y, z)
 }
 
+fun Location.lerp(other: Location, amount: Double): Location {
+    return Location(instance, position.lerp(other.position, amount))
+}
+
+fun Pos.toLocation(instance: Instance?): Location {
+    return Location(instance, this)
+}
+
+fun Location.toCenterLocation(): Location {
+    return withX(blockX + 0.5)
+        .withY(blockY + 0.5)
+        .withZ(blockZ + 0.5)
+}
+
+val Player.location: Location
+    get() = Location(instance, position)
+
 val Pos.up: Pos
     get() = Pos(x, y + 1, z)
+
+val Location.up: Location
+    get() = Location(instance, x, y + 1, z, pitch, yaw)
 
 val Pos.firstWalkableLocationBelow: Pos
     get() = clone().apply {
@@ -98,7 +132,7 @@ operator fun Pos.component1(): Double = x
 operator fun Pos.component2(): Double = y
 operator fun Pos.component3(): Double = z
 
-fun Pos.particleSphere(
+fun Location.particleSphere(
     player: Player,
     radius: Double,
     color: Color,

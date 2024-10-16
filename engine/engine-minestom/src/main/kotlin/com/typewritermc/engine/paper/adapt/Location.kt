@@ -4,19 +4,26 @@ import com.typewritermc.core.utils.point.*
 import com.typewritermc.core.utils.point.Vector
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.instance.Instance
+import net.minestom.server.instance.block.Block
 import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Location(val instance: Instance, val position: Pos): Point, Rotatable {
-    val world: Instance = instance
+class Location(val instance: Instance?, val position: Pos): Point, Rotatable {
+    val world: Instance? = instance
     override val x: Double = position.x
     override val y: Double = position.y
     override val z: Double = position.z
     override val pitch: Float = position.pitch
     override val yaw: Float = position.yaw
+
+    constructor(instance: Instance?, x: Double, y: Double, z: Double, pitch: Float, yaw: Float) :
+            this(instance, Pos(x, y, z, pitch, yaw))
+
+    val block: Block?
+        get() = instance?.getBlock(position)
 
     override fun withX(x: Double): Location = copy(x = x)
 
@@ -106,7 +113,7 @@ class Location(val instance: Instance, val position: Pos): Point, Rotatable {
     }
 
     open fun copy(
-        instance: Instance = this.instance,
+        instance: Instance? = this.instance,
         x: Double = this.x,
         y: Double = this.y,
         z: Double = this.z,

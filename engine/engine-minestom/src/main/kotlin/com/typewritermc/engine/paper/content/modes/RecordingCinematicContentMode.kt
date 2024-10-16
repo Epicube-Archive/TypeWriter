@@ -19,19 +19,15 @@ import com.typewritermc.engine.paper.interaction.stopBlockingActionBar
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.ThreadType.SYNC
 import com.typewritermc.core.utils.failure
-import com.typewritermc.engine.paper.utils.loreString
-import com.typewritermc.engine.paper.utils.name
 import com.typewritermc.core.utils.ok
+import com.typewritermc.engine.paper.adapt.event.Listener
+import com.typewritermc.engine.paper.utils.asMini
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.event.Listener
-import org.bukkit.inventory.ItemStack
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -60,29 +56,25 @@ class RecordingCinematicComponent<T : Any>(
 
     override fun items(player: Player): Map<Int, IntractableItem> {
         if (frameFetcher() > (context.endFrame ?: 0)) {
-            val item = ItemStack.of(Material.BARRIER).apply {
-                editMeta { meta ->
-                    meta.name = "<red><b>Cannot Start Recording"
-                    meta.loreString = """
+            val item = ItemStack.of(Material.BARRIER)
+                .withCustomName("<red><b>Cannot Start Recording".asMini())
+                .withLore("""
                     |<line> <gray>Recording cannot start 
                     |<line> <gray>because the frame is out of range.
                     |
                     |<line> <gray>Make sure that the cinematic frame
                     |<line> <gray>is before the end frame of the segment.
-                """.trimMargin()
-                }
-            } onInteract {}
+                """.trimMargin().asMini())
+                .onInteract {}
             return mapOf(slot to item)
         }
 
-        val item = ItemStack.of(Material.BOOK).apply {
-            editMeta { meta ->
-                meta.name = "<green><b>Start Recording"
-                meta.loreString = "<line> <gray>Click to start recording the cinematic."
+        val item = ItemStack.of(Material.BOOK)
+            .withCustomName("<green><b>Start Recording".asMini())
+            .withLore("<line> <gray>Click to start recording the cinematic.".asMini())
+            .onInteract {
+                ContentModeTrigger(context, modeCreator(context, player, frameFetcher(), klass)) triggerFor player
             }
-        } onInteract {
-            ContentModeTrigger(context, modeCreator(context, player, frameFetcher(), klass)) triggerFor player
-        }
 
         return mapOf(slot to item)
     }

@@ -8,11 +8,14 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerActionBar
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import lirand.api.extensions.server.server
 import com.typewritermc.engine.paper.plugin
 import net.kyori.adventure.text.Component
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerDisconnectEvent
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
@@ -53,22 +56,22 @@ class ActionBarBlockerHandler :
     }
 
     fun acceptMessage(player: Player, message: Component) {
-        val blocker = blockers[player.uniqueId] ?: return
+        val blocker = blockers[player.uuid] ?: return
         blocker.acceptMessage(message)
     }
 
     fun enable(player: Player) {
-        if (player.uniqueId in blockers) return
-        blockers[player.uniqueId] = ActionBarBlocker()
+        if (player.uuid in blockers) return
+        blockers[player.uuid] = ActionBarBlocker()
     }
 
     fun disable(player: Player) {
-        blockers.remove(player.uniqueId)
+        blockers.remove(player.uuid)
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun onQuit(event: PlayerQuitEvent) {
-        blockers.remove(event.player.uniqueId)
+    @EventHandler(priority = 10)
+    fun onQuit(event: PlayerDisconnectEvent) {
+        blockers.remove(event.player.uuid)
     }
 
     fun shutdown() {

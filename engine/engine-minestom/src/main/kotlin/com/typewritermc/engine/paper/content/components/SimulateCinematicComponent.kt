@@ -4,6 +4,8 @@ import com.typewritermc.core.books.pages.PageType
 import com.typewritermc.core.entries.Page
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.utils.loopingDistance
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.ItemInteractionType.*
@@ -25,8 +27,6 @@ import net.kyori.adventure.bossbar.BossBar
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerItemHeldEvent
 import java.util.*
 
