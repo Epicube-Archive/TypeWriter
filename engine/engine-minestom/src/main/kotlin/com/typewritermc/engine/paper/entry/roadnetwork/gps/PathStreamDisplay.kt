@@ -3,10 +3,8 @@ package com.typewritermc.engine.paper.entry.roadnetwork.gps
 import com.extollit.gaming.ai.path.HydrazinePathFinder
 import com.extollit.gaming.ai.path.model.Passibility
 import com.extollit.linalg.immutable.Vec3d
-import com.github.retrooper.packetevents.protocol.particle.Particle
-import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
 import com.typewritermc.core.entries.Ref
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.entity.toProperty
 import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
 import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
@@ -15,20 +13,18 @@ import com.typewritermc.engine.paper.entry.entries.roadNetworkMaxDistance
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkManager
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFEmptyEntity
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
-import com.typewritermc.engine.paper.extensions.packetevents.toVector3d
 import com.typewritermc.engine.paper.snippets.snippet
+import com.typewritermc.engine.paper.utils.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
-import com.typewritermc.engine.paper.utils.distanceSqrt
-import com.typewritermc.engine.paper.utils.firstWalkableLocationBelow
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import lirand.api.extensions.server.server
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
@@ -41,8 +37,8 @@ private val pathStreamRefreshTime by snippet(
 
 class PathStreamDisplay(
     private val ref: Ref<RoadNetworkEntry>,
-    private val startLocation: (Player) -> Pos = Player::getPosition,
-    private val endLocation: (Player) -> Pos,
+    private val startLocation: (Player) -> Location = Player::location,
+    private val endLocation: (Player) -> Location,
 ) : AudienceDisplay(), TickableDisplay {
     private val displays = mutableMapOf<UUID, PlayerPathStreamDisplay>()
     override fun onPlayerAdd(player: Player) {
@@ -60,8 +56,8 @@ class PathStreamDisplay(
 
 class MultiPathStreamDisplay(
     private val ref: Ref<RoadNetworkEntry>,
-    private val startLocation: (Player) -> Pos = Player::getPosition,
-    private val endLocations: (Player) -> List<Pos>,
+    private val startLocation: (Player) -> Location = Player::location,
+    private val endLocations: (Player) -> List<Location>,
 ) : AudienceDisplay(), TickableDisplay {
     private val displays = mutableMapOf<UUID, MutableList<StreamDisplay>>()
 
@@ -94,8 +90,8 @@ class MultiPathStreamDisplay(
 private class StreamDisplay(
     ref: Ref<RoadNetworkEntry>,
     player: Player,
-    startLocation: (Player) -> Pos,
-    var location: Pos,
+    startLocation: (Player) -> Location,
+    var location: Location,
 ) {
     val display = PlayerPathStreamDisplay(ref, player, startLocation) { location }
 }
@@ -103,8 +99,8 @@ private class StreamDisplay(
 private class PlayerPathStreamDisplay(
     ref: Ref<RoadNetworkEntry>,
     private val player: Player,
-    private val startLocation: (Player) -> Pos,
-    private val endLocation: (Player) -> Pos,
+    private val startLocation: (Player) -> Location,
+    private val endLocation: (Player) -> Location,
 ) : KoinComponent {
     private val roadNetworkManager: RoadNetworkManager by inject()
 
@@ -131,14 +127,14 @@ private class PlayerPathStreamDisplay(
     private fun displayPath() {
         lines.retainAll { line ->
             val location = line.currentLocation ?: return@retainAll false
-            WrapperPlayServerParticle(
-                Particle(ParticleTypes.TOTEM_OF_UNDYING),
+            player.sendPacket(ParticlePacket(
+                Particle.TOTEM_OF_UNDYING,
                 true,
-                location.also { it.y += 0.5 }.toVector3d(),
+                location.add(0.0, 0.5, 0.0).position,
                 Vec(0.3, 0.0, 0.3),
                 0f,
                 1
-            ) sendPacketTo player
+            ))
 
             line.next()
         }
@@ -149,7 +145,7 @@ private class PlayerPathStreamDisplay(
         val end = endLocation(player).firstWalkableLocationBelow
 
         // When the start and end location are the same, we don't need to find a path.
-        if ((start.distanceSqrt(end) ?: Double.MAX_VALUE) < 1) {
+        if (start.distanceSqrt(end) < 1) {
             return@launch
         }
 
@@ -157,9 +153,8 @@ private class PlayerPathStreamDisplay(
         coroutineScope {
             // We only need to calculate the paths that the player will be able to see
             val path = edges.filter {
-                ((it.start.distanceSqrt(start) ?: Double.MAX_VALUE) < roadNetworkMaxDistance * roadNetworkMaxDistance
-                        || (it.end.distanceSqrt(start)
-                    ?: Double.MAX_VALUE) < roadNetworkMaxDistance * roadNetworkMaxDistance)
+                (it.start.distanceSqrt(start) < roadNetworkMaxDistance * roadNetworkMaxDistance
+                        || it.end.distanceSqrt(start) < roadNetworkMaxDistance * roadNetworkMaxDistance)
             }
                 .map { edge ->
                     async {
@@ -175,9 +170,9 @@ private class PlayerPathStreamDisplay(
     }
 
     private suspend fun findPath(
-        start: Pos,
-        end: Pos,
-    ): Iterable<Pos> {
+        start: Location,
+        end: Location,
+    ): Iterable<Location> {
         val roadNetwork = roadNetworkManager.getNetwork(gps.roadNetwork)
 
         val interestingNegativeNodes = roadNetwork.negativeNodes.filter {
@@ -185,7 +180,7 @@ private class PlayerPathStreamDisplay(
             distance > it.radius * it.radius && distance < roadNetworkMaxDistance * roadNetworkMaxDistance
         }
 
-        val entity = PFEmptyEntity(start.toProperty(), searchRange = roadNetworkMaxDistance.toFloat())
+        val entity = PFEmptyEntity(start, searchRange = roadNetworkMaxDistance.toFloat())
         val instance = PFInstanceSpace(start.world)
         val pathfinder = HydrazinePathFinder(entity, instance)
 
@@ -202,7 +197,7 @@ private class PlayerPathStreamDisplay(
         val path = pathfinder.computePathTo(Vec3d(end.x, end.y, end.z)) ?: return emptyList()
         return path.map {
             val coordinate = it.coordinates()
-            Pos(coordinate.x.toDouble(), coordinate.y.toDouble(), coordinate.z.toDouble())
+            Location(start.instance, coordinate.x.toDouble(), coordinate.y.toDouble(), coordinate.z.toDouble(), 0f, 0f)
         }
     }
 
@@ -212,10 +207,10 @@ private class PlayerPathStreamDisplay(
 }
 
 private data class PathLine(
-    val path: List<Pos>,
+    val path: List<Location>,
     var index: Int = 0,
 ) {
-    val currentLocation: Pos?
+    val currentLocation: Location?
         get() = path.getOrNull(index)
 
     fun next(): Boolean {

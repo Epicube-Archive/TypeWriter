@@ -13,9 +13,9 @@ class PositionContentMode(context: ContentContext, player: Player) :
     override val type: Type = Position::class.java
 
     override fun value(): Position {
-        val location = player.location
+        val location = player.position
         return Position(
-            World(location.world.name),
+            World(player.instance.uniqueId.toString()),
             location.x.round(2),
             location.y.round(2),
             location.z.round(2),

@@ -1,15 +1,10 @@
 package com.typewritermc.engine.paper.utils
 
 import com.destroystokyo.paper.profile.PlayerProfile
-import com.github.retrooper.packetevents.protocol.particle.Particle
-import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData
-import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
-import com.github.retrooper.packetevents.util.Vector3d
-import com.github.retrooper.packetevents.util.Vector3f
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
+import com.typewritermc.core.utils.point.Position
+import com.typewritermc.core.utils.point.World
 import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.roadnetwork.content.toPacketColor
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.logger
 import lirand.api.extensions.server.server
 import net.kyori.adventure.audience.Audience
@@ -19,11 +14,14 @@ import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
+import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URI
@@ -83,11 +81,16 @@ fun Location.distanceSqrt(other: Point): Double {
     return position.distanceSqrt(other)
 }
 
+fun Pos.distanceSqrt(other: Location): Double {
+    return distanceSqrt(other.position)
+}
+
+fun Location.distanceSqrt(other: Location): Double {
+    return position.distanceSqrt(other)
+}
+
 fun Pos.distanceSqrt(other: Pos): Double {
-    val dx = x - other.x
-    val dy = y - other.y
-    val dz = z - other.z
-    return dx * dx + dy * dy + dz * dz
+    return (this as Point).distanceSqrt(other)
 }
 
 fun Pos.lerp(other: Pos, amount: Double): Pos {
@@ -112,6 +115,14 @@ fun Location.toCenterLocation(): Location {
         .withZ(blockZ + 0.5)
 }
 
+fun Pos.toCenterLocation(instance: Instance?): Location {
+    return toLocation(instance).toCenterLocation()
+}
+
+fun Location.asTwPoint(): com.typewritermc.core.utils.point.Point {
+    return Position(World(instance?.uniqueId.toString()), x, y, z, yaw, pitch)
+}
+
 val Player.location: Location
     get() = Location(instance, position)
 
@@ -121,11 +132,14 @@ val Pos.up: Pos
 val Location.up: Location
     get() = Location(instance, x, y + 1, z, pitch, yaw)
 
-val Pos.firstWalkableLocationBelow: Pos
-    get() = clone().apply {
-        while (block.isPassable) y--
+val Location.firstWalkableLocationBelow: Location
+    get() = apply {
+        var tmp = this
+        while (tmp.block?.isSolid == false) {
+            tmp = withY(tmp.y - 1)
+        }
         // We want to be on top of the block
-        y++
+        return tmp.withY(tmp.y + 1)
     }
 
 operator fun Pos.component1(): Double = x
@@ -149,17 +163,14 @@ fun Location.particleSphere(
             val y = radius * cos(phi)
             val z = radius * sin(phi) * sin(theta)
 
-            WrapperPlayServerParticle(
-                Particle(
-                    ParticleTypes.DUST,
-                    ParticleDustData(sqrt(radius / 3).toFloat(), color.toPacketColor())
-                ),
+            player.sendPacket(ParticlePacket(
+                Particle.DUST.withProperties(color.toPacketColor(), sqrt(radius / 3).toFloat()),
                 true,
-                Vector3d(this.x + x, this.y + y, this.z + z),
-                Vector3f.zero(),
+                Vec(this.x + x, this.y + y, this.z + z),
+                Vec.ZERO,
                 0f,
                 1
-            ) sendPacketTo player
+            ))
         }
     }
 }

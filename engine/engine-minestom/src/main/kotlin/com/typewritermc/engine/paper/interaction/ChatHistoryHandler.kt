@@ -1,13 +1,5 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.event.PacketListenerAbstract
-import com.github.retrooper.packetevents.event.PacketListenerPriority
-import com.github.retrooper.packetevents.event.PacketSendEvent
-import com.github.retrooper.packetevents.protocol.chat.message.ChatMessage_v1_19_3
-import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
@@ -22,6 +14,9 @@ import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerPacketOutEvent
+import net.minestom.server.network.packet.server.play.PlayerChatMessagePacket
+import net.minestom.server.network.packet.server.play.SystemChatPacket
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -34,22 +29,19 @@ private val darkenLimit by snippet(
 )
 private val spacing by snippet("chat.spacing", 3, "The amount of padding between the dialogue and the chat history")
 
-class ChatHistoryHandler :
-    PacketListenerAbstract(PacketListenerPriority.HIGH), Listener {
+class ChatHistoryHandler : Listener {
 
     fun initialize() {
-        PacketEvents.getAPI().eventManager.registerListener(this)
         server.pluginManager.registerSuspendingEvents(this, plugin)
     }
 
     private val histories = mutableMapOf<UUID, ChatHistory>()
 
-    // When the serer sends a message to the player
-    override fun onPacketSend(event: PacketSendEvent?) {
-        if (event == null) return
+    @EventHandler
+    fun onPacketSend(event: PlayerPacketOutEvent) {
         val component = findMessage(event) ?: return
         if (component is TextComponent && component.content() == "no-index") return
-        val history = getHistory(event.user.uuid)
+        val history = getHistory(event.player.uuid)
         history.addMessage(component)
 
         if (history.isBlocking()) {
@@ -57,23 +49,19 @@ class ChatHistoryHandler :
         }
     }
 
-    private fun findMessage(event: PacketSendEvent): Component? {
-        return when (event.packetType) {
-            PacketType.Play.Server.CHAT_MESSAGE -> {
-                val packet = WrapperPlayServerChatMessage(event)
-                val message = packet.message as? ChatMessage_v1_19_3 ?: return packet.message.chatContent
-                message.unsignedChatContent.orElseGet {
-                    // Use the default minecraft formatting
-                    "\\<<name>> <message>".asMiniWithResolvers(
-                        Placeholder.component("name", message.chatFormatting.name),
-                        Placeholder.component("message", message.chatContent)
-                    )
-                }
+    private fun findMessage(event: PlayerPacketOutEvent): Component? {
+        val packet = event.packet
+        return when (packet) {
+            is PlayerChatMessagePacket -> {
+                val message = packet.unsignedContent ?: return packet.unsignedContent
+                return "\\<<name>> <message>".asMiniWithResolvers(
+                    Placeholder.component("name", packet.msgTypeName),
+                    Placeholder.component("message", packet.unsignedContent!!)
+                )
             }
 
-            PacketType.Play.Server.SYSTEM_CHAT_MESSAGE -> {
-                val packet = WrapperPlayServerSystemChatMessage(event)
-                if (packet.isOverlay) return null
+            is SystemChatPacket -> {
+                if (packet.overlay) return null
                 packet.message
             }
 
@@ -101,7 +89,6 @@ class ChatHistoryHandler :
     }
 
     fun shutdown() {
-        PacketEvents.getAPI().eventManager.unregisterListener(this)
     }
 }
 

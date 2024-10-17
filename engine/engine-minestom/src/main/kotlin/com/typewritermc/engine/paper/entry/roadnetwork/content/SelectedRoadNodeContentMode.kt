@@ -1,15 +1,10 @@
 package com.typewritermc.engine.paper.entry.roadnetwork.content
 
 import com.extollit.gaming.ai.path.model.IPath
-import com.github.retrooper.packetevents.protocol.particle.Particle
-import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData
-import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes
-import com.github.retrooper.packetevents.util.Vector3d
-import com.github.retrooper.packetevents.util.Vector3f
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.loopingDistance
 import com.typewritermc.core.utils.ok
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.content.ContentComponent
@@ -22,7 +17,6 @@ import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.roadnetwork.gps.roadNetworkFindPath
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
 import com.typewritermc.engine.paper.entry.triggerFor
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.*
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
@@ -31,7 +25,6 @@ import lirand.api.extensions.server.registerEvents
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -148,9 +141,7 @@ class SelectedRoadNodeContentMode(
         return ok(Unit)
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
-        yaw = (cycle % 360).toFloat()
-    }
+    private fun showingLocation(node: RoadNode): Location = node.location.withYaw((cycle % 360).toFloat())
 
     private fun interactWithNode(node: RoadNode) {
         if (node == selectedNode) {
@@ -430,34 +421,29 @@ private class ModificationComponent(
         val node = nodeFetcher() ?: return map
         val network = networkFetcher()
 
-        map[5] = ItemStack.of(Material.EMERALD).apply {
-            editMeta { meta ->
-                meta.name = "<green><b>Add Fast Travel Connection"
-                meta.loreString = """
+        map[5] = ItemStack.of(Material.EMERALD)
+            .withCustomName("<green><b>Add Fast Travel Connection".asMini())
+            .withLore("""
                     |<line> <gray>Click on a unconnected node to <green>add a fast travel connection</green> to it.
                     |<line> <gray>Click on a modified node to <red>remove the connection</red>.
                     |
                     |<line> <gray>If you only want to connect one way, hold <red>Shift</red> while clicking.
-                    |""".trimMargin()
-                meta.unClickable()
-            }
-        } onInteract {}
+                    |""".trimMargin().asMini())
+            // TODO: meta.unClickable()
+            .onInteract {}
 
         val hasEdges = network.edges.any { it.start == node.id }
         if (hasEdges) {
-            map[6] = ItemStack.of(Material.REDSTONE).apply {
-                editMeta { meta ->
-                    meta.name = "<red><b>Remove Edge"
-                    meta.loreString = """
+            map[6] = ItemStack.of(Material.REDSTONE)
+                .withCustomName("<red><b>Remove Edge".asMini())
+                .withLore("""
                     |<line> <gray>Click on a connected node to <red>force remove the edge</red> between them.
                     |<line> <gray>Click on a modified node to allow the edge to be added again.
                     |
                     |<line> <gray>If you only want to remove one way, hold <red>Shift</red> while clicking.
-                """.trimMargin()
-                    meta.unClickable()
-                }
-            } onInteract {
-            }
+                """.trimMargin().asMini())
+                // TODO: meta.unClickable()
+                .onInteract {}
         }
 
         return map

@@ -4,7 +4,6 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.adapt.Location
-import com.typewritermc.engine.paper.adapt.type
 import com.typewritermc.engine.paper.content.ContentComponent
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
@@ -13,7 +12,6 @@ import com.typewritermc.engine.paper.content.entryId
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.triggerFor
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.extensions.packetevents.toVector3d
 import com.typewritermc.engine.paper.snippets.snippet
 import com.typewritermc.engine.paper.utils.*
@@ -373,5 +371,5 @@ class NegativeNodePulseComponent(
 
 // FIXME: useless
 fun Color.toPacketColor(): Color {
-    return Color.fromRGB(red, green, blue)
+    return this
 }

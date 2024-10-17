@@ -4,6 +4,7 @@ import com.extollit.gaming.ai.path.HydrazinePathFinder
 import com.extollit.gaming.ai.path.model.*
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.point.Vector
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.entity.toProperty
 import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
 import com.typewritermc.engine.paper.entry.entries.RoadNode
@@ -11,7 +12,6 @@ import com.typewritermc.engine.paper.entry.entries.roadNetworkMaxDistance
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFEmptyEntity
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
 import com.typewritermc.engine.paper.utils.distanceSqrt
-import net.minestom.server.coordinate.Pos
 
 interface GPS {
     val roadNetwork: Ref<RoadNetworkEntry>
@@ -19,8 +19,8 @@ interface GPS {
 }
 
 data class GPSEdge(
-    val start: Pos,
-    val end: Pos,
+    val start: Location,
+    val end: Location,
     val weight: Double,
 ) {
     val isFastTravel: Boolean

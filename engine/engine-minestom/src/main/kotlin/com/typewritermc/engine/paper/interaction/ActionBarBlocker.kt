@@ -1,8 +1,5 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.event.PacketListenerAbstract
-import com.github.retrooper.packetevents.event.PacketListenerPriority
 import com.github.retrooper.packetevents.event.PacketSendEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerActionBar
@@ -15,6 +12,10 @@ import com.typewritermc.engine.paper.plugin
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerPacketEvent
+import net.minestom.server.event.player.PlayerPacketOutEvent
+import net.minestom.server.network.packet.server.play.ActionBarPacket
+import net.minestom.server.network.packet.server.play.SystemChatPacket
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -23,29 +24,26 @@ import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class ActionBarBlockerHandler :
-    PacketListenerAbstract(PacketListenerPriority.HIGH), Listener {
+class ActionBarBlockerHandler : Listener {
     fun initialize() {
-        PacketEvents.getAPI().eventManager.registerListener(this)
         server.pluginManager.registerSuspendingEvents(this, plugin)
     }
 
     private val blockers = mutableMapOf<UUID, ActionBarBlocker>()
 
-    override fun onPacketSend(event: PacketSendEvent?) {
-        if (event == null) return
-        val blocker = blockers[event.user.uuid] ?: return
+    @EventHandler
+    fun onPacketSend(event: PlayerPacketOutEvent) {
+        val blocker = blockers[event.player.uuid] ?: return
+        val packet = event.packet
 
-        val component = when (event.packetType) {
-            Play.Server.SYSTEM_CHAT_MESSAGE -> {
-                val packet = WrapperPlayServerSystemChatMessage(event)
-                if (!packet.isOverlay) return
+        val component = when (packet) {
+            is SystemChatPacket -> {
+                if (!packet.overlay) return
                 packet.message
             }
 
-            Play.Server.ACTION_BAR -> {
-                val packet = WrapperPlayServerActionBar(event)
-                packet.actionBarText ?: return
+            is ActionBarPacket -> {
+                packet.text
             }
 
             else -> return
@@ -75,7 +73,6 @@ class ActionBarBlockerHandler :
     }
 
     fun shutdown() {
-        PacketEvents.getAPI().eventManager.unregisterListener(this)
     }
 }
 

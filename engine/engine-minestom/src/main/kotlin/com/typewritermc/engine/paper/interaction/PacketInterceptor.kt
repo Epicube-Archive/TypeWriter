@@ -8,31 +8,36 @@ import com.github.retrooper.packetevents.event.ProtocolPacketEvent
 import com.github.retrooper.packetevents.protocol.packettype.ClientBoundPacket
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon
 import com.github.retrooper.packetevents.protocol.packettype.ServerBoundPacket
+import com.typewritermc.engine.paper.adapt.event.EventHandler
+import com.typewritermc.engine.paper.adapt.event.Listener
+import lirand.api.extensions.server.server
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerPacketEvent
+import net.minestom.server.event.player.PlayerPacketOutEvent
 import org.bukkit.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class PacketInterceptor : PacketListenerAbstract() {
+// TODO: this class needs lots of changes
+class PacketInterceptor : Listener {
     private val blockers = ConcurrentHashMap<UUID, PlayerPacketInterceptor>()
 
     fun initialize() {
-        PacketEvents.getAPI().eventManager.registerListener(this)
+        server.registerEvents(this)
     }
 
-    override fun onPacketReceive(event: PacketReceiveEvent?) {
-        if (event == null) return
-        val player = event.getPlayer<Player>()
-        if (player !is Player) return
-        val interceptor = blockers[player.uniqueId] ?: return
+    @EventHandler
+    fun onPacketReceive(event: PlayerPacketEvent) {
+        val player = event.player
+        val interceptor = blockers[player.uuid] ?: return
         interceptor.trigger(event)
     }
 
-    override fun onPacketSend(event: PacketSendEvent?) {
-        if (event == null) return
-        val player = event.getPlayer<Player>()
-        if (player !is Player) return
-        val interceptor = blockers[player.uniqueId] ?: return
+    @EventHandler
+    fun onPacketSend(event: PlayerPacketOutEvent) {
+        val player = event.player
+        val interceptor = blockers[player.uuid] ?: return
         interceptor.trigger(event)
     }
 
