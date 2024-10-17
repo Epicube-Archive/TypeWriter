@@ -3,16 +3,16 @@ package com.typewritermc.basic.entries.quest
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.*
-import com.typewritermc.engine.paper.entry.entries.EventEntry
-import com.typewritermc.engine.paper.entry.entries.QuestEntry
-import com.typewritermc.engine.paper.entry.quest.QuestStatus
-import com.typewritermc.engine.paper.events.AsyncQuestStatusUpdate
+import com.typewritermc.engine.minestom.entry.*
+import com.typewritermc.engine.minestom.entry.entries.EventEntry
+import com.typewritermc.engine.minestom.entry.entries.QuestEntry
+import com.typewritermc.engine.minestom.entry.quest.QuestStatus
+import com.typewritermc.engine.minestom.events.AsyncQuestStatusUpdate
 
 @Entry("quest_start_event", "Triggered when a quest is started for a player", Colors.YELLOW, "mdi:notebook-plus")
 /**

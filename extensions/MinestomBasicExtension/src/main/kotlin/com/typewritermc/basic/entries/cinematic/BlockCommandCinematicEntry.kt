@@ -8,14 +8,14 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Regex
 import com.typewritermc.core.extension.annotations.Segments
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.cinematic.SimpleCinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicEntry
-import com.typewritermc.engine.paper.entry.entries.Segment
-import com.typewritermc.engine.paper.interaction.InterceptionBundle
-import com.typewritermc.engine.paper.interaction.interceptPackets
-import com.typewritermc.engine.paper.utils.ThreadType
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
+import com.typewritermc.engine.minestom.entry.entries.Segment
+import com.typewritermc.engine.minestom.interaction.InterceptionBundle
+import com.typewritermc.engine.minestom.interaction.interceptPackets
+import com.typewritermc.engine.minestom.utils.ThreadType
 import org.bukkit.entity.Player
 
 @Entry("block_command_cinematic", "Block commands during the cinematic", Colors.RED, "mdi:console")

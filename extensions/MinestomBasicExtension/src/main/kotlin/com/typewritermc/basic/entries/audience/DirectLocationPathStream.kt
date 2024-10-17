@@ -5,11 +5,11 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.utils.point.Position
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
-import com.typewritermc.engine.paper.entry.roadnetwork.gps.PathStreamDisplay
-import com.typewritermc.engine.paper.utils.toBukkitLocation
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
+import com.typewritermc.engine.minestom.entry.roadnetwork.gps.PathStreamDisplay
+import com.typewritermc.engine.minestom.utils.toBukkitLocation
 
 @Entry(
     "direct_location_path_stream",

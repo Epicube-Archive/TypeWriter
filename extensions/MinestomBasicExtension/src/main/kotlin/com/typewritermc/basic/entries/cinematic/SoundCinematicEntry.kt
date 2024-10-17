@@ -1,14 +1,14 @@
 package com.typewritermc.basic.entries.cinematic
 
 import com.typewritermc.core.books.pages.Colors
-import com.typewritermc.engine.paper.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
-import com.typewritermc.engine.paper.entry.cinematic.SimpleCinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicEntry
-import com.typewritermc.engine.paper.entry.entries.Segment
-import com.typewritermc.engine.paper.utils.*
+import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
+import com.typewritermc.engine.minestom.entry.entries.Segment
+import com.typewritermc.engine.minestom.utils.*
 import org.bukkit.entity.Player
 
 @Entry("sound_cinematic", "Play a sound during a cinematic", Colors.YELLOW, "fa6-solid:music")

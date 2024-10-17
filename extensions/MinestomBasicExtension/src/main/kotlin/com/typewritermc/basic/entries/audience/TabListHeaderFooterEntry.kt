@@ -7,10 +7,10 @@ import com.typewritermc.core.entries.priority
 import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.*
-import com.typewritermc.engine.paper.entry.entries.*
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.asMini
+import com.typewritermc.engine.minestom.entry.*
+import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import java.util.*

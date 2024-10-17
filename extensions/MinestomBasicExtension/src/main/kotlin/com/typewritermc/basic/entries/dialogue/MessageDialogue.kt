@@ -5,11 +5,11 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.MultiLine
 import com.typewritermc.core.extension.annotations.Placeholder
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.entry.entries.SpeakerEntry
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.entry.entries.SpeakerEntry
 
 @Entry("message", "Display a single message to the player", "#1c4da3", "ic:baseline-comment-bank")
 /**

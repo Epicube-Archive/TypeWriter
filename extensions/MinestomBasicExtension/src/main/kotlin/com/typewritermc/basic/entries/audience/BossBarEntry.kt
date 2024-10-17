@@ -5,11 +5,11 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Placeholder
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.TickableDisplay
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.asMini
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.TickableDisplay
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.bossbar.BossBar
 import org.bukkit.entity.Player
 import java.util.*

@@ -3,9 +3,9 @@ package com.typewritermc.basic.entries.quest
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.entries.*
+import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.core.entries.ref
-import com.typewritermc.engine.paper.events.AsyncTrackedQuestUpdate
+import com.typewritermc.engine.minestom.events.AsyncTrackedQuestUpdate
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 

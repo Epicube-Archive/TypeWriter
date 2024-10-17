@@ -4,8 +4,8 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.PersistableFactEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.PersistableFactEntry
 
 @Entry("permanent_fact", "Saved permanently, it never gets removed", Colors.PURPLE, "fa6-solid:database")
 /**

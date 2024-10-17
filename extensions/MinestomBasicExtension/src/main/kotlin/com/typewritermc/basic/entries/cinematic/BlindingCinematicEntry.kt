@@ -5,14 +5,14 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCl
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.cinematic.SimpleCinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicAction
-import com.typewritermc.engine.paper.entry.entries.EmptyCinematicAction
-import com.typewritermc.engine.paper.entry.entries.PrimaryCinematicEntry
-import com.typewritermc.engine.paper.entry.entries.Segment
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
-import com.typewritermc.engine.paper.utils.isFloodgate
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicAction
+import com.typewritermc.engine.minestom.entry.entries.EmptyCinematicAction
+import com.typewritermc.engine.minestom.entry.entries.PrimaryCinematicEntry
+import com.typewritermc.engine.minestom.entry.entries.Segment
+import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
+import com.typewritermc.engine.minestom.utils.isFloodgate
 import org.bukkit.entity.Player
 
 @Entry("blinding_cinematic", "Blind the player so the screen looks black", Colors.CYAN, "heroicons-solid:eye-off")

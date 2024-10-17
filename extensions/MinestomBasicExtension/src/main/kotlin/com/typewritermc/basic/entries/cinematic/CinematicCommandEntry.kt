@@ -2,13 +2,13 @@ package com.typewritermc.basic.entries.cinematic
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.*
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.cinematic.SimpleCinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicAction
-import com.typewritermc.engine.paper.entry.entries.CinematicEntry
-import com.typewritermc.engine.paper.entry.entries.Segment
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.ThreadType.SYNC
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicAction
+import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
+import com.typewritermc.engine.minestom.entry.entries.Segment
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
 import org.bukkit.entity.Player
 
 interface CinematicCommandEntry : CinematicEntry {

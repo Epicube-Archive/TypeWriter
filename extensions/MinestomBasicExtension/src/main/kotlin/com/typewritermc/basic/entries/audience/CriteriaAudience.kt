@@ -2,12 +2,12 @@ package com.typewritermc.basic.entries.audience
 
 import lirand.api.extensions.server.server
 import com.typewritermc.core.books.pages.Colors
-import com.typewritermc.engine.paper.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.*
-import com.typewritermc.engine.paper.entry.entries.*
+import com.typewritermc.engine.minestom.entry.*
+import com.typewritermc.engine.minestom.entry.entries.*
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

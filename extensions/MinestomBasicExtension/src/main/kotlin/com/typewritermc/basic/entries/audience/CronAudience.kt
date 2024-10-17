@@ -4,12 +4,12 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.AudienceFilter
-import com.typewritermc.engine.paper.entry.entries.AudienceFilterEntry
-import com.typewritermc.engine.paper.entry.entries.TickableDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.AudienceFilter
+import com.typewritermc.engine.minestom.entry.entries.AudienceFilterEntry
+import com.typewritermc.engine.minestom.entry.entries.TickableDisplay
 import com.typewritermc.core.entries.ref
-import com.typewritermc.engine.paper.utils.CronExpression
+import com.typewritermc.engine.minestom.utils.CronExpression
 import org.bukkit.entity.Player
 import java.time.LocalDateTime
 

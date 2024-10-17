@@ -4,12 +4,12 @@ import com.google.common.io.ByteStreams
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.ActionEntry
-import com.typewritermc.engine.paper.plugin
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.ActionEntry
+import com.typewritermc.engine.minestom.plugin
 import org.bukkit.entity.Player
 
 @Entry("switch_server_action", "Switches the player to another server", Colors.RED, "fluent:server-link-16-filled")

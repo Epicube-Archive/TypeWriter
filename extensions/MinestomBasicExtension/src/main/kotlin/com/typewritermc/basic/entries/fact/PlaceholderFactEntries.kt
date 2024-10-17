@@ -7,12 +7,12 @@ import com.typewritermc.core.extension.annotations.Placeholder
 import com.typewritermc.core.extension.annotations.Regex
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.isPlaceholder
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.facts.FactData
-import com.typewritermc.engine.paper.logger
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.isPlaceholder
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.facts.FactData
+import com.typewritermc.engine.minestom.logger
 import org.bukkit.entity.Player
 
 @Entry("number_placeholder", "Computed Fact for a placeholder number", Colors.PURPLE, "ph:placeholder-fill")

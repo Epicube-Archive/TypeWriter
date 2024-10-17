@@ -6,11 +6,11 @@ import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.MultiLine
 import com.typewritermc.core.extension.annotations.Placeholder
-import com.typewritermc.engine.paper.entry.entries.LinesEntry
-import com.typewritermc.engine.paper.entry.entries.trackedShowingObjectives
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.asMini
-import com.typewritermc.engine.paper.utils.asMiniWithResolvers
+import com.typewritermc.engine.minestom.entry.entries.LinesEntry
+import com.typewritermc.engine.minestom.entry.entries.trackedShowingObjectives
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.asMini
+import com.typewritermc.engine.minestom.utils.asMiniWithResolvers
 import org.bukkit.entity.Player
 import java.util.*
 

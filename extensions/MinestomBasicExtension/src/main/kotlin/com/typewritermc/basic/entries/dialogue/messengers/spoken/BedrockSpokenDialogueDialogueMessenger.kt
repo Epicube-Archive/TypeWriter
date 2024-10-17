@@ -3,13 +3,13 @@ package com.typewritermc.basic.entries.dialogue.messengers.spoken
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
 import com.typewritermc.basic.entries.dialogue.SpokenDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.dialogue.DialogueMessenger
-import com.typewritermc.engine.paper.entry.dialogue.MessengerFilter
-import com.typewritermc.engine.paper.entry.dialogue.MessengerState
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.isFloodgate
-import com.typewritermc.engine.paper.utils.legacy
+import com.typewritermc.engine.minestom.entry.dialogue.DialogueMessenger
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.isFloodgate
+import com.typewritermc.engine.minestom.utils.legacy
 import org.bukkit.entity.Player
 
 @Messenger(SpokenDialogueEntry::class, priority = 5)

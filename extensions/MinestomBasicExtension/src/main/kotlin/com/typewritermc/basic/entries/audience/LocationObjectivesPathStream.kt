@@ -5,12 +5,12 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.basic.entries.quest.LocationObjectiveEntry
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
-import com.typewritermc.engine.paper.entry.entries.trackedShowingObjectives
-import com.typewritermc.engine.paper.entry.roadnetwork.gps.MultiPathStreamDisplay
-import com.typewritermc.engine.paper.utils.toBukkitLocation
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
+import com.typewritermc.engine.minestom.entry.entries.trackedShowingObjectives
+import com.typewritermc.engine.minestom.entry.roadnetwork.gps.MultiPathStreamDisplay
+import com.typewritermc.engine.minestom.utils.toBukkitLocation
 
 @Entry(
     "location_objectives_path_stream",

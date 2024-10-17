@@ -4,12 +4,12 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.QuestEntry
-import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
-import com.typewritermc.engine.paper.entry.matches
-import com.typewritermc.engine.paper.entry.quest.QuestStatus
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.QuestEntry
+import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
+import com.typewritermc.engine.minestom.entry.matches
+import com.typewritermc.engine.minestom.entry.quest.QuestStatus
 import org.bukkit.entity.Player
 
 @Entry("quest", "A quest definition", Colors.MEDIUM_PURPLE, "material-symbols:book-2")

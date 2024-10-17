@@ -6,12 +6,12 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.CustomTriggeringActionEntry
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.GroupId
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupId
 import org.bukkit.entity.Player
 import java.util.*
 

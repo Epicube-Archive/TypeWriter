@@ -5,9 +5,9 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.CustomCommandEntry
-import com.typewritermc.engine.paper.entry.triggerAllFor
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.CustomCommandEntry
+import com.typewritermc.engine.minestom.entry.triggerAllFor
 
 @Entry("on_run_command", "When a player runs a custom command", Colors.YELLOW, "mingcute:terminal-fill")
 /**

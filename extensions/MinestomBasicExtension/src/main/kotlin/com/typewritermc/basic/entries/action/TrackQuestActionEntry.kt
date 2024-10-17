@@ -3,12 +3,12 @@ package com.typewritermc.basic.entries.action
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.entries.*
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.ActionEntry
-import com.typewritermc.engine.paper.entry.entries.QuestEntry
-import com.typewritermc.engine.paper.entry.quest.trackQuest
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.ActionEntry
+import com.typewritermc.engine.minestom.entry.entries.QuestEntry
+import com.typewritermc.engine.minestom.entry.quest.trackQuest
 import org.bukkit.entity.Player
 
 @Entry("track_quest", "Start tracking a quest for a player", Colors.RED, "material-symbols:bookmark")

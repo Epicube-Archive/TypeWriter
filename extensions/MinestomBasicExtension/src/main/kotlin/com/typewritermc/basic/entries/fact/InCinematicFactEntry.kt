@@ -7,11 +7,11 @@ import com.typewritermc.core.books.pages.PageType
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Page
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.cinematic.isPlayingCinematic
+import com.typewritermc.engine.minestom.entry.cinematic.isPlayingCinematic
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
-import com.typewritermc.engine.paper.facts.FactData
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
+import com.typewritermc.engine.minestom.facts.FactData
 import org.bukkit.entity.Player
 
 @Entry("in_cinematic_fact", "If the player is in a cinematic", Colors.PURPLE, "eos-icons:storage-class")

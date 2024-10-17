@@ -4,11 +4,11 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.triggerFor
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.triggerFor
 import org.bukkit.entity.Player
 
 @Entry(

@@ -2,12 +2,12 @@ package com.typewritermc.basic.entries.quest
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.ObjectiveEntry
-import com.typewritermc.engine.paper.entry.entries.QuestEntry
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.ObjectiveEntry
+import com.typewritermc.engine.minestom.entry.entries.QuestEntry
 import java.util.*
 
 @Entry("objective", "An objective definition", Colors.BLUE_VIOLET, "streamline:target-solid")

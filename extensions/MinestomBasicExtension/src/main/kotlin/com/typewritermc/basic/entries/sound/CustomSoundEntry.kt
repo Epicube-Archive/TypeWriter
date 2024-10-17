@@ -2,7 +2,7 @@ package com.typewritermc.basic.entries.sound
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.entries.SoundIdEntry
+import com.typewritermc.engine.minestom.entry.entries.SoundIdEntry
 
 @Entry("custom_sound", "A custom sound", Colors.ORANGE, "lets-icons:sound-fill")
 /**

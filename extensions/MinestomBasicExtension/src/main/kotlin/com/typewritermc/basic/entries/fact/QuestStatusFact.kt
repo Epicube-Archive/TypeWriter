@@ -4,13 +4,13 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.QuestEntry
-import com.typewritermc.engine.paper.entry.entries.ReadableFactEntry
-import com.typewritermc.engine.paper.entry.quest.isQuestActive
-import com.typewritermc.engine.paper.entry.quest.isQuestCompleted
-import com.typewritermc.engine.paper.entry.quest.isQuestTracked
-import com.typewritermc.engine.paper.facts.FactData
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.QuestEntry
+import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
+import com.typewritermc.engine.minestom.entry.quest.isQuestActive
+import com.typewritermc.engine.minestom.entry.quest.isQuestCompleted
+import com.typewritermc.engine.minestom.entry.quest.isQuestTracked
+import com.typewritermc.engine.minestom.facts.FactData
 import org.bukkit.entity.Player
 
 @Entry(

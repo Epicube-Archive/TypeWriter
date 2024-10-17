@@ -5,12 +5,12 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.ExpirableFactEntry
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.PersistableFactEntry
-import com.typewritermc.engine.paper.facts.FactData
-import com.typewritermc.engine.paper.facts.FactId
-import com.typewritermc.engine.paper.utils.CronExpression
+import com.typewritermc.engine.minestom.entry.entries.ExpirableFactEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.PersistableFactEntry
+import com.typewritermc.engine.minestom.facts.FactData
+import com.typewritermc.engine.minestom.facts.FactId
+import com.typewritermc.engine.minestom.utils.CronExpression
 import java.time.LocalDateTime
 
 @Entry("cron_fact", "Saved until a specified date, like (0 0 * * 1)", Colors.PURPLE, "mingcute:calendar-time-add-fill")

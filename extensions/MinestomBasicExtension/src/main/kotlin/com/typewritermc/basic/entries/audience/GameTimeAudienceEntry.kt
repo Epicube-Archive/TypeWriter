@@ -4,9 +4,9 @@ import lirand.api.extensions.server.server
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.entries.*
+import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.core.entries.ref
-import com.typewritermc.engine.paper.logger
+import com.typewritermc.engine.minestom.logger
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerChangedWorldEvent

@@ -5,9 +5,9 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Segments
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.entries.*
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
 import org.bukkit.entity.Player
 import kotlin.random.Random
 

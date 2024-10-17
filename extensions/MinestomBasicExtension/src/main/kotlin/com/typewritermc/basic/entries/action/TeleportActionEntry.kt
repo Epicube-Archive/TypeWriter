@@ -5,13 +5,13 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.WithRotation
 import com.typewritermc.core.utils.point.Position
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.CustomTriggeringActionEntry
-import com.typewritermc.engine.paper.utils.ThreadType.SYNC
-import com.typewritermc.engine.paper.utils.toBukkitLocation
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
+import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
+import com.typewritermc.engine.minestom.utils.toBukkitLocation
 import org.bukkit.entity.Player
 
 @Entry("teleport", "Teleport a player", Colors.RED, "teenyicons:google-streetview-solid")

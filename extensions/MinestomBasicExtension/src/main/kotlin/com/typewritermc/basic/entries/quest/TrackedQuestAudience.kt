@@ -5,10 +5,10 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.*
-import com.typewritermc.engine.paper.entry.quest.isQuestTracked
+import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.entry.quest.isQuestTracked
 import com.typewritermc.core.entries.ref
-import com.typewritermc.engine.paper.events.AsyncTrackedQuestUpdate
+import com.typewritermc.engine.minestom.events.AsyncTrackedQuestUpdate
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 

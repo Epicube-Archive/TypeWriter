@@ -3,10 +3,10 @@ package com.typewritermc.basic.entries.dialogue.messengers.random
 import com.typewritermc.basic.entries.dialogue.RandomSpokenDialogueEntry
 import com.typewritermc.basic.entries.dialogue.messengers.spoken.sendSpokenDialogue
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.dialogue.*
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.stripped
+import com.typewritermc.engine.minestom.entry.dialogue.*
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.stripped
 import org.bukkit.entity.Player
 import java.time.Duration
 

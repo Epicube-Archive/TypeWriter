@@ -2,12 +2,12 @@ package com.typewritermc.basic.entries.dialogue.messengers.spoken
 
 import com.typewritermc.basic.entries.dialogue.SpokenDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.dialogue.*
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.interaction.chatHistory
-import com.typewritermc.engine.paper.snippets.snippet
-import com.typewritermc.engine.paper.utils.*
+import com.typewritermc.engine.minestom.entry.dialogue.*
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.interaction.chatHistory
+import com.typewritermc.engine.minestom.snippets.snippet
+import com.typewritermc.engine.minestom.utils.*
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player
 import java.time.Duration

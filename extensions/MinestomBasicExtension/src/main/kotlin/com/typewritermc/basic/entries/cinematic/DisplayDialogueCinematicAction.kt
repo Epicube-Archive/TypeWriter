@@ -4,15 +4,15 @@ import com.typewritermc.core.extension.annotations.Colored
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.MultiLine
 import com.typewritermc.core.extension.annotations.Placeholder
-import com.typewritermc.engine.paper.entry.dialogue.playSpeakerSound
-import com.typewritermc.engine.paper.entry.entries.*
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.GenericPlayerStateProvider.EXP
-import com.typewritermc.engine.paper.utils.GenericPlayerStateProvider.LEVEL
-import com.typewritermc.engine.paper.utils.PlayerState
-import com.typewritermc.engine.paper.utils.ThreadType.SYNC
-import com.typewritermc.engine.paper.utils.restore
-import com.typewritermc.engine.paper.utils.state
+import com.typewritermc.engine.minestom.entry.dialogue.playSpeakerSound
+import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.GenericPlayerStateProvider.EXP
+import com.typewritermc.engine.minestom.utils.GenericPlayerStateProvider.LEVEL
+import com.typewritermc.engine.minestom.utils.PlayerState
+import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
+import com.typewritermc.engine.minestom.utils.restore
+import com.typewritermc.engine.minestom.utils.state
 import org.bukkit.entity.Player
 
 data class SingleLineDisplayDialogueSegment(

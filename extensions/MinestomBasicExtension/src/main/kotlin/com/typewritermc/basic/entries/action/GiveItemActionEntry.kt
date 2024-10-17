@@ -1,14 +1,14 @@
 package com.typewritermc.basic.entries.action
 
 import com.typewritermc.core.books.pages.Colors
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.entries.ActionEntry
-import com.typewritermc.engine.paper.utils.item.Item
-import com.typewritermc.engine.paper.utils.ThreadType.SYNC
+import com.typewritermc.engine.minestom.entry.entries.ActionEntry
+import com.typewritermc.engine.minestom.utils.item.Item
+import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
 import org.bukkit.entity.Player
 
 @Entry("give_item", "Give an item to the player", Colors.RED, "streamline:give-gift-solid")

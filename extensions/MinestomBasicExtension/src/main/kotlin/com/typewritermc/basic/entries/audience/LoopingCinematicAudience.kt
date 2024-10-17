@@ -5,10 +5,10 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.books.pages.PageType
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.extension.annotations.Page
-import com.typewritermc.engine.paper.entry.entries.*
-import com.typewritermc.engine.paper.entry.matches
-import com.typewritermc.engine.paper.logger
-import com.typewritermc.engine.paper.utils.ThreadType
+import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.entry.matches
+import com.typewritermc.engine.minestom.logger
+import com.typewritermc.engine.minestom.utils.ThreadType
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

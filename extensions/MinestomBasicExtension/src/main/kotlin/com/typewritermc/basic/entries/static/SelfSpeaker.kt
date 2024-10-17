@@ -2,10 +2,10 @@ package com.typewritermc.basic.entries.static
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.entries.SoundEmitter
-import com.typewritermc.engine.paper.entry.entries.SoundSourceEntry
-import com.typewritermc.engine.paper.entry.entries.SpeakerEntry
-import com.typewritermc.engine.paper.utils.Sound
+import com.typewritermc.engine.minestom.entry.entries.SoundEmitter
+import com.typewritermc.engine.minestom.entry.entries.SoundSourceEntry
+import com.typewritermc.engine.minestom.entry.entries.SpeakerEntry
+import com.typewritermc.engine.minestom.utils.Sound
 import org.bukkit.entity.Player
 import java.util.*
 

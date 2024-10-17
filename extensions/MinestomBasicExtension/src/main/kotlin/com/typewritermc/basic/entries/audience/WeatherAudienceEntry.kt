@@ -2,8 +2,8 @@ package com.typewritermc.basic.entries.audience
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import org.bukkit.WeatherType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

@@ -5,12 +5,12 @@ import kotlinx.coroutines.delay
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.CustomTriggeringActionEntry
-import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
+import com.typewritermc.engine.minestom.utils.ThreadType.DISPATCHERS_ASYNC
 import org.bukkit.entity.Player
 import java.time.Duration
 

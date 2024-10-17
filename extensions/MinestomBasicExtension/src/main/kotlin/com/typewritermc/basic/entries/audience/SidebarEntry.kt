@@ -3,8 +3,8 @@ package com.typewritermc.basic.entries.audience
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.SidebarEntry
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.SidebarEntry
 import java.util.*
 
 @Entry("sidebar", "Display a sidebar for players", Colors.DARK_ORANGE, "mdi:page-layout-sidebar-right")

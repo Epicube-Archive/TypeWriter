@@ -5,12 +5,12 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Negative
 import com.typewritermc.core.utils.point.Position
-import com.typewritermc.engine.paper.entry.Criteria
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.entries.ActionEntry
-import com.typewritermc.engine.paper.utils.toBukkitLocation
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.entries.ActionEntry
+import com.typewritermc.engine.minestom.utils.toBukkitLocation
 import org.bukkit.Particle
 import org.bukkit.entity.Player
 import java.util.*

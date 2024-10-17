@@ -1,19 +1,19 @@
 package com.typewritermc.basic.entries.dialogue.messengers.option
 
-import com.typewritermc.engine.paper.entry.Modifier
+import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.basic.entries.dialogue.Option
 import com.typewritermc.basic.entries.dialogue.OptionDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.TriggerableEntry
-import com.typewritermc.engine.paper.entry.dialogue.DialogueMessenger
-import com.typewritermc.engine.paper.entry.dialogue.MessengerFilter
-import com.typewritermc.engine.paper.entry.dialogue.MessengerState
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.entry.matches
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.utils.isFloodgate
-import com.typewritermc.engine.paper.utils.legacy
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.dialogue.DialogueMessenger
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.entry.matches
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.utils.isFloodgate
+import com.typewritermc.engine.minestom.utils.legacy
 import org.bukkit.entity.Player
 
 @Messenger(OptionDialogueEntry::class, priority = 5)

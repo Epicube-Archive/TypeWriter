@@ -4,11 +4,11 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.AudienceDisplay
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
-import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
-import com.typewritermc.engine.paper.entry.roadnetwork.gps.PathStreamDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
+import com.typewritermc.engine.minestom.entry.roadnetwork.gps.PathStreamDisplay
 
 @Entry(
     "closest_group_member_path_stream",

@@ -5,12 +5,12 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.paper.entry.entries.AudienceEntry
-import com.typewritermc.engine.paper.entry.entries.AudienceFilter
-import com.typewritermc.engine.paper.entry.entries.AudienceFilterEntry
-import com.typewritermc.engine.paper.entry.entries.Invertible
+import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
+import com.typewritermc.engine.minestom.entry.entries.AudienceFilter
+import com.typewritermc.engine.minestom.entry.entries.AudienceFilterEntry
+import com.typewritermc.engine.minestom.entry.entries.Invertible
 import com.typewritermc.core.entries.ref
-import com.typewritermc.engine.paper.utils.item.Item
+import com.typewritermc.engine.minestom.utils.item.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.*

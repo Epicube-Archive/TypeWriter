@@ -5,11 +5,11 @@ import com.google.gson.reflect.TypeToken
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.ContentEditor
-import com.typewritermc.engine.paper.entry.entries.RoadNetwork
-import com.typewritermc.engine.paper.entry.entries.RoadNetworkEntry
-import com.typewritermc.engine.paper.entry.entries.data
-import com.typewritermc.engine.paper.entry.entries.hasData
-import com.typewritermc.engine.paper.entry.roadnetwork.content.RoadNetworkContentMode
+import com.typewritermc.engine.minestom.entry.entries.RoadNetwork
+import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
+import com.typewritermc.engine.minestom.entry.entries.data
+import com.typewritermc.engine.minestom.entry.entries.hasData
+import com.typewritermc.engine.minestom.entry.roadnetwork.content.RoadNetworkContentMode
 
 @Entry("base_road_network", "A definition of the words road network", Colors.YELLOW, "material-symbols:map")
 /**

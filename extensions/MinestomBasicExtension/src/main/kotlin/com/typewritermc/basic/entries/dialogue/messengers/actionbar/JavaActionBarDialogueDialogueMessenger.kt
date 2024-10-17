@@ -2,14 +2,14 @@ package com.typewritermc.basic.entries.dialogue.messengers.actionbar
 
 import com.typewritermc.basic.entries.dialogue.ActionBarDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.dialogue.*
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.interaction.acceptActionBarMessage
-import com.typewritermc.engine.paper.interaction.startBlockingActionBar
-import com.typewritermc.engine.paper.interaction.stopBlockingActionBar
-import com.typewritermc.engine.paper.snippets.snippet
-import com.typewritermc.engine.paper.utils.*
+import com.typewritermc.engine.minestom.entry.dialogue.*
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.interaction.acceptActionBarMessage
+import com.typewritermc.engine.minestom.interaction.startBlockingActionBar
+import com.typewritermc.engine.minestom.interaction.stopBlockingActionBar
+import com.typewritermc.engine.minestom.snippets.snippet
+import com.typewritermc.engine.minestom.utils.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

@@ -5,12 +5,12 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.extension.annotations.*
-import com.typewritermc.engine.paper.entry.TriggerableEntry
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.core.utils.point.Position
-import com.typewritermc.engine.paper.entry.*
-import com.typewritermc.engine.paper.entry.entries.EventEntry
-import com.typewritermc.engine.paper.utils.item.Item
-import com.typewritermc.engine.paper.utils.toPosition
+import com.typewritermc.engine.minestom.entry.*
+import com.typewritermc.engine.minestom.entry.entries.EventEntry
+import com.typewritermc.engine.minestom.utils.item.Item
+import com.typewritermc.engine.minestom.utils.toPosition
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import org.bukkit.Material

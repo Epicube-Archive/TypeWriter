@@ -4,8 +4,8 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.emptyRef
-import com.typewritermc.engine.paper.entry.entries.CachableFactEntry
-import com.typewritermc.engine.paper.entry.entries.GroupEntry
+import com.typewritermc.engine.minestom.entry.entries.CachableFactEntry
+import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 
 @Entry("session_fact", "Saved until a player logouts of the server", Colors.PURPLE, "fa6-solid:user-clock")
 /**

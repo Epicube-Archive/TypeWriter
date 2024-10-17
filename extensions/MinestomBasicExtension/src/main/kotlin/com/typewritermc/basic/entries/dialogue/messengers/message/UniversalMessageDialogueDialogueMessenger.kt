@@ -2,14 +2,14 @@ package com.typewritermc.basic.entries.dialogue.messengers.message
 
 import com.typewritermc.basic.entries.dialogue.MessageDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
-import com.typewritermc.engine.paper.entry.dialogue.DialogueMessenger
-import com.typewritermc.engine.paper.entry.dialogue.MessengerFilter
-import com.typewritermc.engine.paper.entry.dialogue.MessengerState
-import com.typewritermc.engine.paper.entry.dialogue.TickContext
-import com.typewritermc.engine.paper.entry.entries.DialogueEntry
-import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
-import com.typewritermc.engine.paper.snippets.snippet
-import com.typewritermc.engine.paper.utils.sendMiniWithResolvers
+import com.typewritermc.engine.minestom.entry.dialogue.DialogueMessenger
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
+import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
+import com.typewritermc.engine.minestom.entry.dialogue.TickContext
+import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
+import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
+import com.typewritermc.engine.minestom.snippets.snippet
+import com.typewritermc.engine.minestom.utils.sendMiniWithResolvers
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player
 import java.time.Duration

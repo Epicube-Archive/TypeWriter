@@ -2,9 +2,9 @@ package com.typewritermc.basic.entries.static
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
-import com.typewritermc.engine.paper.entry.StaticEntry
-import com.typewritermc.engine.paper.entry.entries.SpeakerEntry
-import com.typewritermc.engine.paper.utils.Sound
+import com.typewritermc.engine.minestom.entry.StaticEntry
+import com.typewritermc.engine.minestom.entry.entries.SpeakerEntry
+import com.typewritermc.engine.minestom.utils.Sound
 
 @Entry("simple_speaker", "The most basic speaker", Colors.ORANGE, "bi:person-fill")
 /**
