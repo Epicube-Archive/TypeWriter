@@ -1,12 +1,14 @@
 package com.typewritermc.engine.paper.utils
 
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
-import com.typewritermc.engine.paper.plugin
+import lirand.api.extensions.server.onlinePlayers
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
+import net.minestom.server.network.packet.server.play.SetSlotPacket
+import net.minestom.server.potion.Potion
+import net.minestom.server.potion.PotionEffect
 
 interface PlayerStateProvider {
     fun store(player: Player): Any
@@ -32,20 +34,20 @@ enum class GenericPlayerStateProvider(private val store: Player.() -> Any, priva
 
     // All Players that are visible to the player
     VISIBLE_PLAYERS({
-        server.onlinePlayers.filter { it != this && canSee(it) }.map { it.uniqueId.toString() }.toList()
+        onlinePlayers.filter { it != this && isViewer(it) }.map { it.uuid.toString() }.toList()
     }, { data ->
         val visible = data as List<*>
-        server.onlinePlayers.filter { it != this && it.uniqueId.toString() in visible }
-            .forEach { showPlayer(plugin, it) }
+        onlinePlayers.filter { it != this && it.uuid.toString() in visible }
+            .forEach { addViewer(it) }
     }),
 
     // All Players that can see the player
     SHOWING_PLAYER({
-        server.onlinePlayers.filter { it != this && it.canSee(this) }.map { it.uniqueId.toString() }.toList()
+        onlinePlayers.filter { it != this && it.isViewer(this) }.map { it.uuid.toString() }.toList()
     }, { data ->
         val showing = data as List<*>
-        server.onlinePlayers.filter { it != this && it.uniqueId.toString() in showing }
-            .forEach { it.showPlayer(plugin, this) }
+        onlinePlayers.filter { it != this && it.uuid.toString() in showing }
+            .forEach { it.addViewer(this) }
     })
     ;
 
@@ -54,18 +56,18 @@ enum class GenericPlayerStateProvider(private val store: Player.() -> Any, priva
 }
 
 data class EffectStateProvider(
-    private val effect: PotionEffectType,
+    private val effect: PotionEffect,
 ) : PlayerStateProvider {
     override fun store(player: Player): Any {
-        return player.getPotionEffect(effect) ?: return false
+        return player.getEffect(effect) ?: return false
     }
 
     override fun restore(player: Player, value: Any) {
-        if (value !is PotionEffect) {
-            player.removePotionEffect(effect)
+        if (value !is Potion) {
+            player.removeEffect(effect)
             return
         }
-        player.addPotionEffect(value)
+        player.addEffect(value)
     }
 }
 
@@ -120,8 +122,12 @@ fun Player.fakeClearInventory() {
         val item = inventory.getItemStack(i) ?: continue
         if (item.isAir) continue
 
-        val packet = WrapperPlayServerSetSlot(-2, 0, i, com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY)
-        packet.sendPacketTo(this)
+        sendPacket(SetSlotPacket(
+            -2,
+            0,
+            i.toShort(),
+            ItemStack.AIR
+        ))
     }
 }
 
@@ -130,7 +136,11 @@ fun Player.restoreInventory() {
         val item = inventory.getItemStack(i) ?: continue
         if (item.isAir) continue
 
-        val packet = WrapperPlayServerSetSlot(-2, 0, i, SpigotReflectionUtil.decodeBukkitItemStack(item))
-        packet.sendPacketTo(this)
+        sendPacket(SetSlotPacket(
+            -2,
+            0,
+            i.toShort(),
+            item
+        ))
     }
 }

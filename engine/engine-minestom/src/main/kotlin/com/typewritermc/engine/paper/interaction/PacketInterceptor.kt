@@ -1,20 +1,11 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.event.PacketListenerAbstract
-import com.github.retrooper.packetevents.event.PacketReceiveEvent
-import com.github.retrooper.packetevents.event.PacketSendEvent
-import com.github.retrooper.packetevents.event.ProtocolPacketEvent
-import com.github.retrooper.packetevents.protocol.packettype.ClientBoundPacket
-import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon
-import com.github.retrooper.packetevents.protocol.packettype.ServerBoundPacket
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerPacketEvent
 import net.minestom.server.event.player.PlayerPacketOutEvent
-import org.bukkit.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -66,7 +57,6 @@ class PacketInterceptor : Listener {
     }
 
     fun shutdown() {
-        PacketEvents.getAPI().eventManager.unregisterListener(this)
         blockers.clear()
     }
 }

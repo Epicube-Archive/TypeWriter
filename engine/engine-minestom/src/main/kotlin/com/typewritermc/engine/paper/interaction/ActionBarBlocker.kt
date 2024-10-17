@@ -1,9 +1,5 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.retrooper.packetevents.event.PacketSendEvent
-import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerActionBar
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
@@ -12,14 +8,9 @@ import com.typewritermc.engine.paper.plugin
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
-import net.minestom.server.event.player.PlayerPacketEvent
 import net.minestom.server.event.player.PlayerPacketOutEvent
 import net.minestom.server.network.packet.server.play.ActionBarPacket
 import net.minestom.server.network.packet.server.play.SystemChatPacket
-import org.bukkit.entity.Player
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerQuitEvent
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
