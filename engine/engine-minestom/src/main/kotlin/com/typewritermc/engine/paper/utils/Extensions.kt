@@ -20,6 +20,10 @@ import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
+import net.minestom.server.item.ItemComponent
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.component.EnchantmentList
+import net.minestom.server.item.enchant.Enchantment
 import net.minestom.server.network.packet.server.play.ParticlePacket
 import net.minestom.server.particle.Particle
 import java.io.File
@@ -199,20 +203,9 @@ val String.lineCount: Int
 val <T : Any> Optional<T>?.optional: Optional<T> get() = Optional.ofNullable(this?.orElse(null))
 val <T : Any> T?.optional: Optional<T> get() = Optional.ofNullable(this)
 
-var ItemMeta.loreString: String?
-    get() = lore()?.joinToString("\n") { it.asMini() }
-    set(value) {
-        lore(value?.split("\n")?.map { "<!i><white>$it".asMini() })
-    }
-
-var ItemMeta.name: String?
-    get() = if (hasDisplayName()) displayName()?.asMini() else null
-    set(value) = displayName(if (!value.isNullOrEmpty()) "<!i>$value".asMini() else Component.text(" "))
-
-fun ItemMeta.unClickable(): ItemMeta {
-    addEnchant(Enchantment.BINDING_CURSE, 1, true)
-    addItemFlags(ItemFlag.HIDE_ENCHANTS)
-    return this
+fun ItemStack.unClickable(): ItemStack {
+    return with(ItemComponent.ENCHANTMENTS, EnchantmentList(Enchantment.BINDING_CURSE, 1))
+        .with(ItemComponent.ENCHANTMENT_GLINT_OVERRIDE, false)
 }
 
 private val RANDOM_UUID =

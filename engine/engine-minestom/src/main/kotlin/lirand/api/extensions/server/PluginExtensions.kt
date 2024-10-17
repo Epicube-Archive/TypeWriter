@@ -8,13 +8,11 @@ import net.minestom.server.MinecraftServer
 fun Plugin.registerEvents(
 	vararg listeners: Listener
 ) = listeners.forEach {
-	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it)
+	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it, false)
 }
 
 fun Plugin.registerSuspendingEvents(
 	vararg listeners: Listener
 ) = listeners.forEach {
-	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it)
-	// TODO: suspending events ?
-	//server.pluginManager.registerSuspendingEvents(it, this)
+	EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it, true)
 }

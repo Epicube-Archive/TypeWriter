@@ -4,10 +4,7 @@ import com.extollit.gaming.ai.path.model.ColumnarOcclusionFieldList
 import com.extollit.gaming.ai.path.model.IColumnarSpace
 import com.extollit.gaming.ai.path.model.IInstanceSpace
 import com.typewritermc.core.utils.point.World
-import com.typewritermc.engine.paper.adapt.type
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.item.Material
-import net.minestom.server.item.Materials
 import net.minestom.server.snapshot.ChunkSnapshot
 
 

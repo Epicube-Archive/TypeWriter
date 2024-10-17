@@ -1,6 +1,5 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.plugin
@@ -32,7 +31,7 @@ private val spacing by snippet("chat.spacing", 3, "The amount of padding between
 class ChatHistoryHandler : Listener {
 
     fun initialize() {
-        server.pluginManager.registerSuspendingEvents(this, plugin)
+        server.registerSuspendingEvents(this)
     }
 
     private val histories = mutableMapOf<UUID, ChatHistory>()

@@ -247,7 +247,7 @@ class PointToPointGPS(
         asEnd: Boolean,
     ): List<RoadEdge> =
         coroutineScope {
-            val instance = PFInstanceSpace(node.location.world)
+            val instance = PFInstanceSpace(node.location.world!!)
             val intersectingNodes = nodes
                 .filter {
                     it != node && it.location.world == node.location.world && (it.location.distanceSqrt(node.location)

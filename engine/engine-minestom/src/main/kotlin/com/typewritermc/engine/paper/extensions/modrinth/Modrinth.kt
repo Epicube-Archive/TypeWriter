@@ -9,8 +9,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
 import lirand.api.extensions.events.SimpleListener
 import lirand.api.extensions.events.listen
-import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
+import lirand.api.extensions.server.onlinePlayers
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerSpawnEvent
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -26,7 +27,7 @@ object Modrinth {
     private val listener = SimpleListener()
 
     suspend fun initialize() {
-        plugin.listen<PlayerJoinEvent>(listener) {
+        plugin.listen<PlayerSpawnEvent>(listener) {
             if (!canSendNotification(it.player)) return@listen
             SYNC.launch {
                 delay(5.seconds)
@@ -54,7 +55,7 @@ object Modrinth {
 
         val latestVersion = findLatestVersion(versions) ?: return
 
-        if (latestVersion.versionNumber.v <= plugin.pluginMeta.version.v) return
+        if (latestVersion.versionNumber.v <= plugin.version.v) return
 
         newVersion = latestVersion
 
@@ -62,18 +63,18 @@ object Modrinth {
             """|
             |-----------------{ Typewriter Update }-----------------
             |    A new version of Typewriter is available!
-            |    Current version: ${plugin.pluginMeta.version}
+            |    Current version: ${plugin.version}
             |    New version:     ${latestVersion.versionNumber}
             |    Download it at:  ${latestVersion.url}
             |------------------------------------------------------
         """.trimMargin()
         )
 
-        plugin.server.onlinePlayers.forEach { notifyPlayer(it) }
+        onlinePlayers.forEach { notifyPlayer(it) }
     }
 
     private fun findLatestVersion(versions: List<ModrinthVersion>): ModrinthVersion? {
-        val currentIsDevelopment = plugin.pluginMeta.version.contains("dev")
+        val currentIsDevelopment = plugin.version.contains("dev")
 
         return versions
             .filter {
@@ -84,21 +85,21 @@ object Modrinth {
 
     private fun canSendNotification(player: Player): Boolean {
         if (newVersion == null) return false
-        if (player.uniqueId in notifiedPlayers) return false
+        if (player.uuid in notifiedPlayers) return false
         return player.hasPermission("typewriter.update")
     }
 
     private fun notifyPlayer(player: Player) {
         if (!canSendNotification(player)) return
         val newVersion = newVersion ?: return
-        notifiedPlayers.add(player.uniqueId)
+        notifiedPlayers.add(player.uuid)
 
         player.sendMessage(
             """
             |<st><gray>             </st><gray>{ <dark_gray><bold>Typewriter Update</bold><gray> }<st>             </st>
             |
             |    A new version of Typewriter is available!
-            |    <red>Current version: <reset>${plugin.pluginMeta.version}<reset>
+            |    <red>Current version: <reset>${plugin.version}<reset>
             |    <green>New version:       <reset>${newVersion.versionNumber}<reset>
             |    <blue>Download it:       <reset><bold><click:open_url:${newVersion.url}><hover:show_text:Click to open>[Here]<reset>
             |    

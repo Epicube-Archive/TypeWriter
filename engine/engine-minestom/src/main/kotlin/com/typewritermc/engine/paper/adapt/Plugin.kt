@@ -1,7 +1,7 @@
 package com.typewritermc.engine.paper.adapt
 
 interface Plugin {
-    val version: Any
+    val version: String
     var isEnabled: Boolean
 
     fun onLoad()

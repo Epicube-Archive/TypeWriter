@@ -351,12 +351,12 @@ class NodeRadiusComponent(
             ItemStack.of(Material.CALIBRATED_SCULK_SENSOR)
                 .withCustomName("<yellow><b>Selecting Radius".asMini())
                 .withLore("<line> <gray>Right click to set the radius of the node.".asMini())
-                //.unclickable() // TODO: what is this ?
+                .unClickable()
         } else {
             ItemStack.of(Material.SCULK_SENSOR)
                 .withCustomName("<yellow><b>Change Radius".asMini())
                 .withLore("<line> <gray>Current radius: <white>${nodeFetcher()?.radius}".asMini())
-                //.unclickable() // TODO: what is this ?
+                .unClickable()
         }
         return slot to (item onInteract {
             scrolling = if (scrolling == player.uuid) {
@@ -430,7 +430,7 @@ private class ModificationComponent(
                     |
                     |<line> <gray>If you only want to connect one way, hold <red>Shift</red> while clicking.
                     |""".trimMargin().asMini())
-            // TODO: meta.unClickable()
+            .unClickable()
             .onInteract {}
 
         val hasEdges = network.edges.any { it.start == node.id }
@@ -443,7 +443,7 @@ private class ModificationComponent(
                     |
                     |<line> <gray>If you only want to remove one way, hold <red>Shift</red> while clicking.
                 """.trimMargin().asMini())
-                // TODO: meta.unClickable()
+                .unClickable()
                 .onInteract {}
         }
 

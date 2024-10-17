@@ -181,7 +181,7 @@ private class PlayerPathStreamDisplay(
         }
 
         val entity = PFEmptyEntity(start, searchRange = roadNetworkMaxDistance.toFloat())
-        val instance = PFInstanceSpace(start.world)
+        val instance = PFInstanceSpace(start.world!!)
         val pathfinder = HydrazinePathFinder(entity, instance)
 
         val additionalRadius = pathfinder.subject().width().toDouble()

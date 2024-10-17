@@ -1,10 +1,10 @@
 package com.typewritermc.engine.paper.entry.dialogue
 
-import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import com.github.shynixn.mccoroutine.minestom.ticks
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.Reloadable
 import com.typewritermc.engine.paper.adapt.event.Listener
+import com.typewritermc.engine.paper.adapt.event.bukkit.PlayerToggleSneakEvent
 import com.typewritermc.engine.paper.entry.Modifier
 import com.typewritermc.engine.paper.entry.TriggerableEntry
 import com.typewritermc.engine.paper.entry.entries.DialogueEntry
@@ -19,12 +19,9 @@ import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerSwapItemEvent
+import net.minestom.server.event.trait.CancellableEvent
 import net.minestom.server.event.trait.PlayerEvent
-import org.bukkit.event.Cancellable
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
-import org.bukkit.event.player.PlayerToggleSneakEvent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.Duration
@@ -169,18 +166,17 @@ enum class ConfirmationKey(val keybind: String) {
     ) {
         plugin.listen(
             listener,
-            EventPriority.HIGHEST,
         ) event@{ event: E ->
             if (event.player.uuid != playerUUID) return@event
             if (event is PlayerToggleSneakEvent && !event.isSneaking) return@event // Otherwise the event is fired twice
             block()
-            if (event is Cancellable) event.isCancelled = true
+            if (event is CancellableEvent) event.isCancelled = true
         }
     }
 
     fun listen(listener: Listener, playerUUID: UUID, block: () -> Unit) {
         when (this) {
-            SWAP_HANDS -> listenEvent<PlayerSwapHandItemsEvent>(listener, playerUUID, block)
+            SWAP_HANDS -> listenEvent<PlayerSwapItemEvent>(listener, playerUUID, block)
             JUMP -> listenEvent<PlayerJumpEvent>(listener, playerUUID, block)
             SNEAK -> listenEvent<PlayerToggleSneakEvent>(listener, playerUUID, block)
         }

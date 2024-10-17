@@ -8,6 +8,8 @@ import net.minestom.server.entity.Player
 import java.util.UUID
 
 class Server private constructor() {
+    var minecraftServer: MinecraftServer? = null
+
     companion object {
         val instance:Server by lazy {
             Server()
@@ -20,5 +22,9 @@ class Server private constructor() {
 
     fun registerEvents(vararg listeners: Listener) = listeners.forEach {
         EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it)
+    }
+
+    fun registerSuspendingEvents(vararg listeners: Listener) = listeners.forEach {
+        EventListenerScanner.registerListeners(MinecraftServer.getGlobalEventHandler(), it, true)
     }
 }

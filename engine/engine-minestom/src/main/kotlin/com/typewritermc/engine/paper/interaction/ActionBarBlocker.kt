@@ -1,10 +1,8 @@
 package com.typewritermc.engine.paper.interaction
 
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
 import lirand.api.extensions.server.server
-import com.typewritermc.engine.paper.plugin
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
@@ -17,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 class ActionBarBlockerHandler : Listener {
     fun initialize() {
-        server.pluginManager.registerSuspendingEvents(this, plugin)
+        server.registerSuspendingEvents(this)
     }
 
     private val blockers = mutableMapOf<UUID, ActionBarBlocker>()

@@ -1,73 +1,95 @@
-package com.typewritermc.engine.paper.adapt.event;
+package com.typewritermc.engine.paper.adapt.event
 
-import net.minestom.server.event.Event;
-import net.minestom.server.event.EventNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.shynixn.mccoroutine.minestom.addSuspendingListener
+import lirand.api.extensions.server.server
+import net.minestom.server.event.Event
+import net.minestom.server.event.EventNode
+import org.slf4j.LoggerFactory
+import java.lang.invoke.MethodHandle
+import java.lang.invoke.MethodHandles
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+object EventListenerScanner {
+    private val LOGGER = LoggerFactory.getLogger(EventListenerScanner::class.java)
+    private val LISTENER_CACHE = ConcurrentHashMap<KClass<*>, Map<KClass<out Event>, List<EventHandlerWrapper>>>()
+    private val LOOKUP = MethodHandles.lookup()
 
-public class EventListenerScanner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventListenerScanner.class);
+    private data class EventHandlerWrapper(val methodHandle: MethodHandle, val priority: Int) : Comparable<EventHandlerWrapper> {
+        override fun compareTo(other: EventHandlerWrapper) = other.priority.compareTo(priority)
+    }
 
-    private static final Map<Class<?>, Map<Class<? extends Event>, List<EventHandlerWrapper>>> LISTENER_CACHE = new ConcurrentHashMap<>();
-    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    fun <T : Event> registerListeners(eventNode: EventNode<T>, listener: Any, suspending: Boolean = false) {
+        val listenerClass = listener::class
+        val classHandlers = LISTENER_CACHE.computeIfAbsent(listenerClass) { scanForHandlers(it.java) }
 
-    private record EventHandlerWrapper(MethodHandle methodHandle, int priority) implements Comparable<EventHandlerWrapper> {
+        for ((eventType, handlers) in classHandlers) {
+            @Suppress("UNCHECKED_CAST")
+            val eventClass = eventType.java as Class<out T>
 
-        @Override
-        public int compareTo(EventHandlerWrapper other) {
-            return Integer.compare(other.priority, this.priority);
+            if (suspending) {
+                registerSuspendingListener(eventNode, eventClass, listener, handlers)
+            } else {
+                registerSyncListener(eventNode, eventClass, listener, handlers)
+            }
+
+            LOGGER.info("Registered ${handlers.size} ${if (suspending) "suspending" else "sync"} event handler(s) for ${eventType.simpleName}")
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends Event> void registerListeners(EventNode<T> eventNode, Object listener) {
-        var listenerClass = listener.getClass();
-        var classHandlers = LISTENER_CACHE.computeIfAbsent(listenerClass, k -> new ConcurrentHashMap<>());
+    private fun scanForHandlers(listenerClass: Class<*>): Map<KClass<out Event>, List<EventHandlerWrapper>> {
+        val handlers = mutableMapOf<KClass<out Event>, MutableList<EventHandlerWrapper>>()
 
-        if (classHandlers.isEmpty()) {
-            for (var method : listenerClass.getDeclaredMethods()) {
-                var annotation = method.getAnnotation(EventHandler.class);
-                if (annotation != null) {
-                    var parameterTypes = method.getParameterTypes();
-                    if (parameterTypes.length > 0 && Event.class.isAssignableFrom(parameterTypes[0])) {
-                        var eventType = (Class<? extends Event>) parameterTypes[0];
-                        try {
-                            var methodHandle = LOOKUP.unreflect(method);
-                            var wrapper = new EventHandlerWrapper(methodHandle, annotation.priority());
-                            classHandlers.computeIfAbsent(eventType, e -> new ArrayList<>()).add(wrapper);
-                        } catch (IllegalAccessException e) {
-                            LOGGER.error("Failed to create MethodHandle for " + method.getName(), e);
-                        }
-                    }
-                }
-            }
+        for (method in listenerClass.declaredMethods) {
+            val annotation = method.getAnnotation(EventHandler::class.java) ?: continue
+            val parameterTypes = method.parameterTypes
+            if (parameterTypes.isEmpty() || !Event::class.java.isAssignableFrom(parameterTypes[0])) continue
 
-            // Sort handlers by priority
-            for (var handlers : classHandlers.values()) {
-                Collections.sort(handlers);
+            @Suppress("UNCHECKED_CAST")
+            val eventType = parameterTypes[0].kotlin as KClass<out Event>
+            try {
+                val methodHandle = LOOKUP.unreflect(method)
+                val wrapper = EventHandlerWrapper(methodHandle, annotation.priority)
+                handlers.getOrPut(eventType) { mutableListOf() }.add(wrapper)
+            } catch (e: IllegalAccessException) {
+                LOGGER.error("Failed to create MethodHandle for ${method.name}", e)
             }
         }
 
-        for (var entry : classHandlers.entrySet()) {
-            var eventType = (Class<? extends T>) entry.getKey();
-            var handlers = entry.getValue();
+        return handlers.mapValues { (_, v) -> v.sorted() }
+    }
 
-            eventNode.addListener(eventType, event -> {
-                for (var handler : handlers) {
-                    try {
-                        handler.methodHandle.invoke(listener, event);
-                    } catch (Throwable e) {
-                        LOGGER.error("Error invoking event handler for " + eventType.getSimpleName(), e);
-                    }
+    private fun <T : Event> registerSyncListener(
+        eventNode: EventNode<T>,
+        eventClass: Class<out T>,
+        listener: Any,
+        handlers: List<EventHandlerWrapper>
+    ) {
+        eventNode.addListener(eventClass) { event ->
+            for (handler in handlers) {
+                try {
+                    handler.methodHandle.invoke(listener, event)
+                } catch (e: Throwable) {
+                    LOGGER.error("Error invoking event handler for ${eventClass.simpleName}", e)
                 }
-            });
+            }
+        }
+    }
 
-            LOGGER.info("Registered " + handlers.size() + " event handler(s) for " + eventType.getSimpleName());
+    private fun <T : Event> registerSuspendingListener(
+        eventNode: EventNode<T>,
+        eventClass: Class<out T>,
+        listener: Any,
+        handlers: List<EventHandlerWrapper>
+    ) {
+        eventNode.addSuspendingListener(server.minecraftServer!!, eventClass) { event ->
+            for (handler in handlers) {
+                try {
+                    handler.methodHandle.invoke(listener, event)
+                } catch (e: Throwable) {
+                    LOGGER.error("Error invoking event handler for ${eventClass.simpleName}", e)
+                }
+            }
         }
     }
 }

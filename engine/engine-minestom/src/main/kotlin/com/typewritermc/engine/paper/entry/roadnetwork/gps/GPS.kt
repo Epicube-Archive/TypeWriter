@@ -30,7 +30,7 @@ fun roadNetworkFindPath(
     start: RoadNode,
     end: RoadNode,
     entity: IPathingEntity = PFEmptyEntity(start.location.toProperty(), searchRange = roadNetworkMaxDistance.toFloat()),
-    instance: PFInstanceSpace = PFInstanceSpace(start.location.world),
+    instance: PFInstanceSpace = PFInstanceSpace(start.location.world!!),
     nodes: List<RoadNode> = emptyList(),
     negativeNodes: List<RoadNode> = emptyList(),
 ): IPath? {

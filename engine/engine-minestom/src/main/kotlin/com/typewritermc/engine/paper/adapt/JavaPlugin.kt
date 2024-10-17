@@ -3,7 +3,7 @@ package com.typewritermc.engine.paper.adapt
 import java.io.File
 import java.util.logging.Logger
 
-open class JavaPlugin : Plugin {
+abstract class JavaPlugin : Plugin {
     var logger: Logger = Logger.getLogger("JavaPlugin")
     val dataFolder: File = File("typewriter")
 

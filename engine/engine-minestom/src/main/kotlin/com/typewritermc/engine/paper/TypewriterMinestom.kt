@@ -59,12 +59,17 @@ import com.typewritermc.engine.paper.adapt.TypeWriterPlayer
 import com.typewritermc.engine.paper.adapt.event.AdaptBukkitEvents
 import com.typewritermc.engine.paper.loader.PaperDependencyChecker
 import com.typewritermc.engine.paper.utils.callEvent
+import lirand.api.extensions.server.server
 import net.minestom.server.MinecraftServer
-import net.minestom.server.network.player.PlayerConnection
 import java.util.*
 
 class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
     override val version: String = "1.0.0-Minestom"
+
+    fun initialize(minecraftServer: MinecraftServer) {
+        server.minecraftServer = minecraftServer
+        onLoad()
+    }
 
     override fun onLoad() {
         super.onLoad()

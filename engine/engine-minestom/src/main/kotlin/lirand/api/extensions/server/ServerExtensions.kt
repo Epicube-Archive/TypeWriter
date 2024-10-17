@@ -9,6 +9,6 @@ val onlinePlayers: MutableCollection<Player> get() = MinecraftServer.getConnecti
 
 val craftBukkitPackage = server.javaClass.getPackage().name
 
-val Server.mainWorld get() = worlds[0]!!
+val Server.mainWorld get() = MinecraftServer.getInstanceManager().instances.first()
 
 fun WorldCreator.create() = server.createWorld(this)
