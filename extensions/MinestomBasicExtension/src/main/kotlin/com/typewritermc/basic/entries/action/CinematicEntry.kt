@@ -13,7 +13,7 @@ import com.typewritermc.core.extension.annotations.Page
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.CinematicStartTrigger
 import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 
 @Entry("cinematic", "Start a new cinematic", Colors.RED, "fa-solid:camera-retro")

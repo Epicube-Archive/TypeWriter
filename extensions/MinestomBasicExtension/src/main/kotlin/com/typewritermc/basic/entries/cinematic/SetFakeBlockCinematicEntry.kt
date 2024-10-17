@@ -1,6 +1,5 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockChange
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
@@ -11,12 +10,13 @@ import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
-import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.minestom.utils.toBukkitLocation
+import com.typewritermc.engine.minestom.utils.toMinestomPos
 import com.typewritermc.engine.minestom.utils.toPacketVector3i
-import io.github.retrooper.packetevents.util.SpigotConversionUtil
-import org.bukkit.Material
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.instance.block.Block
+import net.minestom.server.item.Material
+import net.minestom.server.network.packet.server.play.BlockChangePacket
 
 @Entry("set_fake_block_cinematic", "Set a fake block", Colors.CYAN, "mingcute:cube-3d-fill")
 class SetFakeBlockCinematicEntry(
@@ -36,7 +36,7 @@ data class SetFakeBlockSegment(
     override val startFrame: Int = 0,
     override val endFrame: Int = 0,
     val location: Position = Position.ORIGIN,
-    val block: Material = Material.AIR,
+    val block: Block = Block.AIR,
 ) : Segment
 
 class SetFakeBlockCinematicAction(
@@ -48,16 +48,22 @@ class SetFakeBlockCinematicAction(
     override suspend fun startSegment(segment: SetFakeBlockSegment) {
         super.startSegment(segment)
 
-        val state = SpigotConversionUtil.fromBukkitBlockData(segment.block.createBlockData())
-        val packet = WrapperPlayServerBlockChange(segment.location.toPacketVector3i(), state.globalId)
-        packet.sendPacketTo(player)
+        player.sendPacket(BlockChangePacket(
+            segment.location.toMinestomPos(),
+            segment.block
+        ))
     }
 
     override suspend fun stopSegment(segment: SetFakeBlockSegment) {
         super.stopSegment(segment)
 
         val bukkitLocation = segment.location.toBukkitLocation()
-        player.sendBlockChange(bukkitLocation, bukkitLocation.block.blockData)
+        val block = bukkitLocation.instance?.getBlock(bukkitLocation.position)!!
+
+        player.sendPacket(BlockChangePacket(
+            bukkitLocation.position,
+            block
+        ))
     }
 }
 

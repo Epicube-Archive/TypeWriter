@@ -9,8 +9,8 @@ import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
-import org.bukkit.event.entity.EntityPickupItemEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.event.item.PickupItemEvent
 
 @Entry("on_item_pickup", "When the player picks up an item", Colors.YELLOW, "fa6-solid:hand-holding-medical")
 /**
@@ -28,12 +28,12 @@ class PickupItemEventEntry(
 ) : EventEntry
 
 @EntryListener(PickupItemEventEntry::class)
-fun onPickupItem(event: EntityPickupItemEvent, query: Query<PickupItemEventEntry>) {
+fun onPickupItem(event: PickupItemEvent, query: Query<PickupItemEventEntry>) {
     if (event.entity !is Player) return
 
     val player = event.entity as Player
 
     query findWhere { entry ->
-        entry.item.isSameAs(player, event.item.itemStack)
+        entry.item.isSameAs(player, event.itemStack)
     } startDialogueWithOrNextDialogue player
 }

@@ -12,7 +12,7 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupId
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Entry(

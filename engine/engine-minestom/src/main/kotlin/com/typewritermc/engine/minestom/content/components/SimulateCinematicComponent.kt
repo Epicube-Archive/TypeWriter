@@ -4,8 +4,6 @@ import com.typewritermc.core.books.pages.PageType
 import com.typewritermc.core.entries.Page
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.utils.loopingDistance
-import com.typewritermc.engine.minestom.adapt.event.EventHandler
-import com.typewritermc.engine.minestom.adapt.event.Listener
 import com.typewritermc.engine.minestom.content.ContentContext
 import com.typewritermc.engine.minestom.content.ContentMode
 import com.typewritermc.engine.minestom.content.components.ItemInteractionType.*

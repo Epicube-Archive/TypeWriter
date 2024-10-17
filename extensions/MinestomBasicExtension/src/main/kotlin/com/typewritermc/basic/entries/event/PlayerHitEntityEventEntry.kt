@@ -9,7 +9,7 @@ import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
 import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import java.util.*
 

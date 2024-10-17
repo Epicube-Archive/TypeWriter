@@ -8,7 +8,7 @@ import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.minestom.facts.FactData
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry(
     "item_in_slot_fact",
@@ -33,8 +33,8 @@ class ItemInSlotFact(
     val slot: Int = 0,
 ) : ReadableFactEntry {
     override fun readSinglePlayer(player: Player): FactData {
-        val itemInSlot = player.inventory.getItem(slot) ?: return FactData(0)
+        val itemInSlot = player.inventory.getItemStack(slot)
         if (!item.isSameAs(player, itemInSlot)) return FactData(0)
-        return FactData(itemInSlot.amount)
+        return FactData(itemInSlot.amount())
     }
 }

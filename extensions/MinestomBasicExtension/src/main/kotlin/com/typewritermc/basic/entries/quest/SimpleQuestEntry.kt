@@ -10,7 +10,7 @@ import com.typewritermc.engine.minestom.entry.entries.QuestEntry
 import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.minestom.entry.matches
 import com.typewritermc.engine.minestom.entry.quest.QuestStatus
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("quest", "A quest definition", Colors.MEDIUM_PURPLE, "material-symbols:book-2")
 /**

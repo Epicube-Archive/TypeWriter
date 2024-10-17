@@ -15,9 +15,10 @@ import com.typewritermc.engine.minestom.utils.PlayerState
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
 import com.typewritermc.engine.minestom.utils.restore
 import com.typewritermc.engine.minestom.utils.state
-import org.bukkit.entity.Player
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
+import net.minestom.server.entity.Player
+import net.minestom.server.potion.Potion
+import net.minestom.server.potion.PotionEffect
+import kotlin.experimental.or
 
 @Entry(
     "potion_effect_cinematic",
@@ -51,7 +52,7 @@ class PotionEffectCinematicEntry(
 data class PotionEffectSegment(
     override val startFrame: Int = 0,
     override val endFrame: Int = 0,
-    val potionEffectType: PotionEffectType = PotionEffectType.BLINDNESS,
+    val potionEffectType: PotionEffect = PotionEffect.BLINDNESS,
     @Default("1")
     val strength: Int = 1,
     val ambient: Boolean = false,
@@ -74,14 +75,17 @@ class PotionEffectCinematicAction(
         state = player.state(EffectStateProvider(segment.potionEffectType))
 
         SYNC.switchContext {
-            player.addPotionEffect(
-                PotionEffect(
+            var flags: Byte = 0
+            if(segment.ambient) flags = flags or Potion.AMBIENT_FLAG
+            if(segment.particles) flags = flags or Potion.PARTICLES_FLAG
+            if(segment.icon) flags = flags or Potion.ICON_FLAG
+
+            player.addEffect(
+                Potion(
                     segment.potionEffectType,
+                    segment.strength.toByte(),
                     10000000,
-                    segment.strength,
-                    segment.ambient,
-                    segment.particles,
-                    segment.icon
+                    flags
                 )
             )
         }

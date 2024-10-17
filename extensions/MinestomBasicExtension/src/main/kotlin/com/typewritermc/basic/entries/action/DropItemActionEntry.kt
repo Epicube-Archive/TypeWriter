@@ -1,18 +1,21 @@
 package com.typewritermc.basic.entries.action
 
 import com.typewritermc.core.books.pages.Colors
-import com.typewritermc.engine.minestom.entry.Criteria
-import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.core.entries.Ref
-import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.utils.point.Position
+import com.typewritermc.engine.minestom.entry.Criteria
+import com.typewritermc.engine.minestom.entry.Modifier
+import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
-import com.typewritermc.engine.minestom.utils.item.Item
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
+import com.typewritermc.engine.minestom.utils.item.Item
 import com.typewritermc.engine.minestom.utils.toBukkitLocation
-import org.bukkit.entity.Player
+import net.minestom.server.entity.ItemEntity
+import net.minestom.server.entity.Player
+import net.minestom.server.utils.time.TimeUnit
+import java.time.Duration
 import java.util.*
 
 @Entry("drop_item", "Drop an item at location, or on player", Colors.RED, "fa-brands:dropbox")
@@ -43,9 +46,16 @@ class DropItemActionEntry(
             if (location.isPresent) {
                 val position = location.get()
                 val bukkitLocation = position.toBukkitLocation()
-                bukkitLocation.world.dropItem(bukkitLocation, item.build(player))
+
+                val droppedItem = item.build(player)
+
+                val itemEntity = ItemEntity(droppedItem)
+                itemEntity.setPickupDelay(Duration.of(500, TimeUnit.MILLISECOND))
+                itemEntity.setInstance(player.instance, bukkitLocation.position)
+                val velocity = player.position.direction().mul(6.0)
+                itemEntity.setVelocity(velocity)
             } else {
-                player.location.world.dropItem(player.location, item.build(player))
+                player.dropItem(item.build(player))
             }
         }
     }

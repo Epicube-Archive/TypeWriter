@@ -11,7 +11,7 @@ import com.typewritermc.engine.minestom.entry.quest.isQuestActive
 import com.typewritermc.engine.minestom.entry.quest.isQuestCompleted
 import com.typewritermc.engine.minestom.entry.quest.isQuestTracked
 import com.typewritermc.engine.minestom.facts.FactData
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry(
     "quest_status_fact",

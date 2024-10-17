@@ -5,8 +5,6 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.loopingDistance
 import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.minestom.adapt.Location
-import com.typewritermc.engine.minestom.adapt.event.EventHandler
-import com.typewritermc.engine.minestom.adapt.event.Listener
 import com.typewritermc.engine.minestom.content.ContentComponent
 import com.typewritermc.engine.minestom.content.ContentContext
 import com.typewritermc.engine.minestom.content.ContentMode

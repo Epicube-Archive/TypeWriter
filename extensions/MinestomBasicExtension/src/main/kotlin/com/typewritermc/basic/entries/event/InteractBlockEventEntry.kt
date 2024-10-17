@@ -10,15 +10,14 @@ import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.MaterialProperties
 import com.typewritermc.core.extension.annotations.MaterialProperty.BLOCK
 import com.typewritermc.core.utils.point.Position
+import com.typewritermc.engine.minestom.adapt.Location
+import com.typewritermc.engine.minestom.adapt.event.bukkit.PlayerInteractEvent
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
 import com.typewritermc.engine.minestom.utils.item.Item
-import com.typewritermc.engine.minestom.utils.toPosition
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
+import com.typewritermc.engine.minestom.utils.toVector
+import net.minestom.server.entity.Player
+import net.minestom.server.instance.block.Block
 import java.util.*
 
 @Entry("on_interact_with_block", "When the player interacts with a block", Colors.YELLOW, "mingcute:finger-tap-fill")
@@ -34,7 +33,7 @@ class InteractBlockEventEntry(
     override val name: String = "",
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
     @MaterialProperties(BLOCK)
-    val block: Material = Material.AIR,
+    val block: Block = Block.AIR,
     val location: Optional<Position> = Optional.empty(),
     @Help("The item the player must be holding when the block is interacted with.")
     val itemInHand: Item = Item.Empty,
@@ -62,12 +61,12 @@ enum class ShiftType {
     }
 }
 
-enum class InteractionType(vararg val actions: Action) {
-    ALL(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK, Action.PHYSICAL),
-    CLICK(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK),
-    RIGHT_CLICK(Action.RIGHT_CLICK_BLOCK),
-    LEFT_CLICK(Action.LEFT_CLICK_BLOCK),
-    PHYSICAL(Action.PHYSICAL),
+enum class InteractionType(vararg val actions: PlayerInteractEvent.Action) {
+    ALL(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK/*, PlayerInteractEvent.Action.PHYSICAL*/),
+    CLICK(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK),
+    RIGHT_CLICK(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK),
+    LEFT_CLICK(PlayerInteractEvent.Action.LEFT_CLICK_BLOCK),
+    PHYSICAL(/*PlayerInteractEvent.Action.PHYSICAL*/),
 }
 
 private fun hasItemInHand(player: Player, item: Item): Boolean {
@@ -86,7 +85,7 @@ fun onInteractBlock(event: PlayerInteractEvent, query: Query<InteractBlockEventE
     if (event.clickedBlock == null) return
     // The even triggers twice. Both for the main hand and offhand.
     // We only want to trigger once.
-    if (event.hand != org.bukkit.inventory.EquipmentSlot.HAND) return // Disable off-hand interactions
+    if (event.hand != Player.Hand.MAIN) return // Disable off-hand interactions
     val entries = query.findWhere { entry ->
         // Check if the player is sneaking
         if (!entry.shiftType.isApplicable(event.player)) return@findWhere false
@@ -95,13 +94,13 @@ fun onInteractBlock(event: PlayerInteractEvent, query: Query<InteractBlockEventE
         if (!entry.interactionType.actions.contains(event.action)) return@findWhere false
 
         // Check if the player clicked on the correct location
-        if (!entry.location.map { it.sameBlock(event.clickedBlock!!.location.toPosition()) }
+        if (!entry.location.map { it.sameBlock(event.clickedBlockPosition!!.asVec().toVector()) }
                 .orElse(true)) return@findWhere false
 
         // Check if the player is holding the correct item
         if (!hasItemInHand(event.player, entry.itemInHand)) return@findWhere false
 
-        entry.block == event.clickedBlock!!.type
+        entry.block == event.clickedBlock
     }.toList()
     if (entries.isEmpty()) return
 

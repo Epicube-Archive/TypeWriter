@@ -8,9 +8,10 @@ import com.typewritermc.core.extension.annotations.Segments
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.entries.*
+import com.typewritermc.engine.minestom.utils.spawnParticle
 import com.typewritermc.engine.minestom.utils.toBukkitLocation
-import org.bukkit.Particle
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.particle.Particle
 
 @Entry("particle_cinematic", "Spawn particles for a cinematic", Colors.CYAN, "fa6-solid:fire-flame-simple")
 /**

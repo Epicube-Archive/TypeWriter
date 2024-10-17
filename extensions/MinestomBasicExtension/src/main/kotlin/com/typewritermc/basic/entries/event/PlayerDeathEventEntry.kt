@@ -8,9 +8,9 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import org.bukkit.entity.Player
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause
-import org.bukkit.event.entity.EntityDeathEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.entity.damage.DamageType
+import net.minestom.server.event.entity.EntityDeathEvent
 import java.util.*
 
 @Entry("on_player_death", "When a player dies", Colors.YELLOW, "fa6-solid:skull-crossbones")
@@ -25,7 +25,7 @@ class PlayerDeathEventEntry(
     override val id: String = "",
     override val name: String = "",
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
-    val deathCause: Optional<DamageCause> = Optional.empty()
+    val deathCause: Optional<DamageType> = Optional.empty()
 ) : EventEntry
 
 
@@ -36,6 +36,6 @@ fun onDeath(event: EntityDeathEvent, query: Query<PlayerDeathEventEntry>) {
     val player = event.entity as Player
 
     query findWhere { entry ->
-        entry.deathCause.map { it == event.entity.lastDamageCause?.cause }.orElse(true)
+        entry.deathCause.map { it == (event.entity as Player).lastDamageSource?.type }.orElse(true)
     } triggerAllFor player
 }

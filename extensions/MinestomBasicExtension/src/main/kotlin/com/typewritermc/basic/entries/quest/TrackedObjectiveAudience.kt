@@ -5,9 +5,9 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.core.entries.ref
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.events.AsyncTrackedQuestUpdate
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
+import net.minestom.server.entity.Player
 
 @Entry(
     "tracked_objective_audience",

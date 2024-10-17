@@ -1,8 +1,5 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommand
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommandUnsigned
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
@@ -16,7 +13,8 @@ import com.typewritermc.engine.minestom.entry.entries.Segment
 import com.typewritermc.engine.minestom.interaction.InterceptionBundle
 import com.typewritermc.engine.minestom.interaction.interceptPackets
 import com.typewritermc.engine.minestom.utils.ThreadType
-import org.bukkit.entity.Player
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 
 @Entry("block_command_cinematic", "Block commands during the cinematic", Colors.RED, "mdi:console")
 /**
@@ -85,7 +83,7 @@ class BlockCommandCinematicAction(
         if (ranCommands.isNotEmpty()) {
             ThreadType.SYNC.switchContext {
                 ranCommands.forEach {
-                    player.performCommand(it)
+                    MinecraftServer.getCommandManager().execute(player, it)
                 }
             }
         }

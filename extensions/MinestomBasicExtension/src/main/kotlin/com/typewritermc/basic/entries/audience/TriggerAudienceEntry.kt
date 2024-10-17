@@ -9,7 +9,7 @@ import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.engine.minestom.entry.entries.AudienceDisplay
 import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import com.typewritermc.engine.minestom.entry.triggerFor
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry(
     "trigger_audience",

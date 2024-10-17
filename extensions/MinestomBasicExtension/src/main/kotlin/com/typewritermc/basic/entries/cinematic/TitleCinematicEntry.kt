@@ -1,6 +1,5 @@
 package com.typewritermc.basic.entries.cinematic
 
-import io.papermc.paper.util.Tick
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
@@ -12,7 +11,8 @@ import com.typewritermc.engine.minestom.entry.entries.Segment
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.title.Title
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.utils.time.Tick
 import java.time.Duration
 
 @Entry("title_cinematic", "Show a title during a cinematic", Colors.CYAN, "fluent:align-center-vertical-32-filled")
@@ -61,9 +61,9 @@ class TitleCinematicAction(
         val adjustedDuration: Long = (totalDuration - segment.fadeIn - segment.fadeOut).coerceAtLeast(0)
 
         val times: Title.Times = Title.Times.times(
-            Duration.of(segment.fadeIn, Tick.tick()),
-            Duration.of(adjustedDuration, Tick.tick()),
-            Duration.of(segment.fadeOut, Tick.tick())
+            Duration.of(segment.fadeIn, Tick.SERVER_TICKS),
+            Duration.of(adjustedDuration, Tick.SERVER_TICKS),
+            Duration.of(segment.fadeOut, Tick.SERVER_TICKS)
         )
 
         val title: Title = Title.title(

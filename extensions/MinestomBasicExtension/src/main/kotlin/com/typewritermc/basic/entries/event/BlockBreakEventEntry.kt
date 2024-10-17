@@ -13,9 +13,11 @@ import com.typewritermc.engine.minestom.utils.item.Item
 import com.typewritermc.engine.minestom.utils.toPosition
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.event.block.BlockBreakEvent
+import com.typewritermc.engine.minestom.adapt.type
+import com.typewritermc.engine.minestom.utils.toMinestomPos
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerBlockBreakEvent
+import net.minestom.server.instance.block.Block
 import java.util.*
 
 @Entry("on_block_break", "When the player breaks a block", Colors.YELLOW, "mingcute:pickax-fill")
@@ -31,7 +33,7 @@ class BlockBreakEventEntry(
     override val name: String = "",
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
     @MaterialProperties(MaterialProperty.BLOCK)
-    val block: Optional<Material> = Optional.empty(),
+    val block: Optional<Block> = Optional.empty(),
     val location: Optional<Position> = Optional.empty(),
     @Help("The item the player must be holding when the block is broken.")
     val itemInHand: Item = Item.Empty,
@@ -45,16 +47,16 @@ private fun hasItemInHand(player: Player, item: Item): Boolean {
 }
 
 @EntryListener(BlockBreakEventEntry::class)
-fun onBlockBreak(event: BlockBreakEvent, query: Query<BlockBreakEventEntry>) {
-    val position = event.block.location.toPosition()
+fun onBlockBreak(event: PlayerBlockBreakEvent, query: Query<BlockBreakEventEntry>) {
+    val position = event.blockPosition.asVec().asPosition()
     query findWhere { entry ->
         // Check if the player clicked on the correct location
-        if (!entry.location.map { it == position }.orElse(true)) return@findWhere false
+        if (!entry.location.map { it.toMinestomPos() == position }.orElse(true)) return@findWhere false
 
         // Check if the player is holding the correct item
         if (!hasItemInHand(event.player, entry.itemInHand)) return@findWhere false
 
         // Check if block type is correct
-        entry.block.map { it == event.block.type }.orElse(true)
+        entry.block.map { it == event.block }.orElse(true)
     } startDialogueWithOrNextDialogue event.player
 }

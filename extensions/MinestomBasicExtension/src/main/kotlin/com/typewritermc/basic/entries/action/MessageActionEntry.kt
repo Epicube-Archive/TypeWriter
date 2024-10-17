@@ -16,7 +16,7 @@ import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlacehold
 import com.typewritermc.engine.minestom.snippets.snippet
 import com.typewritermc.engine.minestom.utils.sendMiniWithResolvers
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.parsed
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 private val messageFormat: String by snippet(
     "action.message.format",

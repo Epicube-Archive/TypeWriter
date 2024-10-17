@@ -10,8 +10,7 @@ import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerFishEvent
+import net.minestom.server.entity.Player
 
 @Entry("on_fish", "When the a player caught a fish or an item", Colors.YELLOW, "mdi:fish")
 /**

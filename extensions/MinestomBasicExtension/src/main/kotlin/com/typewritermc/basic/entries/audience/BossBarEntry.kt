@@ -11,7 +11,7 @@ import com.typewritermc.engine.minestom.entry.entries.TickableDisplay
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.bossbar.BossBar
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -66,11 +66,11 @@ class BossBarDisplay(
             style,
             flags.toSet()
         )
-        bars[player.uniqueId] = bar
+        bars[player.uuid] = bar
         player.showBossBar(bar)
     }
 
     override fun onPlayerRemove(player: Player) {
-        bars.remove(player.uniqueId)?.let { player.hideBossBar(it) }
+        bars.remove(player.uuid)?.let { player.hideBossBar(it) }
     }
 }

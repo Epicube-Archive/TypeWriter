@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.Sound
 import com.typewritermc.engine.minestom.utils.playSound
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("play_sound", "Play sound at player, or location", Colors.RED, "fa6-solid:volume-high")
 /**

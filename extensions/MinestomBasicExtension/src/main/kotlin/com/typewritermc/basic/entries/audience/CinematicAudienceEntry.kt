@@ -13,10 +13,10 @@ import com.typewritermc.engine.minestom.entry.entries.AudienceFilter
 import com.typewritermc.engine.minestom.entry.entries.AudienceFilterEntry
 import com.typewritermc.engine.minestom.entry.entries.Invertible
 import com.typewritermc.core.entries.ref
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.events.AsyncCinematicEndEvent
 import com.typewritermc.engine.minestom.events.AsyncCinematicStartEvent
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
+import net.minestom.server.entity.Player
 
 @Entry(
     "cinematic_audience",

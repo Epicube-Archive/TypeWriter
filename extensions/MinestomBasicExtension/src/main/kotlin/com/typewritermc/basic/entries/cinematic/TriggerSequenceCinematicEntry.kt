@@ -15,7 +15,7 @@ import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.EntryTrigger
 import com.typewritermc.engine.minestom.entry.entries.Segment
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("trigger_sequence_cinematic", "A sequence of triggers to run", Colors.PURPLE, "fa-solid:play")
 /**

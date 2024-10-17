@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.interaction.chatHistory
 import com.typewritermc.engine.minestom.snippets.snippet
 import com.typewritermc.engine.minestom.utils.*
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.time.Duration
 
 val spokenFormat: String by snippet(

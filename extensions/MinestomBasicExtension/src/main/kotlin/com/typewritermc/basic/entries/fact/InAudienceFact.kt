@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.minestom.entry.inAudience
 import com.typewritermc.engine.minestom.facts.FactData
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry(
     "in_audience_fact",

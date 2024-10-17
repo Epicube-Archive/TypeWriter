@@ -1,14 +1,14 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerHurtAnimation
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Segments
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.entries.*
-import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.EntityAnimationPacket
+import net.minestom.server.network.packet.server.play.HitAnimationPacket
 import kotlin.random.Random
 
 @Entry(
@@ -57,8 +57,7 @@ class ScreenShakeCinematicAction(
         val baseFrame = frame - segment.startFrame
         if (segment.frameDelay > 0 && baseFrame % segment.frameDelay != 0) return
 
-        val packet = WrapperPlayServerHurtAnimation(player.entityId, Random.nextFloat() * 360 - 180)
-        packet.sendPacketTo(player)
+        player.sendPacket(HitAnimationPacket(player.entityId, Random.nextFloat() * 360 - 180))
     }
 
     override fun canFinish(frame: Int): Boolean = entry.segments canFinishAt frame

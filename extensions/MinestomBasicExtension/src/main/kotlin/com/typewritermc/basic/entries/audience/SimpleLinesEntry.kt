@@ -7,7 +7,7 @@ import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.MultiLine
 import com.typewritermc.core.extension.annotations.Placeholder
 import com.typewritermc.engine.minestom.entry.entries.LinesEntry
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Entry("simple_lines", "Statically determined lines of text", Colors.ORANGE_RED, "bi:layout-text-sidebar")

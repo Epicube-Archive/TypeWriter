@@ -19,7 +19,7 @@ import com.typewritermc.engine.minestom.utils.asMiniWithResolvers
 import com.typewritermc.engine.minestom.utils.asPartialFormattedMini
 import com.typewritermc.engine.minestom.utils.isFloodgate
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("spoken_dialogue_cinematic", "Play a spoken dialogue cinematic", Colors.CYAN, "mingcute:message-4-fill")
 /**

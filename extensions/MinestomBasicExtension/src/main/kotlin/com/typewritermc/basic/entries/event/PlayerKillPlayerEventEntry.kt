@@ -8,8 +8,9 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import org.bukkit.entity.Player
-import org.bukkit.event.entity.EntityDeathEvent
+import net.minestom.server.entity.LivingEntity
+import net.minestom.server.entity.Player
+import net.minestom.server.event.entity.EntityDeathEvent
 
 @Entry("on_player_kill_player", "When a player kills a player", Colors.YELLOW, "fa6-solid:skull")
 /**
@@ -29,8 +30,10 @@ class PlayerKillPlayerEventEntry(
 
 @EntryListener(PlayerKillPlayerEventEntry::class)
 fun onKill(event: EntityDeathEvent, query: Query<PlayerKillPlayerEventEntry>) {
-    val killer =
-        event.entity.killer ?: return
+    val killer = (event.entity as LivingEntity).lastDamageSource?.attacker ?: return
+    if(killer !is Player) {
+        return
+    }
 
     val target = event.entity as? Player ?: return
 

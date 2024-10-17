@@ -8,8 +8,8 @@ import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import org.bukkit.entity.Player
-import org.bukkit.potion.PotionEffectType
+import net.minestom.server.entity.Player
+import net.minestom.server.potion.PotionEffect
 
 @Entry(
     "remove_potion_effect",
@@ -30,13 +30,13 @@ class RemovePotionEffectActionEntry(
     override val criteria: List<Criteria> = emptyList(),
     override val modifiers: List<Modifier> = emptyList(),
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
-    val potionEffect: PotionEffectType = PotionEffectType.SPEED,
+    val potionEffect: PotionEffect = PotionEffect.SPEED,
 ) : ActionEntry {
     override fun execute(player: Player) {
         super.execute(player)
 
         SYNC.launch {
-            player.removePotionEffect(potionEffect)
+            player.removeEffect(potionEffect)
         }
     }
 }

@@ -6,7 +6,7 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.core.entries.ref
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry(
     "item_in_inventory_audience",
@@ -35,7 +35,7 @@ class ItemInInventoryAudienceFilter(
     private val item: Item,
 ) : AudienceFilter(ref), TickableDisplay {
     override fun filter(player: Player): Boolean {
-        return player.inventory.contents.any { it != null && item.isSameAs(player, it) } || item.isSameAs(player, player.itemOnCursor)
+        return player.inventory.itemStacks.any { item.isSameAs(player, it) } || item.isSameAs(player, player.inventory.cursorItem)
     }
 
     override fun tick() {

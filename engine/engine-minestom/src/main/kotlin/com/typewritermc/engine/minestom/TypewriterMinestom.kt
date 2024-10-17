@@ -149,7 +149,7 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
         get<EntityHandler>().initialize()
         get<AudienceManager>().initialize()
 
-        PlaceholderExpansion.register()
+        //PlaceholderExpansion.register() // no support for PAPI
 
         // We want to initialize all the extensions after all the plugins have been enabled to make sure
         // that all the plugins are loaded.

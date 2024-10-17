@@ -9,7 +9,7 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.item.Item
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("give_item", "Give an item to the player", Colors.RED, "streamline:give-gift-solid")
 /**
@@ -31,7 +31,7 @@ class GiveItemActionEntry(
         super.execute(player)
 
         SYNC.launch {
-            player.inventory.addItem(item.build(player))
+            player.inventory.addItemStack(item.build(player))
         }
     }
 }

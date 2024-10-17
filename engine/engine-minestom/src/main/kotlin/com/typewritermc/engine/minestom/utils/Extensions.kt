@@ -3,6 +3,7 @@ package com.typewritermc.engine.minestom.utils
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.core.utils.point.World
 import com.typewritermc.engine.minestom.adapt.Location
+import com.typewritermc.engine.minestom.adapt.WeatherType
 import com.typewritermc.engine.minestom.entry.roadnetwork.content.toPacketColor
 import com.typewritermc.engine.minestom.logger
 import net.kyori.adventure.audience.Audience
@@ -12,24 +13,20 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Entity
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
-import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
+import net.minestom.server.instance.Weather
 import net.minestom.server.item.ItemComponent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.component.EnchantmentList
-import net.minestom.server.item.component.HeadProfile
 import net.minestom.server.item.enchant.Enchantment
 import net.minestom.server.network.packet.server.play.ParticlePacket
-import net.minestom.server.network.player.GameProfile
 import net.minestom.server.particle.Particle
-import net.minestom.server.utils.mojang.MojangUtils
 import java.io.File
-import java.net.MalformedURLException
-import java.net.URI
 import java.time.Duration
 import java.util.*
 import kotlin.math.*
@@ -128,8 +125,42 @@ fun Location.asTwPoint(): com.typewritermc.core.utils.point.Point {
     return Position(World(instance?.uniqueId.toString()), x, y, z, yaw, pitch)
 }
 
+fun Player.setPlayerWeather(weatherType: WeatherType) {
+    sendPackets(when (weatherType) {
+        WeatherType.DOWNFALL -> Weather.RAIN.createWeatherPackets()
+        WeatherType.CLEAR -> Weather.CLEAR.createWeatherPackets()
+    })
+}
+
+fun Player.spawnParticle(
+    particle: Particle,
+    location: Location,
+    count: Int,
+    offsetX: Double,
+    offsetY: Double,
+    offsetZ: Double,
+    speed: Double
+) {
+    sendPacket(ParticlePacket(
+        particle,
+        location.position,
+        Vec(offsetX, offsetY, offsetZ),
+        speed.toFloat(),
+        count
+    ))
+}
+
 val Player.location: Location
     get() = Location(instance, position)
+
+val Player.world: Instance
+    get() = instance
+
+val Player.uniqueId: UUID
+    get() = uuid
+
+val Entity.uniqueId: UUID
+    get() = uuid
 
 val Pos.up: Pos
     get() = Pos(x, y + 1, z)

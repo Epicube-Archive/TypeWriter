@@ -11,9 +11,9 @@ import com.typewritermc.core.extension.annotations.MaterialProperty.BLOCK
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import com.typewritermc.engine.minestom.utils.toPosition
-import org.bukkit.Material
-import org.bukkit.event.block.BlockPlaceEvent
+import com.typewritermc.engine.minestom.utils.toMinestomPos
+import net.minestom.server.event.player.PlayerBlockPlaceEvent
+import net.minestom.server.instance.block.Block
 import java.util.*
 
 @Entry("on_place_block", "When the player places a block", Colors.YELLOW, "fluent:cube-add-20-filled")
@@ -30,16 +30,16 @@ class BlockPlaceEventEntry(
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
     val location: Optional<Position> = Optional.empty(),
     @MaterialProperties(BLOCK)
-    val block: Material = Material.STONE,
+    val block: Block = Block.STONE,
 ) : EventEntry
 
 @EntryListener(BlockPlaceEventEntry::class)
-fun onPlaceBlock(event: BlockPlaceEvent, query: Query<BlockPlaceEventEntry>) {
-    val position = event.block.location.toPosition()
+fun onPlaceBlock(event: PlayerBlockPlaceEvent, query: Query<BlockPlaceEventEntry>) {
+    val position = event.blockPosition.asVec().asPosition()
     query findWhere { entry ->
         // Check if the player clicked on the correct location
-        if (!entry.location.map { it == position }.orElse(true)) return@findWhere false
+        if (!entry.location.map { it.toMinestomPos() == position }.orElse(true)) return@findWhere false
 
-        entry.block == event.block.type
+        entry.block == event.block
     } startDialogueWithOrNextDialogue event.player
 }

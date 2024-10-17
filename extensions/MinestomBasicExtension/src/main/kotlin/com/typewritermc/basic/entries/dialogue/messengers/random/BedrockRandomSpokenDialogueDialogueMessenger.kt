@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.isFloodgate
 import com.typewritermc.engine.minestom.utils.legacy
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Messenger(RandomSpokenDialogueEntry::class, priority = 5)
 class BedrockRandomSpokenDialogueDialogueMessenger(player: Player, entry: RandomSpokenDialogueEntry) :
@@ -22,18 +22,6 @@ class BedrockRandomSpokenDialogueDialogueMessenger(player: Player, entry: Random
     override fun init() {
         super.init()
         val message = entry.messages.randomOrNull() ?: return
-        org.geysermc.floodgate.api.FloodgateApi.getInstance().sendForm(
-            player.uniqueId,
-            org.geysermc.cumulus.form.SimpleForm.builder()
-                .title("<bold>${entry.speakerDisplayName}</bold>".legacy())
-                .content("${message.parsePlaceholders(player).legacy()}\n\n")
-                .button("Continue")
-                .closedOrInvalidResultHandler { _, _ ->
-                    state = MessengerState.CANCELLED
-                }
-                .validResultHandler { _, _ ->
-                    state = MessengerState.FINISHED
-                }
-        )
+        /* no-op */
     }
 }

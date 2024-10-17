@@ -12,7 +12,7 @@ import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.text.Component
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass

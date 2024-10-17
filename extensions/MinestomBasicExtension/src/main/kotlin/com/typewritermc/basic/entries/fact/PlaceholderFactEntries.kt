@@ -13,7 +13,7 @@ import com.typewritermc.engine.minestom.extensions.placeholderapi.isPlaceholder
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.facts.FactData
 import com.typewritermc.engine.minestom.logger
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("number_placeholder", "Computed Fact for a placeholder number", Colors.PURPLE, "ph:placeholder-fill")
 /**

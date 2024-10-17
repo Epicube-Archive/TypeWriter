@@ -1,10 +1,9 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
+import com.typewritermc.engine.minestom.adapt.event.Listener
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.cinematic.setCinematicFrame
@@ -14,15 +13,14 @@ import com.typewritermc.engine.minestom.entry.entries.Segment
 import com.typewritermc.engine.minestom.interaction.InterceptionBundle
 import com.typewritermc.engine.minestom.interaction.interceptPackets
 import com.typewritermc.engine.minestom.plugin
+import com.typewritermc.engine.minestom.utils.callEvent
+import com.typewritermc.engine.minestom.utils.uniqueId
 import lirand.api.extensions.events.SimpleListener
 import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
-import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerEvent
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
+import net.minestom.server.event.trait.PlayerEvent
 
 @Entry("skip_cinematic", "Allows players to manually skip the cinematic", Colors.RED, "mdi:skip-next")
 /**
@@ -86,7 +84,7 @@ class SkipCinematicAction(
             SkipConfirmationKey.SWAP_HANDS -> {
                 val listener = SimpleListener()
                 this.listener = listener
-                plugin.listen<PlayerSwapHandItemsEvent>(listener) {
+                plugin.listen<PlayerChangeHeldSlotEvent>(listener) {
                     if (it.player.uniqueId != player.uniqueId) return@listen
                     player.setCinematicFrame(segment.endFrame)
                 }
@@ -106,15 +104,9 @@ class SkipCinematicAction(
     }
 }
 
-class CinematicSkippableEvent(player: Player, val canSkip: Boolean, val confirmationKey: SkipConfirmationKey) :
-    PlayerEvent(player, !Bukkit.isPrimaryThread()) {
-    override fun getHandlers(): HandlerList = HANDLER_LIST
+class CinematicSkippableEvent(val player: Player, val canSkip: Boolean, val confirmationKey: SkipConfirmationKey) : PlayerEvent {
 
-    companion object {
-        @JvmStatic
-        val HANDLER_LIST = HandlerList()
-
-        @JvmStatic
-        fun getHandlerList(): HandlerList = HANDLER_LIST
+    override fun getPlayer(): Player {
+        return player
     }
 }

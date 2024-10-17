@@ -11,8 +11,8 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import com.typewritermc.engine.minestom.utils.toBukkitLocation
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.toMinestomPos
+import net.minestom.server.entity.Player
 
 @Entry("teleport", "Teleport a player", Colors.RED, "teenyicons:google-streetview-solid")
 /**
@@ -34,7 +34,7 @@ class TeleportActionEntry(
 ) : CustomTriggeringActionEntry {
     override fun execute(player: Player) {
         SYNC.launch {
-            player.teleport(location.toBukkitLocation())
+            player.teleport(location.toMinestomPos())
             super.execute(player)
             player.triggerCustomTriggers()
         }

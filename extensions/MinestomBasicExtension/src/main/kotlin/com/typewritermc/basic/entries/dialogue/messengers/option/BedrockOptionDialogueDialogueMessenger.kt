@@ -8,13 +8,10 @@ import com.typewritermc.core.extension.annotations.Messenger
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.dialogue.DialogueMessenger
 import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
-import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
 import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
 import com.typewritermc.engine.minestom.entry.matches
-import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.isFloodgate
-import com.typewritermc.engine.minestom.utils.legacy
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Messenger(OptionDialogueEntry::class, priority = 5)
 class BedrockOptionDialogueDialogueMessenger(player: Player, entry: OptionDialogueEntry) :
@@ -39,24 +36,7 @@ class BedrockOptionDialogueDialogueMessenger(player: Player, entry: OptionDialog
     override fun init() {
         super.init()
         usableOptions = entry.options.filter { it.criteria.matches(player) }
-        org.geysermc.floodgate.api.FloodgateApi.getInstance().sendForm(
-            player.uniqueId,
-            org.geysermc.cumulus.form.CustomForm.builder()
-                .title("<bold>${entry.speakerDisplayName}</bold>".legacy())
-                .label("${entry.text.parsePlaceholders(player).legacy()}\n\n\n")
-                .dropdown(
-                    "Select Response",
-                    usableOptions.map { it.text.parsePlaceholders(player).legacy() })
-                .label("\n\n\n\n")
-                .closedOrInvalidResultHandler { _, _ ->
-                    state = MessengerState.CANCELLED
-                }
-                .validResultHandler { responds ->
-                    val dropdown = responds.asDropdown()
-                    selectedIndex = dropdown
-                    state = MessengerState.FINISHED
-                }
-        )
+        /* no-op */
     }
 
     override fun end() {

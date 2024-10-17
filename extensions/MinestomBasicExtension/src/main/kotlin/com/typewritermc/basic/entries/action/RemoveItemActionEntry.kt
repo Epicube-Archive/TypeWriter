@@ -9,7 +9,8 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.ThreadType
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.inventory.TransactionOption
 
 @Entry("remove_item", "Remove an item from the players inventory", Colors.RED, "icomoon-free:user-minus")
 /**
@@ -38,7 +39,7 @@ class RemoveItemActionEntry(
         super.execute(player)
 
         ThreadType.SYNC.launch {
-            player.inventory.removeItemAnySlot(item.build(player).clone())
+            player.inventory.takeItemStack(item.build(player), TransactionOption.ALL)
         }
     }
 }

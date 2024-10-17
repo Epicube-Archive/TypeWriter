@@ -11,8 +11,10 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.toBukkitLocation
-import org.bukkit.Particle
-import org.bukkit.entity.Player
+import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import java.util.*
 
 @Entry("spawn_particles", "Spawn particles at location", Colors.RED, "fa6-solid:fire-flame-simple")
@@ -47,9 +49,22 @@ class SpawnParticleActionEntry(
 
         if (location.isPresent) {
             val bukkitLocation = location.get().toBukkitLocation()
-            bukkitLocation.world?.spawnParticle(particle, bukkitLocation, count, offsetX, offsetY, offsetZ, speed)
+            bukkitLocation.instance?.sendGroupedPacket(ParticlePacket(
+                particle,
+                bukkitLocation.position,
+                Vec(offsetX, offsetY, offsetZ),
+                speed.toFloat(),
+                count
+            ))
         } else {
-            player.world.spawnParticle(particle, player.location, count, offsetX, offsetY, offsetZ, speed)
+            val bukkitLocation = location.get().toBukkitLocation()
+            bukkitLocation.instance?.sendGroupedPacket(ParticlePacket(
+                particle,
+                player.position,
+                Vec(offsetX, offsetY, offsetZ),
+                speed.toFloat(),
+                count
+            ))
         }
     }
 }

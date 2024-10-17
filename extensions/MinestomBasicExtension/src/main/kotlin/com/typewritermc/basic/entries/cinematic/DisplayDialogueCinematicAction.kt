@@ -13,7 +13,7 @@ import com.typewritermc.engine.minestom.utils.PlayerState
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
 import com.typewritermc.engine.minestom.utils.restore
 import com.typewritermc.engine.minestom.utils.state
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 data class SingleLineDisplayDialogueSegment(
     override val startFrame: Int = 0,

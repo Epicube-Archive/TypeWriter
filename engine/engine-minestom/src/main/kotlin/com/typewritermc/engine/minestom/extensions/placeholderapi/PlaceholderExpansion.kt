@@ -42,14 +42,13 @@ object PlaceholderExpansion : KoinComponent {
 
 // TODO: implement placeholder support
 fun String.parsePlaceholders(player: OfflinePlayer?): String {
-    return PlaceholderAPI.setPlaceholders(player, this)
+    return this // no support for PAPI
 }
 
 fun String.parsePlaceholders(player: Player?): String = parsePlaceholders(player as OfflinePlayer?)
 
 fun String.parsePlaceholders(playerId: UUID): String = parsePlaceholders(server.getOfflinePlayer(playerId))
 
-val String.isPlaceholder: Boolean
-    get() {
-        return PlaceholderAPI.getPlaceholderPattern().matcher(this).matches()
-    }
+val String.isPlaceholder: Boolean get() {
+    return false // no support for PAPI
+}

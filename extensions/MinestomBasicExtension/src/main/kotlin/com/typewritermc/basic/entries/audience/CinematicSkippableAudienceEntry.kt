@@ -6,6 +6,7 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Entry
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.entry.PlaceholderEntry
 import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import com.typewritermc.engine.minestom.entry.entries.AudienceFilter
@@ -13,8 +14,7 @@ import com.typewritermc.engine.minestom.entry.entries.AudienceFilterEntry
 import com.typewritermc.engine.minestom.entry.entries.Invertible
 import com.typewritermc.engine.minestom.entry.findDisplay
 import com.typewritermc.engine.minestom.events.AsyncCinematicEndEvent
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -64,7 +64,7 @@ class CinematicSkippableAudienceDisplay(
 
         event.player.updateFilter(event.canSkip)
 
-        confirmationKeys.compute(event.player.uniqueId) { _, _ ->
+        confirmationKeys.compute(event.player.uuid) { _, _ ->
             if (event.canSkip) event.confirmationKey else null
         }
     }
@@ -73,9 +73,9 @@ class CinematicSkippableAudienceDisplay(
     fun onPlayerCinematicEnd(event: AsyncCinematicEndEvent) {
         if (!canConsider(event.player)) return
         event.player.updateFilter(false)
-        confirmationKeys.remove(event.player.uniqueId)
+        confirmationKeys.remove(event.player.uuid)
     }
 
-    fun confirmationKey(player: Player): SkipConfirmationKey? = confirmationKeys[player.uniqueId]
+    fun confirmationKey(player: Player): SkipConfirmationKey? = confirmationKeys[player.uuid]
 }
 

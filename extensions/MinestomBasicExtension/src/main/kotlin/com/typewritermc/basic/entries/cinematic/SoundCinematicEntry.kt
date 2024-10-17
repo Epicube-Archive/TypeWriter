@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
 import com.typewritermc.engine.minestom.utils.*
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("sound_cinematic", "Play a sound during a cinematic", Colors.YELLOW, "fa6-solid:music")
 /**

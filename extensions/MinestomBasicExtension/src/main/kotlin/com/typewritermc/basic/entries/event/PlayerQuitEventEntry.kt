@@ -8,7 +8,7 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import org.bukkit.event.player.PlayerQuitEvent
+import net.minestom.server.event.player.PlayerDisconnectEvent
 
 @Entry("on_player_quit", "When the player quits the server", Colors.YELLOW, "fluent:person-subtract-20-filled")
 /**
@@ -25,6 +25,6 @@ class PlayerQuitEventEntry(
 ) : EventEntry
 
 @EntryListener(PlayerQuitEventEntry::class)
-fun onQuit(event: PlayerQuitEvent, query: Query<PlayerQuitEventEntry>) {
+fun onQuit(event: PlayerDisconnectEvent, query: Query<PlayerQuitEventEntry>) {
     query.find() triggerAllFor event.player
 }

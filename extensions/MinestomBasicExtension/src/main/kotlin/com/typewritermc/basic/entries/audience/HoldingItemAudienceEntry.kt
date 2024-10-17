@@ -1,21 +1,25 @@
 package com.typewritermc.basic.entries.audience
 
-import io.papermc.paper.event.player.PlayerPickItemEvent
 import com.typewritermc.core.books.pages.Colors
+import com.typewritermc.core.entries.Ref
+import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
-import com.typewritermc.core.entries.Ref
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import com.typewritermc.engine.minestom.entry.entries.AudienceFilter
 import com.typewritermc.engine.minestom.entry.entries.AudienceFilterEntry
 import com.typewritermc.engine.minestom.entry.entries.Invertible
-import com.typewritermc.core.entries.ref
 import com.typewritermc.engine.minestom.utils.item.Item
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.inventory.*
-import org.bukkit.event.player.PlayerDropItemEvent
-import org.bukkit.event.player.PlayerItemHeldEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.event.inventory.InventoryClickEvent
+import net.minestom.server.event.inventory.InventoryCloseEvent
+import net.minestom.server.event.inventory.InventoryItemChangeEvent
+import net.minestom.server.event.inventory.InventoryOpenEvent
+import net.minestom.server.event.item.ItemDropEvent
+import net.minestom.server.event.item.PickupItemEvent
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
+import net.minestom.server.event.trait.InventoryEvent
 
 @Entry(
     "holding_item_audience",
@@ -51,9 +55,9 @@ class HoldingItemAudienceFilter(
     }
 
     @EventHandler
-    fun onPlayerItemHeld(event: PlayerItemHeldEvent) {
+    fun onPlayerItemHeld(event: PlayerChangeHeldSlotEvent) {
         val player = event.player
-        val newHoldingItem = player.inventory.getItem(event.newSlot)
+        val newHoldingItem = player.inventory.getItemStack(event.slot.toInt())
         player.updateFilter(item.isSameAs(player, newHoldingItem))
     }
 
@@ -61,7 +65,7 @@ class HoldingItemAudienceFilter(
     fun onInventoryClickEvent(event: InventoryClickEvent) = onInventoryEvent(event)
 
     @EventHandler
-    fun onInventoryDragEvent(event: InventoryDragEvent) = onInventoryEvent(event)
+    fun onInventoryDragEvent(event: InventoryItemChangeEvent) = onInventoryEvent(event)
 
     @EventHandler
     fun onInventoryOpenEvent(event: InventoryOpenEvent) = onInventoryEvent(event)
@@ -71,13 +75,23 @@ class HoldingItemAudienceFilter(
 
     @EventHandler
     fun onInventoryEvent(event: InventoryEvent) {
-        val player = event.view.player as? Player ?: return
-        player.refresh()
+        if(event.inventory == null) {
+            // player inventory
+            return
+        }
+
+        for (viewer in event.inventory!!.viewers) {
+            viewer.refresh()
+        }
     }
 
     @EventHandler
-    fun onPickupItem(event: PlayerPickItemEvent) = event.player.refresh()
+    fun onPickupItem(event: PickupItemEvent) {
+        if(event.livingEntity is Player) {
+            (event.livingEntity as Player).refresh()
+        }
+    }
 
     @EventHandler
-    fun onDropItem(event: PlayerDropItemEvent) = event.player.refresh()
+    fun onDropItem(event: ItemDropEvent) = event.player.refresh()
 }

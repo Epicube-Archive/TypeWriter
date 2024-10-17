@@ -6,10 +6,9 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.core.entries.ref
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.logger
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerChangedWorldEvent
+import net.minestom.server.entity.Player
 
 @Entry(
     "game_time_audience",

@@ -12,9 +12,8 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import lirand.api.extensions.server.server
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 
 @Entry("console_run_command", "Run command from console", Colors.RED, "mingcute:terminal-fill")
 /**
@@ -42,7 +41,7 @@ class ConsoleCommandActionEntry(
         SYNC.launch {
             val commands = command.parsePlaceholders(player).lines()
             for (cmd in commands) {
-                server.dispatchCommand(Bukkit.getConsoleSender(), cmd)
+                MinecraftServer.getCommandManager().executeServerCommand(cmd)
             }
         }
     }

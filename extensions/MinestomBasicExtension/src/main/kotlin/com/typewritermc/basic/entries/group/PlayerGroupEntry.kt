@@ -4,7 +4,8 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupId
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.uniqueId
+import net.minestom.server.entity.Player
 
 @Entry("player_group", "Group for every individual player", Colors.MYRTLE_GREEN, "fa6-solid:user")
 /**

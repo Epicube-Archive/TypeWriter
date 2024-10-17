@@ -10,7 +10,7 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("random_trigger", "Randomly selects its connected triggers", Colors.PINK, "mdi:clover")
 /**

@@ -9,7 +9,8 @@ import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.engine.minestom.entry.matches
 import com.typewritermc.engine.minestom.logger
 import com.typewritermc.engine.minestom.utils.ThreadType
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.uniqueId
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

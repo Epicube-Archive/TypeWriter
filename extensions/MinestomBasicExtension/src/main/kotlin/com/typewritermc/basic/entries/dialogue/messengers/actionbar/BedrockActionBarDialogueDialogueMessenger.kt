@@ -4,12 +4,9 @@ import com.typewritermc.basic.entries.dialogue.ActionBarDialogueEntry
 import com.typewritermc.core.extension.annotations.Messenger
 import com.typewritermc.engine.minestom.entry.dialogue.DialogueMessenger
 import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
-import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
 import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
-import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.isFloodgate
-import com.typewritermc.engine.minestom.utils.legacy
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Messenger(ActionBarDialogueEntry::class, priority = 5)
 class BedrockActionBarDialogueDialogueMessenger(player: Player, entry: ActionBarDialogueEntry) :
@@ -21,19 +18,7 @@ class BedrockActionBarDialogueDialogueMessenger(player: Player, entry: ActionBar
 
     override fun init() {
         super.init()
-        org.geysermc.floodgate.api.FloodgateApi.getInstance().sendForm(
-            player.uniqueId,
-            org.geysermc.cumulus.form.SimpleForm.builder()
-                .title("<bold>${entry.speakerDisplayName}</bold>".legacy())
-                .content("${entry.text.parsePlaceholders(player).legacy()}\n\n")
-                .button("Continue")
-                .closedOrInvalidResultHandler { _, _ ->
-                    state = MessengerState.CANCELLED
-                }
-                .validResultHandler { _, _ ->
-                    state = MessengerState.FINISHED
-                }
-        )
+        /* no-op */
     }
 
     override fun end() {

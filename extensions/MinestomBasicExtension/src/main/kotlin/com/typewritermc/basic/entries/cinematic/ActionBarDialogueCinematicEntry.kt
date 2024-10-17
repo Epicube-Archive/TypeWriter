@@ -16,7 +16,7 @@ import com.typewritermc.engine.minestom.snippets.snippet
 import com.typewritermc.engine.minestom.utils.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("actionbar_dialogue_cinematic", "Show an action bar typed dialogue", Colors.CYAN, "fa6-solid:xmarks-lines")
 /**

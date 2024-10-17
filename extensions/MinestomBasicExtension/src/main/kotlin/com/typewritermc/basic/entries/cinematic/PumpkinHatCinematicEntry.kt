@@ -1,7 +1,5 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.protocol.player.Equipment
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
@@ -10,13 +8,14 @@ import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.PrimaryCinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
-import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.minestom.extensions.packetevents.toPacketItem
-import com.typewritermc.engine.minestom.utils.name
 import com.typewritermc.engine.minestom.utils.unClickable
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import net.kyori.adventure.text.Component
+import net.minestom.server.entity.EquipmentSlot
+import net.minestom.server.entity.Player
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
+import net.minestom.server.network.packet.server.play.EntityEquipmentPacket
 
 @Entry("pumpkin_hat_cinematic", "Show a pumpkin hat during a cinematic", Colors.CYAN, "mingcute:hat-fill")
 /**
@@ -54,35 +53,24 @@ class PumpkinHatCinematicAction(
     override suspend fun startSegment(segment: PumpkinHatSegment) {
         super.startSegment(segment)
 
-        WrapperPlayServerEntityEquipment(
+        player.sendPacket(EntityEquipmentPacket(
             player.entityId,
-            listOf(
-                Equipment(
-                    com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET,
-                    ItemStack(Material.CARVED_PUMPKIN)
-                        .apply {
-                            editMeta { meta ->
-                                meta.name = " "
-                                meta.unClickable()
-                            }
-                        }
-                        .toPacketItem()
-                )
+            mapOf(
+                Pair(EquipmentSlot.HELMET, ItemStack.of(Material.CARVED_PUMPKIN)
+                    .withCustomName(Component.text(" "))
+                    .unClickable())
             )
-        ) sendPacketTo player
+        ))
     }
 
     override suspend fun stopSegment(segment: PumpkinHatSegment) {
         super.stopSegment(segment)
-        WrapperPlayServerEntityEquipment(
+
+        player.sendPacket(EntityEquipmentPacket(
             player.entityId,
-            listOf(
-                Equipment(
-                    com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET,
-                    player.inventory.helmet?.toPacketItem()
-                        ?: com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY
-                )
+            mapOf(
+                Pair(EquipmentSlot.HELMET, player.inventory.helmet)
             )
-        ) sendPacketTo player
+        ))
     }
 }

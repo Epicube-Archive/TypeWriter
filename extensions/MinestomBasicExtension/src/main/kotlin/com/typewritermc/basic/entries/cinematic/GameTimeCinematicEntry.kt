@@ -1,24 +1,23 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTimeUpdate
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
 import com.typewritermc.core.utils.point.squared
+import com.typewritermc.engine.minestom.adapt.TypeWriterPlayer
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.PrimaryCinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
-import com.typewritermc.engine.minestom.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.minestom.interaction.InterceptionBundle
 import com.typewritermc.engine.minestom.interaction.interceptPackets
 import com.typewritermc.engine.minestom.utils.GenericPlayerStateProvider.GAME_TIME
 import com.typewritermc.engine.minestom.utils.PlayerState
 import com.typewritermc.engine.minestom.utils.restore
 import com.typewritermc.engine.minestom.utils.state
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.TimeUpdatePacket
 import kotlin.math.pow
 
 @Entry("game_time_cinematic", "A cinematic that changes the in game time", Colors.CYAN, "material-symbols:auto-timer")
@@ -76,6 +75,8 @@ class GameTimeCinematicAction(
 
     override suspend fun startSegment(segment: GameTimeSegment) {
         super.startSegment(segment)
+        if(player !is TypeWriterPlayer) return
+
         tracker = TimeTracker(player.playerTime, player.playerTime - (player.playerTime % 24000) + segment.time)
 
         // Since minecraft sends the time update packet every 20 ticks, we can't use it and needs to send our own.
@@ -91,21 +92,22 @@ class GameTimeCinematicAction(
 
     override suspend fun stopSegment(segment: GameTimeSegment) {
         super.stopSegment(segment)
+        if(player !is TypeWriterPlayer) return
         // We don't reset the time for the player since it is likely we want to keep the time set to this.
         // Otherwise, why change it?
         interceptor?.cancel()
-        player.setPlayerTime(segment.time.toLong(), false)
+        player.playerTime = segment.time.toLong()
         tracker = null
     }
 
     override suspend fun tickSegment(segment: GameTimeSegment, frame: Int) {
         super.tickSegment(segment, frame)
+        if(player !is TypeWriterPlayer) return
 
         val percentage = (frame - segment.startFrame).toDouble() / (segment.endFrame - segment.startFrame)
         val easedPercentage = percentage.easeInOutQuad()
         val time = tracker?.time(easedPercentage) ?: return
-        player.setPlayerTime(time, false)
-        WrapperPlayServerTimeUpdate(player.world.gameTime, time).sendPacketTo(player)
+        player.playerTime = time
     }
 
     override suspend fun teardown() {

@@ -10,8 +10,8 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
 import com.typewritermc.engine.minestom.utils.toBukkitLocation
-import org.bukkit.Material
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
+import net.minestom.server.instance.block.Block
 
 @Entry("set_block", "Set a block at a location", Colors.RED, "fluent:cube-add-20-filled")
 /**
@@ -32,7 +32,7 @@ class SetBlockActionEntry(
     override val criteria: List<Criteria> = emptyList(),
     override val modifiers: List<Modifier> = emptyList(),
     override val triggers: List<Ref<TriggerableEntry>> = emptyList(),
-    val material: Material = Material.AIR,
+    val material: Block = Block.AIR,
     val location: Position = Position.ORIGIN,
 ) : ActionEntry {
     override fun execute(player: Player) {
@@ -40,7 +40,7 @@ class SetBlockActionEntry(
 
         SYNC.launch {
             val bukkitLocation = location.toBukkitLocation()
-            bukkitLocation.block.type = material
+            bukkitLocation.instance?.setBlock(bukkitLocation.position, material)
         }
     }
 }

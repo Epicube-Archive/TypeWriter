@@ -9,6 +9,8 @@ import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
 import com.typewritermc.engine.minestom.entry.roadnetwork.gps.PathStreamDisplay
+import com.typewritermc.engine.minestom.utils.location
+import com.typewritermc.engine.minestom.utils.world
 
 @Entry(
     "closest_group_member_path_stream",

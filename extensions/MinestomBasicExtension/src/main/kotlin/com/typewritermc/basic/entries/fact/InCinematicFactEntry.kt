@@ -12,7 +12,7 @@ import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.ReadableFactEntry
 import com.typewritermc.engine.minestom.facts.FactData
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("in_cinematic_fact", "If the player is in a cinematic", Colors.PURPLE, "eos-icons:storage-class")
 /**

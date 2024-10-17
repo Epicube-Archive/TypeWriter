@@ -15,6 +15,14 @@ allprojects {
     repositories {
         // Required
         mavenCentral()
+
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatype-oss-snapshots"
+        }
+    }
+
+    dependencies {
+        implementation("net.kyori:adventure-text-minimessage:4.17.0")
     }
 
     val targetJavaVersion = 21

@@ -8,7 +8,7 @@ import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.EntryListener
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import org.bukkit.event.player.PlayerJoinEvent
+import net.minestom.server.event.player.PlayerSpawnEvent
 
 @Entry("on_player_join", "When the player joins the server", Colors.YELLOW, "fluent:person-add-20-filled")
 /**
@@ -26,6 +26,6 @@ class PlayerJoinEventEntry(
 ) : EventEntry
 
 @EntryListener(PlayerJoinEventEntry::class)
-fun onJoin(event: PlayerJoinEvent, query: Query<PlayerJoinEventEntry>) {
+fun onJoin(event: PlayerSpawnEvent, query: Query<PlayerJoinEventEntry>) {
     query.find() triggerAllFor event.player
 }

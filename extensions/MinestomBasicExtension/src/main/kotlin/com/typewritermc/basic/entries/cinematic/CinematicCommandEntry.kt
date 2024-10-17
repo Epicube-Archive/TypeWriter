@@ -9,7 +9,8 @@ import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import org.bukkit.entity.Player
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 
 interface CinematicCommandEntry : CinematicEntry {
     val segments: List<CommandSegment>
@@ -42,7 +43,7 @@ class CinematicConsoleCommandEntry(
             player,
             this
         ) { command ->
-            player.server.dispatchCommand(player.server.consoleSender, command)
+            MinecraftServer.getCommandManager().executeServerCommand(command)
         }
     }
 }
@@ -74,7 +75,7 @@ class CinematicPlayerCommandEntry(
             player,
             this
         ) { command ->
-            player.performCommand(command)
+            MinecraftServer.getCommandManager().execute(player, command)
         }
     }
 }

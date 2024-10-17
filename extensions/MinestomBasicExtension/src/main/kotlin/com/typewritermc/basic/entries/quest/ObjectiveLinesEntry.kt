@@ -11,7 +11,7 @@ import com.typewritermc.engine.minestom.entry.entries.trackedShowingObjectives
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.asMini
 import com.typewritermc.engine.minestom.utils.asMiniWithResolvers
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Entry(

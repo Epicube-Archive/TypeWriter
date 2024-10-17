@@ -9,6 +9,7 @@ import com.typewritermc.engine.minestom.entry.entries.AudienceEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.RoadNetworkEntry
 import com.typewritermc.engine.minestom.entry.roadnetwork.gps.MultiPathStreamDisplay
+import com.typewritermc.engine.minestom.utils.location
 
 @Entry(
     "group_members_path_stream",

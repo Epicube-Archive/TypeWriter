@@ -10,7 +10,7 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.SoundId
 import net.kyori.adventure.sound.SoundStop
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Entry("stop_sound", "Stop a or all sounds for a player", Colors.RED, "teenyicons:sound-off-solid")
@@ -40,7 +40,7 @@ class StopSoundActionEntry(
 
             player.stopSound(soundStop)
         } else {
-            player.stopAllSounds()
+            player.stopSound(SoundStop.all())
         }
     }
 }

@@ -11,7 +11,7 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.CustomTriggeringActionEntry
 import com.typewritermc.engine.minestom.utils.ThreadType.DISPATCHERS_ASYNC
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.time.Duration
 
 @Entry("delayed_action", "Delay an action for a certain amount of time", Colors.RED, "fa-solid:hourglass")

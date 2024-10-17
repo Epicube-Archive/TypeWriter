@@ -8,7 +8,7 @@ import com.typewritermc.engine.minestom.entry.dialogue.MessengerFilter
 import com.typewritermc.engine.minestom.entry.dialogue.MessengerState
 import com.typewritermc.engine.minestom.entry.dialogue.TickContext
 import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.time.Duration
 
 @Messenger(RandomMessageDialogueEntry::class)

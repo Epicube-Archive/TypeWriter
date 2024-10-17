@@ -1,19 +1,13 @@
 package com.typewritermc.basic.entries.cinematic
 
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes
-import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerPosition
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerPositionAndRotation
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerPositionAndLook
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.*
 import com.typewritermc.core.utils.point.Position
+import com.typewritermc.engine.minestom.adapt.Location
+import com.typewritermc.engine.minestom.adapt.event.Listener
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.entries.*
-import com.typewritermc.engine.minestom.extensions.packetevents.meta
 import com.typewritermc.engine.minestom.extensions.packetevents.spectateEntity
 import com.typewritermc.engine.minestom.extensions.packetevents.stopSpectatingEntity
 import com.typewritermc.engine.minestom.interaction.InterceptionBundle
@@ -23,28 +17,22 @@ import com.typewritermc.engine.minestom.plugin
 import com.typewritermc.engine.minestom.utils.*
 import com.typewritermc.engine.minestom.utils.GenericPlayerStateProvider.*
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import io.github.retrooper.packetevents.util.SpigotConversionUtil
 import lirand.api.extensions.events.SimpleListener
 import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
-import me.tofaa.entitylib.meta.display.ItemDisplayMeta
-import me.tofaa.entitylib.meta.display.TextDisplayMeta
-import me.tofaa.entitylib.wrapper.WrapperEntity
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffect.INFINITE_DURATION
-import org.bukkit.potion.PotionEffectType.INVISIBILITY
+import lirand.api.extensions.server.onlinePlayers
+import net.minestom.server.entity.*
+import net.minestom.server.entity.metadata.display.ItemDisplayMeta
+import net.minestom.server.entity.metadata.display.TextDisplayMeta
+import net.minestom.server.event.entity.EntityDamageEvent
+import net.minestom.server.item.ItemComponent
+import net.minestom.server.item.ItemStack
+import net.minestom.server.item.Material
+import net.minestom.server.item.component.HeadProfile
+import net.minestom.server.potion.Potion
+import net.minestom.server.potion.PotionEffect
 import java.util.*
+
 
 @Entry("camera_cinematic", "Create a cinematic camera path", Colors.CYAN, "fa6-solid:video")
 /**
@@ -165,16 +153,16 @@ class CameraCinematicAction(
             FLYING,
             VISIBLE_PLAYERS,
             SHOWING_PLAYER,
-            EffectStateProvider(INVISIBILITY)
+            EffectStateProvider(PotionEffect.INVISIBILITY)
         )
 
         SYNC.switchContext {
-            allowFlight = true
+            isAllowFlying = true
             isFlying = true
-            addPotionEffect(PotionEffect(INVISIBILITY, INFINITE_DURATION, 0, false, false))
-            lirand.api.extensions.server.server.onlinePlayers.forEach {
-                it.hidePlayer(plugin, this)
-                this.hidePlayer(plugin, it)
+            addEffect(Potion(PotionEffect.INVISIBILITY, 1, 1, Potion.INFINITE_DURATION))
+            onlinePlayers.forEach {
+                it.removeViewer(this)
+                this.removeViewer(it)
             }
 
             // In creative mode, when the player opens the inventory while their inventory is fake cleared,
@@ -274,11 +262,10 @@ private suspend inline fun Player.teleportIfNeeded(
     frame: Int,
     location: Location,
 ) {
-    if (frame % 10 == 0 || (location.distanceSqrt(location)
-            ?: Double.MAX_VALUE) > MAX_DISTANCE_SQUARED
+    if (frame % 10 == 0 || location.distanceSqrt(location) > MAX_DISTANCE_SQUARED
     ) SYNC.switchContext {
-        teleport(location)
-        allowFlight = true
+        teleport(location.position)
+        isAllowFlying = true
         isFlying = true
     }
 }
@@ -306,11 +293,12 @@ private class DisplayCameraAction(
         const val BASE_INTERPOLATION = 10
     }
 
-    private fun createEntity(): WrapperEntity {
-        return WrapperEntity(EntityTypes.TEXT_DISPLAY)
-            .meta<TextDisplayMeta> {
-                positionRotationInterpolationDuration = BASE_INTERPOLATION
+    private fun createEntity(): Entity {
+        return Entity(EntityType.TEXT_DISPLAY).apply {
+            editEntityMeta(TextDisplayMeta::class.java) {
+                it.posRotInterpolationDuration = BASE_INTERPOLATION
             }
+        }
     }
 
     private fun setupPath(segment: CameraSegment) {
@@ -323,18 +311,19 @@ private class DisplayCameraAction(
         setupPath(segment)
 
         SYNC.switchContext {
-            player.teleport(path.first().position.toBukkitLocation())
+            player.teleport(path.first().position.toMinestomPos())
         }
 
-        entity.spawn(path.first().position.toPacketLocation())
-        entity.addViewer(player.uniqueId)
+        val loc = path.first().position.toBukkitLocation();
+        entity.setInstance(loc.world!!, loc.position)
+        entity.addViewer(player)
         player.spectateEntity(entity)
     }
 
     override suspend fun tickSegment(frame: Int) {
         val location = path.interpolate(frame)
-        entity.rotateHead(location.yaw, location.pitch)
-        entity.teleport(location.toPacketLocation())
+        entity.setView(location.yaw, location.pitch)
+        entity.teleport(location.toMinestomPos())
         player.teleportIfNeeded(frame, location.toBukkitLocation())
     }
 
@@ -352,33 +341,33 @@ private class DisplayCameraAction(
 
     private suspend fun switchSeamless() {
         val newEntity = createEntity()
-        newEntity.spawn(path.first().position.toPacketLocation())
-        newEntity.addViewer(player.uniqueId)
+        val loc = path.first().position.toBukkitLocation();
+        newEntity.setInstance(loc.world!!, loc.position)
+        newEntity.addViewer(player)
 
         SYNC.switchContext {
-            player.teleport(path.first().position.toBukkitLocation())
+            entity.teleport(loc.position)
             player.spectateEntity(newEntity)
         }
 
-        entity.despawn()
         entity.remove()
         entity = newEntity
     }
 
     private suspend fun switchWithStop() {
         player.stopSpectatingEntity()
-        entity.despawn()
-        entity.addViewer(player.uniqueId)
+        //entity.despawn() // FIXME
+        entity.addViewer(player)
         SYNC.switchContext {
-            player.teleport(path.first().position.toBukkitLocation())
-            entity.spawn(path.first().position.toPacketLocation())
+            val loc = path.first().position.toBukkitLocation();
+            player.teleport(loc.position)
+            entity.setInstance(loc.world!!, loc.position)
             player.spectateEntity(entity)
         }
     }
 
     override suspend fun stop() {
         player.stopSpectatingEntity()
-        entity.despawn()
         entity.remove()
     }
 }
@@ -395,8 +384,8 @@ private class TeleportCameraAction(
     override suspend fun tickSegment(frame: Int) {
         val position = path.interpolate(frame)
         SYNC.switchContext {
-            player.teleport(position.toBukkitLocation())
-            player.allowFlight = true
+            player.teleport(position.toMinestomPos())
+            player.isAllowFlying = true
             player.isFlying = true
         }
     }
@@ -421,40 +410,48 @@ class SimulatedCameraCinematicAction(
         }
     }
 
-    private var entity: WrapperEntity? = null
+    private var entity: Entity? = null
 
     override suspend fun startSegment(segment: CameraSegment) {
         super.startSegment(segment)
-        entity?.despawn()
         entity?.remove()
-        entity = WrapperEntity(EntityTypes.ITEM_DISPLAY)
-            .meta<ItemDisplayMeta> {
-                positionRotationInterpolationDuration = 3
-                displayType = ItemDisplayMeta.DisplayType.HEAD
-                item = SpigotConversionUtil.fromBukkitItemStack(ItemStack(Material.PLAYER_HEAD)
-                    .apply {
-                        editMeta(SkullMeta::class.java) { meta ->
-                            meta.applySkinUrl("https://textures.minecraft.net/texture/427066e899358b1185460f867fc6dc434c7b4c82fbe70e1919ce74b8bacf80a1")
-                        }
-                    }
-                )
+
+        val playerSkin = PlayerSkin(
+            Base64.getEncoder().encodeToString(
+                "{textures:{SKIN:{url:\"https://textures.minecraft.net/texture/427066e899358b1185460f867fc6dc434c7b4c82fbe70e1919ce74b8bacf80a1\"}}}".encodeToByteArray()
+            ),
+            ""
+        )
+
+        entity = Entity(EntityType.ITEM_DISPLAY).apply {
+            editEntityMeta(ItemDisplayMeta::class.java) {
+                it.posRotInterpolationDuration = 3
+                it.displayContext = ItemDisplayMeta.DisplayContext.HEAD
+                it.itemStack = ItemStack.of(Material.PLAYER_HEAD)
+                    .with(ItemComponent.PROFILE, HeadProfile(playerSkin));
             }
+        }
         val path = paths[segment] ?: return
-        val location = path.interpolate(lastFrame - segment.startFrame)
-        entity?.spawn(location.toPacketLocation().apply { yaw += 180; pitch = -pitch })
-        entity?.addViewer(player.uniqueId)
+        val location = path.interpolate(lastFrame - segment.startFrame).toBukkitLocation()
+        entity?.setInstance(location.instance!!, location.position.withView(
+            location.position.yaw + 180,
+            -location.position.pitch
+        ))
+        entity?.addViewer(player)
     }
 
     override suspend fun tickSegment(segment: CameraSegment, frame: Int) {
         super.tickSegment(segment, frame)
         val path = paths[segment] ?: return
         val location = path.interpolate(frame - segment.startFrame)
-        entity?.teleport(location.toPacketLocation().apply { yaw += 180; pitch = -pitch })
+        entity?.teleport(location.toMinestomPos().withView(
+            location.yaw + 180,
+            -location.pitch
+        ))
     }
 
     override suspend fun stopSegment(segment: CameraSegment) {
         super.stopSegment(segment)
-        entity?.despawn()
         entity?.remove()
         entity = null
     }

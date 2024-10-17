@@ -4,7 +4,7 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupId
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("global_group", "One group with all the online players", Colors.MYRTLE_GREEN, "fa6-solid:globe")
 /**

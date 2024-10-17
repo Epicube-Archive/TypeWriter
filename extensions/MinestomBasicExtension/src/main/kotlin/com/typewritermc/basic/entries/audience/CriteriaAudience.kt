@@ -8,7 +8,8 @@ import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.*
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.uniqueId
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

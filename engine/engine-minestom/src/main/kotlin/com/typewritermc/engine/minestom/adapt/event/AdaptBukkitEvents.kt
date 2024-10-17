@@ -15,25 +15,25 @@ object AdaptBukkitEvents {
         handler.addListener(PlayerStopSneakingEvent::class.java) { PlayerToggleSneakEvent(it.player, false).callEvent() }
 
         handler.addListener(PlayerBlockInteractEvent::class.java) {
-            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, it.isCancelled)
+            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, it.blockPosition, it.block, it.isCancelled)
             handler.call(event)
             it.isCancelled = event.isCancelled
         }
 
         handler.addListener(PlayerStartDiggingEvent::class.java) {
-            val event = PlayerInteractEvent(it.player, it.player.playerMeta.activeHand, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, it.isCancelled)
+            val event = PlayerInteractEvent(it.player, it.player.playerMeta.activeHand, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, it.blockPosition, it.block, it.isCancelled)
             handler.call(event)
             it.isCancelled = event.isCancelled
         }
 
         handler.addListener(PlayerUseItemEvent::class.java) {
-            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, it.isCancelled)
+            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, null, null, it.isCancelled)
             handler.call(event)
             it.isCancelled = event.isCancelled
         }
 
         handler.addListener(PlayerHandAnimationEvent::class.java) {
-            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.LEFT_CLICK_AIR, it.isCancelled)
+            val event = PlayerInteractEvent(it.player, it.hand, PlayerInteractEvent.Action.LEFT_CLICK_AIR, null, null, it.isCancelled)
             handler.call(event)
             it.isCancelled = event.isCancelled
         }

@@ -26,6 +26,8 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.kotlindsl.*
 import net.kyori.adventure.inventory.Book
+import net.minestom.server.command.CommandSender
+import net.minestom.server.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.time.format.DateTimeFormatter
 

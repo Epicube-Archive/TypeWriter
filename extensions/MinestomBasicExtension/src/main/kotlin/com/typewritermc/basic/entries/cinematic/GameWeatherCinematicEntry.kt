@@ -4,13 +4,14 @@ import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Default
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Segments
+import com.typewritermc.engine.minestom.adapt.WeatherType
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.cinematic.SimpleCinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicAction
 import com.typewritermc.engine.minestom.entry.entries.CinematicEntry
 import com.typewritermc.engine.minestom.entry.entries.Segment
-import org.bukkit.WeatherType
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.setPlayerWeather
+import net.minestom.server.entity.Player
 
 @Entry("game_weather_cinematic", "A cinematic that changes the weather", Colors.CYAN, "fluent:weather-rain-showers-day-24-filled")
 /**

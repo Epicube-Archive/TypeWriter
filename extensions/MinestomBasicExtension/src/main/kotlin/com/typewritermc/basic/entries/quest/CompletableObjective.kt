@@ -13,7 +13,7 @@ import com.typewritermc.engine.minestom.snippets.snippet
 import com.typewritermc.engine.minestom.utils.asMini
 import com.typewritermc.engine.minestom.utils.asMiniWithResolvers
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.parsed
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 private val completedObjectiveDisplay by snippet(

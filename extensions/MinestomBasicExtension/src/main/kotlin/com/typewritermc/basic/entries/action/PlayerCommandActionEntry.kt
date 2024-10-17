@@ -12,8 +12,8 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import lirand.api.extensions.server.server
-import org.bukkit.entity.Player
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 
 @Entry("player_run_command", "Make player run command", Colors.RED, "mingcute:terminal-fill")
 /**
@@ -47,7 +47,7 @@ class PlayerCommandActionEntry(
         SYNC.launch {
             val commands = command.parsePlaceholders(player).lines()
             for (cmd in commands) {
-                server.dispatchCommand(player, cmd)
+                MinecraftServer.getCommandManager().execute(player, cmd)
             }
         }
     }

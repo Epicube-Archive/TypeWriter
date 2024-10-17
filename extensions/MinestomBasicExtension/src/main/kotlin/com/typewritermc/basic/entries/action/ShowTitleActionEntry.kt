@@ -13,7 +13,7 @@ import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.title.Title
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.time.Duration
 import java.util.*
 

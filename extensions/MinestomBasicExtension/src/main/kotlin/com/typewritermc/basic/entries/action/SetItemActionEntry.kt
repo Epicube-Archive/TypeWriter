@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.item.Item
 import com.typewritermc.engine.minestom.utils.ThreadType.SYNC
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("set_item", "Set an item in a specific slot", Colors.RED, "fluent:tray-item-add-24-filled")
 /**
@@ -32,7 +32,7 @@ class SetItemActionEntry(
         super.execute(player)
 
         SYNC.launch {
-            player.inventory.setItem(slot, item.build(player))
+            player.inventory.setItemStack(slot, item.build(player))
         }
     }
 }

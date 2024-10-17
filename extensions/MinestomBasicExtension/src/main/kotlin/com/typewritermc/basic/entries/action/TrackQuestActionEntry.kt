@@ -9,7 +9,7 @@ import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.entry.entries.QuestEntry
 import com.typewritermc.engine.minestom.entry.quest.trackQuest
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("track_quest", "Start tracking a quest for a player", Colors.RED, "material-symbols:bookmark")
 /**

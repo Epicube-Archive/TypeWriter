@@ -19,7 +19,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.title.Title
 import net.kyori.adventure.title.Title.Times
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.time.Duration
 
 @Entry("subtitle_dialogue_cinematic", "Show an subtitle message", Colors.CYAN, "fa6-solid:diagram-next")

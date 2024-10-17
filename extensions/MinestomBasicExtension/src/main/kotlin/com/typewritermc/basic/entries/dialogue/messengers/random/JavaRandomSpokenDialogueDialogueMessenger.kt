@@ -7,7 +7,8 @@ import com.typewritermc.engine.minestom.entry.dialogue.*
 import com.typewritermc.engine.minestom.entry.entries.DialogueEntry
 import com.typewritermc.engine.minestom.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.minestom.utils.stripped
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.uniqueId
+import net.minestom.server.entity.Player
 import java.time.Duration
 
 @Messenger(RandomSpokenDialogueEntry::class)

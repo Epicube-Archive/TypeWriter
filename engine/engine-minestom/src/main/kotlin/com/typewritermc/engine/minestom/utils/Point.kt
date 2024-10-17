@@ -5,6 +5,7 @@ import com.typewritermc.core.utils.point.Vector
 import com.typewritermc.engine.minestom.adapt.Location
 import com.typewritermc.engine.minestom.adapt.uid
 import net.minestom.server.MinecraftServer
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import java.util.*
 
@@ -20,6 +21,7 @@ fun Point.toBukkitVector() = Vec(x, y, z)
 fun World.toBukkitWorld() = MinecraftServer.getInstanceManager().getInstance(UUID.fromString(identifier))
     ?: throw IllegalArgumentException("Could not find instance '$identifier' for location, and no default world available.")
 
+fun Position.toMinestomPos() = Pos(x, y, z, yaw, pitch)
 fun Position.toBukkitLocation() = Location(world.toBukkitWorld(), x, y, z, yaw, pitch)
 fun Position.toPacketLocation() = toBukkitLocation().toPacketLocation()
 

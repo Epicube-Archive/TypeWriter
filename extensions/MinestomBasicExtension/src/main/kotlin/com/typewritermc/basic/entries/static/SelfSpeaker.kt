@@ -6,7 +6,7 @@ import com.typewritermc.engine.minestom.entry.entries.SoundEmitter
 import com.typewritermc.engine.minestom.entry.entries.SoundSourceEntry
 import com.typewritermc.engine.minestom.entry.entries.SpeakerEntry
 import com.typewritermc.engine.minestom.utils.Sound
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 import java.util.*
 
 @Entry("self_speaker", "The player themself", Colors.ORANGE, "bi:person-fill")

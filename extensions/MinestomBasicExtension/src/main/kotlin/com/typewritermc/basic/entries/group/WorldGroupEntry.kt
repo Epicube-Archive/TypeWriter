@@ -2,9 +2,11 @@ package com.typewritermc.basic.entries.group
 
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.Entry
+import com.typewritermc.engine.minestom.adapt.uid
 import com.typewritermc.engine.minestom.entry.entries.GroupEntry
 import com.typewritermc.engine.minestom.entry.entries.GroupId
-import org.bukkit.entity.Player
+import com.typewritermc.engine.minestom.utils.world
+import net.minestom.server.entity.Player
 
 @Entry("world_group", "Group for the whole world", Colors.MYRTLE_GREEN, "bx:world")
 /**

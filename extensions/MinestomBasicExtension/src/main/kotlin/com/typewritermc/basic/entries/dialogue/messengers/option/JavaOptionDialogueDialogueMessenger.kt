@@ -6,6 +6,7 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.extension.annotations.Messenger
 import com.typewritermc.core.utils.around
 import com.typewritermc.core.utils.loopingDistance
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.entry.Modifier
 import com.typewritermc.engine.minestom.entry.TriggerableEntry
 import com.typewritermc.engine.minestom.entry.dialogue.*
@@ -18,9 +19,8 @@ import com.typewritermc.engine.minestom.utils.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerItemHeldEvent
+import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
 import java.time.Duration
 import kotlin.math.min
 
@@ -112,10 +112,10 @@ class JavaOptionDialogueDialogueMessenger(player: Player, entry: OptionDialogueE
     }
 
     @EventHandler
-    private fun onPlayerItemHeld(event: PlayerItemHeldEvent) {
+    private fun onPlayerItemHeld(event: PlayerChangeHeldSlotEvent) {
         if (event.player.uniqueId != player.uniqueId) return
-        val curSlot = event.previousSlot
-        val newSlot = event.newSlot
+        val curSlot = event.player.heldSlot.toInt()
+        val newSlot = event.slot.toInt()
         val dif = loopingDistance(curSlot, newSlot, 8)
         val index = selectedIndex
         event.isCancelled = true

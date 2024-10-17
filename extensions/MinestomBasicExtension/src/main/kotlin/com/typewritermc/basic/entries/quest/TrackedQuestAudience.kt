@@ -8,9 +8,9 @@ import com.typewritermc.core.entries.emptyRef
 import com.typewritermc.engine.minestom.entry.entries.*
 import com.typewritermc.engine.minestom.entry.quest.isQuestTracked
 import com.typewritermc.core.entries.ref
+import com.typewritermc.engine.minestom.adapt.event.EventHandler
 import com.typewritermc.engine.minestom.events.AsyncTrackedQuestUpdate
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
+import net.minestom.server.entity.Player
 
 @Entry(
     "tracked_quest_audience",

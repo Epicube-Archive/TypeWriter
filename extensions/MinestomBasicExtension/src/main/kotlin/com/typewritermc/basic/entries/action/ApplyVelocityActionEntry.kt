@@ -9,7 +9,7 @@ import com.typewritermc.core.utils.point.Vector
 import com.typewritermc.engine.minestom.entry.Criteria
 import com.typewritermc.engine.minestom.entry.entries.ActionEntry
 import com.typewritermc.engine.minestom.utils.toBukkitVector
-import org.bukkit.entity.Player
+import net.minestom.server.entity.Player
 
 @Entry("apply_velocity", "Apply a velocity to the player", Colors.RED, "fa-solid:wind")
 /**

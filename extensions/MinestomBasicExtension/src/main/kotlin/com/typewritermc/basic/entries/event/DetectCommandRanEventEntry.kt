@@ -8,10 +8,10 @@ import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Regex
 import com.typewritermc.engine.minestom.entry.*
 import com.typewritermc.engine.minestom.entry.entries.EventEntry
-import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import kotlin.text.Regex as KotlinRegex
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.extension.annotations.EntryListener
+import net.minestom.server.event.player.PlayerCommandEvent
 
 @Entry("on_detect_command_ran", "When a player runs an existing command", Colors.YELLOW, "mdi:account-eye")
 /**
@@ -62,8 +62,8 @@ class DetectCommandRanEventEntry(
 ) : EventEntry
 
 @EntryListener(DetectCommandRanEventEntry::class)
-fun onRunCommand(event: PlayerCommandPreprocessEvent, query: Query<DetectCommandRanEventEntry>) {
-    val message = event.message.removePrefix("/")
+fun onRunCommand(event: PlayerCommandEvent, query: Query<DetectCommandRanEventEntry>) {
+    val message = event.command.removePrefix("/")
 
     val entries = query.findWhere { KotlinRegex(it.command).matches(message) }.toList()
     if (entries.isEmpty()) return
