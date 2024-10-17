@@ -58,17 +58,16 @@ class TypewriterModulePlugin : Plugin<Project> {
             dependencies.add("compileOnly", "com.typewritermc:engine-core:${engine.version}")
         }
 
-
-        // Add PacketEvents repository
-        repositories.maven {
-            it.setUrl("https://repo.codemc.io/repository/maven-snapshots/")
-        }
-        // Add EntityLib repository
-        repositories.maven {
-            it.setUrl("https://maven.evokegames.gg/snapshots")
-        }
-
         if (extension.extension?.paper != null) {
+            // Add PacketEvents repository
+            repositories.maven {
+                it.setUrl("https://repo.codemc.io/repository/maven-snapshots/")
+            }
+            // Add EntityLib repository
+            repositories.maven {
+                it.setUrl("https://maven.evokegames.gg/snapshots")
+            }
+
             extension.engine?.let { engine ->
                 // Add Typewriter Paper dependency
                 dependencies.add("compileOnly", "com.typewritermc:engine-paper:${engine.version}")
@@ -79,6 +78,17 @@ class TypewriterModulePlugin : Plugin<Project> {
                 // Add Geyser repository
                 repositories.maven {
                     it.setUrl("https://repo.opencollab.dev/maven-snapshots/")
+                }
+            }
+        }
+
+        if (extension.extension?.minestom != null) {
+            extension.engine?.let { engine ->
+                // Add Typewriter Minestom dependency
+                dependencies.add("compileOnly", "com.typewritermc:engine-minestom:${engine.version}")
+                // Add Jitpack repository
+                repositories.maven {
+                    it.setUrl("https://jitpack.io")
                 }
             }
         }

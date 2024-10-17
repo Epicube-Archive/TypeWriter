@@ -91,7 +91,8 @@ data class TypewriterExtensionConfiguration(
      * A longer description of the extension.
      */
     var description: String = "",
-    var paper: PaperExtensionConfiguration? = null
+    var paper: PaperExtensionConfiguration? = null,
+    var minestom: PaperExtensionConfiguration? = null,
 ) {
     fun paper(block: PaperExtensionConfiguration.() -> Unit) {
         paper = PaperExtensionConfiguration().apply(block)
@@ -99,6 +100,14 @@ data class TypewriterExtensionConfiguration(
 
     fun paper() {
         paper = PaperExtensionConfiguration()
+    }
+
+    fun minestom(block: PaperExtensionConfiguration.() -> Unit) {
+        minestom = PaperExtensionConfiguration().apply(block)
+    }
+
+    fun minestom() {
+        minestom = PaperExtensionConfiguration()
     }
 }
 
@@ -145,6 +154,7 @@ internal fun TypewriterExtensionConfiguration.validate() {
     }
 
     paper?.validate()
+    minestom?.validate()
 }
 
 @Serializable

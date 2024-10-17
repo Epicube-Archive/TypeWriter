@@ -19,6 +19,6 @@ typewriter {
             first.
         """.trimIndent()
 
-        paper()
+        minestom()
     }
 }
