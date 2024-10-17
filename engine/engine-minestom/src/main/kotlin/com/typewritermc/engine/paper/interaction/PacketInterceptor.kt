@@ -2,13 +2,17 @@ package com.typewritermc.engine.paper.interaction
 
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
+import com.typewritermc.engine.paper.adapt.event.packet.WrappedPacketEvent
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerPacketEvent
 import net.minestom.server.event.player.PlayerPacketOutEvent
+import net.minestom.server.network.packet.client.ClientPacket
+import net.minestom.server.network.packet.server.ServerPacket
 import org.koin.java.KoinJavaComponent.get
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
 
 // TODO: this class needs lots of changes
 class PacketInterceptor : Listener {
@@ -22,14 +26,14 @@ class PacketInterceptor : Listener {
     fun onPacketReceive(event: PlayerPacketEvent) {
         val player = event.player
         val interceptor = blockers[player.uuid] ?: return
-        interceptor.trigger(event)
+        interceptor.trigger(WrappedPacketEvent(event))
     }
 
     @EventHandler
     fun onPacketSend(event: PlayerPacketOutEvent) {
         val player = event.player
         val interceptor = blockers[player.uuid] ?: return
-        interceptor.trigger(event)
+        interceptor.trigger(WrappedPacketEvent(event))
     }
 
     fun interceptPacket(player: UUID, interception: PacketInterception): PacketInterceptionSubscription {
@@ -82,10 +86,10 @@ private data class PlayerPacketInterceptor(
         return interceptions.isEmpty()
     }
 
-    fun trigger(event: ProtocolPacketEvent) {
+    fun trigger(event: WrappedPacketEvent) {
         interceptions.values
             .asSequence()
-            .filter { it.type == event.packetType }
+            .filter { it.type.isInstance(event.packet()) }
             .forEach { it.onIntercept(event) }
     }
 }
@@ -95,40 +99,40 @@ data class PacketInterceptionSubscription(
 )
 
 interface PacketInterception {
-    val type: PacketTypeCommon
-    fun onIntercept(event: ProtocolPacketEvent)
+    val type: KClass<*>
+    fun onIntercept(event: WrappedPacketEvent)
 }
 
 class PacketBlocker(
-    override val type: PacketTypeCommon,
+    override val type: KClass<*>,
 ) : PacketInterception {
-    override fun onIntercept(event: ProtocolPacketEvent) {
+    override fun onIntercept(event: WrappedPacketEvent) {
         event.isCancelled = true
     }
 }
 
 class CustomPacketReceiveInterception(
-    override val type: PacketTypeCommon,
-    private val intercept: (PacketReceiveEvent) -> Unit
+    override val type: KClass<*>,
+    private val intercept: (PlayerPacketEvent) -> Unit
 ) : PacketInterception {
-    override fun onIntercept(event: ProtocolPacketEvent) {
-        if (event !is PacketReceiveEvent) return
-        intercept(event)
+    override fun onIntercept(event: WrappedPacketEvent) {
+        if (event.isServer) return
+        intercept(event.asClient())
     }
 }
 
 class CustomPacketSendInterception(
-    override val type: PacketTypeCommon,
-    private val intercept: (PacketSendEvent) -> Unit
+    override val type: KClass<*>,
+    private val intercept: (PlayerPacketOutEvent) -> Unit
 ) : PacketInterception {
-    override fun onIntercept(event: ProtocolPacketEvent) {
-        if (event !is PacketSendEvent) return
-        intercept(event)
+    override fun onIntercept(event: WrappedPacketEvent) {
+        if (event.isClient) return
+        intercept(event.asServer())
     }
 }
 
 fun Player.interceptPackets(block: InterceptionBundle.() -> Unit): InterceptionBundle {
-    val bundle = InterceptionBundle(uniqueId)
+    val bundle = InterceptionBundle(uuid)
     block(bundle)
     return bundle
 }
@@ -141,18 +145,16 @@ class InterceptionBundle(private val playerId: UUID) {
         subscriptions.add(subscription)
     }
 
-    operator fun PacketTypeCommon.not() {
+    operator fun KClass<Any>.not() {
         intercept(PacketBlocker(this))
     }
 
-    operator fun ClientBoundPacket.invoke(onIntercept: (PacketSendEvent) -> Unit) {
-        if (this !is PacketTypeCommon) return
-        intercept(CustomPacketSendInterception(this, onIntercept))
+    operator fun <T : ServerPacket> T.invoke(onIntercept: (PlayerPacketOutEvent) -> Unit) {
+        intercept(CustomPacketSendInterception(this::class, onIntercept))
     }
 
-    operator fun ServerBoundPacket.invoke(onIntercept: (PacketReceiveEvent) -> Unit) {
-        if (this !is PacketTypeCommon) return
-        intercept(CustomPacketReceiveInterception(this, onIntercept))
+    operator fun <T : ClientPacket> T.invoke(onIntercept: (PlayerPacketEvent) -> Unit) {
+        intercept(CustomPacketReceiveInterception(this::class, onIntercept))
     }
 
     fun cancel() {
