@@ -24,8 +24,8 @@ enum class ThreadType {
 
         return withContext(
             when (this) {
-                SYNC -> plugin.minecraftDispatcher
-                ASYNC -> plugin.asyncDispatcher
+                SYNC -> server.minecraftServer!!.minecraftDispatcher
+                ASYNC -> server.minecraftServer!!.asyncDispatcher
                 DISPATCHERS_ASYNC -> Dispatchers.IO
                 else -> throw IllegalStateException("Unknown thread type: $this")
             }
@@ -42,12 +42,12 @@ enum class ThreadType {
             return Job()
         }
 
-        return plugin.launch(
+        return server.minecraftServer!!.launch(
             when (this) {
-                SYNC -> plugin.minecraftDispatcher
-                ASYNC -> plugin.minecraftDispatcher
+                SYNC -> server.minecraftServer!!.minecraftDispatcher
+                ASYNC -> server.minecraftServer!!.asyncDispatcher
                 DISPATCHERS_ASYNC -> Dispatchers.IO
-                REMAIN -> if (server.isPrimaryThread) plugin.minecraftDispatcher else plugin.asyncDispatcher
+                REMAIN -> if (server.isPrimaryThread) server.minecraftServer!!.minecraftDispatcher else server.minecraftServer!!.asyncDispatcher
             }
         ) {
             block()

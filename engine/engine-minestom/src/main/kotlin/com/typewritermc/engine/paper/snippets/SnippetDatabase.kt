@@ -3,15 +3,15 @@ package com.typewritermc.engine.paper.snippets
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.get
 import com.typewritermc.engine.paper.utils.reloadable
-import org.bukkit.configuration.file.YamlConfiguration
 import org.koin.core.component.KoinComponent
+import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import kotlin.reflect.KClass
-import kotlin.reflect.safeCast
+
 
 interface SnippetDatabase {
-    fun get(path: String, default: Any, comment: String = ""): Any
+    fun <T : Any> get(path: String, klass: KClass<T>, default: T, comment: String = ""): T
     fun <T : Any> getSnippet(path: String, klass: KClass<T>, default: T, comment: String = ""): T
-    fun registerSnippet(path: String, defaultValue: Any, comment: String = "")
+    fun <T : Any> registerSnippet(path: String, klass: KClass<T>, defaultValue: T, comment: String = "")
 }
 
 class SnippetDatabaseImpl : SnippetDatabase, KoinComponent {
@@ -24,46 +24,36 @@ class SnippetDatabaseImpl : SnippetDatabase, KoinComponent {
         file
     }
 
-    private val ymlConfiguration by reloadable { YamlConfiguration.loadConfiguration(file) }
+    private val configLoader = GsonConfigurationLoader.builder().file(file).build()
+    private val configuration by reloadable { configLoader.load() }
     private val cache by reloadable { mutableMapOf<String, Any>() }
 
-    override fun get(path: String, default: Any, comment: String): Any {
+    override fun <T : Any> get(path: String, klass: KClass<T>, default: T, comment: String): T {
         val cached = cache[path]
-        if (cached != null) return cached
+        if (cached != null) return cached as T
 
-        val value = ymlConfiguration.get(path)
+        val paths = path.split(".").toMutableList()
+        val node = configuration.node(paths)
 
-        if (value == null) {
-            ymlConfiguration.set(path, default)
-            if (comment.isNotBlank()) {
-                ymlConfiguration.setComments(path, comment.lines())
+        if (node.virtual()) {
+            node.set(default)
+            if(comment.isNotBlank()) {
+                configuration.node(paths.apply { add("__comment__") }).set(comment)
             }
-            ymlConfiguration.save(file)
+            configLoader.save(configuration)
             return default
         }
 
-        cache[path] = value
+        val value = node.get(klass.java)
+        cache[path] = value as Any
         return value
     }
 
     override fun <T : Any> getSnippet(path: String, klass: KClass<T>, default: T, comment: String): T {
-        val value = get(path, default, comment)
-
-        val casted = klass.safeCast(value)
-
-        if (casted == null) {
-            ymlConfiguration.set(path, default)
-            if (comment.isNotBlank()) {
-                ymlConfiguration.setComments(path, comment.lines())
-            }
-            ymlConfiguration.save(file)
-            return default
-        }
-
-        return casted
+        return get(path, klass, default, comment)
     }
 
-    override fun registerSnippet(path: String, defaultValue: Any, comment: String) {
-        get(path, defaultValue, comment)
+    override fun <T : Any> registerSnippet(path: String, klass: KClass<T>, defaultValue: T, comment: String) {
+        get(path, klass, defaultValue, comment)
     }
 }

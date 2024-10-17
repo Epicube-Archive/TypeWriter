@@ -149,13 +149,11 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
         get<EntityHandler>().initialize()
         get<AudienceManager>().initialize()
 
-        if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
-            PlaceholderExpansion.register()
-        }
+        PlaceholderExpansion.register()
 
         // We want to initialize all the extensions after all the plugins have been enabled to make sure
         // that all the plugins are loaded.
-        launch {
+        server.minecraftServer?.launch {
             delay(1)
             load()
             get<CommunicationHandler>().initialize()
@@ -196,8 +194,6 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
         unload()
         load()
     }
-
-    val isFloodgateInstalled: Boolean by lazy { server.pluginManager.isPluginEnabled("Floodgate") }
 
     override suspend fun onDisableAsync() {
         CommandAPI.onDisable()

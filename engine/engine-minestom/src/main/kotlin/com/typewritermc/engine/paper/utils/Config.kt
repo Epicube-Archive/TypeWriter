@@ -16,21 +16,23 @@ class ConfigPropertyDelegate<T : Any>(
     private val comments: String?,
 ) {
     operator fun getValue(thisRef: Nothing?, property: KProperty<*>): T {
-        val value = plugin.config.get(key)
-        if (value == null) {
-            plugin.config.set(key, default)
-            if (comments != null) {
-                plugin.config.setComments(key, comments.lines())
+        val paths = key.split(".").toMutableList()
+        val node = plugin.config.node(paths)
+        if (node.virtual()) {
+            node.set(default)
+            if(comments != null) {
+                plugin.config.node(paths.apply { add("__comment__") }).set(comments)
             }
             plugin.saveConfig()
             return default
         }
-        val t = klass.safeCast(value)
-        if (t == null) {
-            logger.warning("Invalid value for config key '$key', expected ${klass.simpleName}, got ${value::class.simpleName}")
+
+        val value = node.get(klass.java)
+        if (value == null) {
+            logger.warning("Invalid value for config key '$key', expected ${klass.simpleName}")
             return default
         }
-        return t
+        return value
     }
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): T = getValue(null, property)
@@ -44,13 +46,18 @@ class OptionalConfigPropertyDelegate<T : Any>(
     private val klass: KClass<T>,
 ) {
     operator fun getValue(thisRef: Nothing?, property: KProperty<*>): T? {
-        val value = plugin.config.get(key) ?: return null
-        val t = klass.safeCast(value)
-        if (t == null) {
-            logger.warning("Invalid value for config key '$key', expected ${klass.simpleName}, got ${value::class.simpleName}")
+        val paths = key.split(".")
+        val node = plugin.config.node(paths)
+        if (node.virtual()) {
             return null
         }
-        return t
+
+        val value = node.get(klass.java)
+        if (value == null) {
+            logger.warning("Invalid value for config key '$key', expected ${klass.simpleName}")
+            return null
+        }
+        return value
     }
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): T? = getValue(null, property)

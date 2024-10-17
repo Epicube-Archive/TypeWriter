@@ -15,9 +15,9 @@ import kotlinx.coroutines.runBlocking
 import lirand.api.extensions.server.onlinePlayers
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerCommandEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
-import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.koin.core.component.KoinComponent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -129,8 +129,8 @@ class InteractionHandler : Listener, KoinComponent {
 
     // When a player tries to execute a command, we need to end the dialogue.
     @EventHandler(priority = 10)
-    fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) {
-        val command = event.message.removePrefix("/")
+    fun onPlayerCommandPreprocess(event: PlayerCommandEvent) {
+        val command = event.command.removePrefix("/")
         // We don't want to end the dialogue if the player is running a typewriter command
         if (command.startsWith("typewriter")) return
         if (command.startsWith("tw")) return

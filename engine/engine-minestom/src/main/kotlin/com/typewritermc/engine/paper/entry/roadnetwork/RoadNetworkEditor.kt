@@ -1,11 +1,11 @@
 package com.typewritermc.engine.paper.entry.roadnetwork
 
 import co.touchlab.stately.concurrency.AtomicInt
+import com.github.shynixn.mccoroutine.minestom.launch
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.roadnetwork.gps.roadNetworkFindPath
 import com.typewritermc.engine.paper.entry.roadnetwork.pathfinding.PFInstanceSpace
-import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.ThreadType.DISPATCHERS_ASYNC
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -13,6 +13,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import lirand.api.extensions.server.server
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.Executors
@@ -64,7 +65,7 @@ class RoadNetworkEditor(
         jobRecalculateEdges?.cancel()
 
         val nrOfThreads = Runtime.getRuntime().availableProcessors()
-        jobRecalculateEdges = plugin.launch(Executors.newFixedThreadPool(nrOfThreads).asCoroutineDispatcher()) {
+        jobRecalculateEdges = server.minecraftServer?.launch(Executors.newFixedThreadPool(nrOfThreads).asCoroutineDispatcher()) {
             update {
                 it.copy(edges = emptyList())
             }
@@ -82,7 +83,7 @@ class RoadNetworkEditor(
     }
 
     private suspend fun recalculateEdgesForNode(node: RoadNode) {
-        val instance = PFInstanceSpace(node.location.world)
+        val instance = PFInstanceSpace(node.location.world!!)
         val interestingNodes = network.nodes
             .filter { it != node && it.location.world == node.location.world && it.location.distanceSquared(node.location) < roadNetworkMaxDistance * roadNetworkMaxDistance }
         val generatedEdges =

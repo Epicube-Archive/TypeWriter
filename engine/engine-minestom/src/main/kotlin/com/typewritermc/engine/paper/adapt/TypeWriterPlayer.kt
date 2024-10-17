@@ -1,27 +1,18 @@
-package com.typewritermc.engine.paper.adapt;
+package com.typewritermc.engine.paper.adapt
 
-import net.minestom.server.entity.Player;
-import net.minestom.server.network.player.PlayerConnection;
-import org.jetbrains.annotations.NotNull;
+import net.minestom.server.entity.Player
+import net.minestom.server.network.player.PlayerConnection
+import java.util.*
 
-import java.util.UUID;
+class TypeWriterPlayer(
+    override val uuid: UUID,
+    override val username: String,
+    playerConnection: PlayerConnection
+) : Player(uuid, username, playerConnection), OfflinePlayer {
 
-public class TypeWriterPlayer extends Player {
-	private long playerTime;
+    var playerTime: Long = 0
 
-	public TypeWriterPlayer(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
-		super(uuid, username, playerConnection);
-	}
-
-	public long getPlayerTime() {
-		return playerTime;
-	}
-
-	public void setPlayerTime(long playerTime) {
-		this.playerTime = playerTime;
-	}
-
-	public void resetPlayerTime() {
-		this.playerTime = 0;
-	}
+    fun resetPlayerTime() {
+        playerTime = 0
+    }
 }

@@ -34,7 +34,7 @@ class ItemStackSerializer : JsonSerializer<ItemStack>, JsonDeserializer<ItemStac
 
 class LocationSerializer : JsonSerializer<Location>, JsonDeserializer<Location> {
     override fun serialize(src: Location, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        return JsonPrimitive("${src.world?.name},${src.x},${src.y},${src.z},${src.yaw},${src.pitch}")
+        return JsonPrimitive("${src.world?.uniqueId.toString()},${src.x},${src.y},${src.z},${src.yaw},${src.pitch}")
     }
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Location {

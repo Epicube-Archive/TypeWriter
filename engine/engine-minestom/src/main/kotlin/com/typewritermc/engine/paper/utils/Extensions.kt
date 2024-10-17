@@ -1,31 +1,32 @@
 package com.typewritermc.engine.paper.utils
 
-import com.destroystokyo.paper.profile.PlayerProfile
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.core.utils.point.World
 import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.entry.roadnetwork.content.toPacketColor
 import com.typewritermc.engine.paper.logger
-import lirand.api.extensions.server.server
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
-import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
+import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.event.Event
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
 import net.minestom.server.item.ItemComponent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.component.EnchantmentList
+import net.minestom.server.item.component.HeadProfile
 import net.minestom.server.item.enchant.Enchantment
 import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.network.player.GameProfile
 import net.minestom.server.particle.Particle
+import net.minestom.server.utils.mojang.MojangUtils
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URI
@@ -206,24 +207,4 @@ val <T : Any> T?.optional: Optional<T> get() = Optional.ofNullable(this)
 fun ItemStack.unClickable(): ItemStack {
     return with(ItemComponent.ENCHANTMENTS, EnchantmentList(Enchantment.BINDING_CURSE, 1))
         .with(ItemComponent.ENCHANTMENT_GLINT_OVERRIDE, false)
-}
-
-private val RANDOM_UUID =
-    UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4") // We reuse the same "random" UUID all the time
-
-private fun getProfile(url: String): PlayerProfile {
-    val profile: PlayerProfile = server.createProfile(RANDOM_UUID) // Get a new player profile
-    val textures: PlayerTextures = profile.textures
-    textures.skin = try {
-        // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
-        URI(url).toURL()
-    } catch (exception: MalformedURLException) {
-        throw RuntimeException("Invalid URL", exception)
-    }
-    profile.setTextures(textures) // Set the textures back to the profile
-    return profile
-}
-
-fun SkullMeta.applySkinUrl(url: String) {
-    playerProfile = getProfile(url)
 }

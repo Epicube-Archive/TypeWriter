@@ -9,8 +9,6 @@ import com.typewritermc.engine.paper.entry.entries.SystemTrigger
 import com.typewritermc.engine.paper.entry.triggerFor
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.asMini
-import com.typewritermc.engine.paper.utils.loreString
-import com.typewritermc.engine.paper.utils.name
 import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player

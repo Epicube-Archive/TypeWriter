@@ -34,10 +34,11 @@ dependencies {
     }
 
     api("net.minestom:minestom-snapshots:1c47dd613f")
-    //api("dev.hollowcube:minestom-ce-extensions:1.2.0")
     api("com.github.shynixn.mccoroutine:mccoroutine-minestom-api:2.19.0")
     api("com.github.shynixn.mccoroutine:mccoroutine-minestom-core:2.19.0")
+
     implementation("com.google.guava:guava:33.3.1-jre")
+    implementation("org.spongepowered:configurate-gson:4.0.0")
 
     api(project(":engine-core"))
     api(project(":engine-loader"))

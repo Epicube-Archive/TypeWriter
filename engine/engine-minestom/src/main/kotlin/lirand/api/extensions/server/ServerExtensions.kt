@@ -11,4 +11,4 @@ val craftBukkitPackage = server.javaClass.getPackage().name
 
 val Server.mainWorld get() = MinecraftServer.getInstanceManager().instances.first()
 
-fun WorldCreator.create() = server.createWorld(this)
+//fun WorldCreator.create() = server.createWorld(this)

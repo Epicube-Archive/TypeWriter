@@ -3,18 +3,15 @@ package com.typewritermc.engine.paper.entry
 import com.typewritermc.core.entries.Entry
 import com.typewritermc.core.entries.Query
 import com.typewritermc.core.utils.Reloadable
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.entry.entries.EventEntry
 import com.typewritermc.engine.paper.logger
-import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.utils.logErrorIfNull
 import com.typewritermc.loader.EntryListenerInfo
 import com.typewritermc.loader.ExtensionLoader
-import com.typewritermc.loader.ListenerPriority
 import lirand.api.extensions.events.listen
 import lirand.api.extensions.events.unregister
-import org.bukkit.event.Event
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
+import net.minestom.server.event.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.get
@@ -58,7 +55,7 @@ class EntryListeners : KoinComponent, Reloadable {
             val method = it.method
             val eventClass = findEventFromMethod(method).logErrorIfNull("Could not find bukkit event class for ${method.name}") ?: return@forEach
 
-            listener.listen(plugin, eventClass, it.priority.toBukkitPriority(), it.ignoreCancelled) { event ->
+            listener.listen(eventClass) { event ->
                 onEvent(event, it, ParameterGenerator.getGenerators(method.parameters), method)
             }
         }
@@ -76,17 +73,6 @@ class EntryListeners : KoinComponent, Reloadable {
             val arguments = arguments.map { extensionLoader.loadClass(it) }.toTypedArray()
             return clazz.getDeclaredMethod(methodName, *arguments)
         }
-
-    private fun ListenerPriority.toBukkitPriority(): EventPriority {
-        return when (this) {
-            ListenerPriority.HIGHEST -> EventPriority.HIGHEST
-            ListenerPriority.HIGH -> EventPriority.HIGH
-            ListenerPriority.NORMAL -> EventPriority.NORMAL
-            ListenerPriority.LOW -> EventPriority.LOW
-            ListenerPriority.LOWEST -> EventPriority.LOWEST
-            ListenerPriority.MONITOR -> EventPriority.MONITOR
-        }
-    }
 
     /**
      * Unregisters all the entry listeners.

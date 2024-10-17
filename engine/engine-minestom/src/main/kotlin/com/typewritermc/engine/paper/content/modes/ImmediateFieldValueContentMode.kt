@@ -1,6 +1,6 @@
 package com.typewritermc.engine.paper.content.modes
 
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.minestom.launch
 import kotlinx.coroutines.delay
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
@@ -11,10 +11,10 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger.CONTENT_END
 import com.typewritermc.engine.paper.entry.fieldValue
 import com.typewritermc.engine.paper.entry.triggerFor
-import com.typewritermc.engine.paper.plugin
 import com.typewritermc.core.utils.failure
 import com.typewritermc.core.utils.ok
 import com.typewritermc.engine.paper.logger
+import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
 import java.lang.reflect.Type
 import kotlin.time.Duration.Companion.milliseconds
@@ -31,7 +31,7 @@ abstract class ImmediateFieldValueContentMode<T : Any>(context: ContentContext, 
             ?: return failure("No fieldPath found for ${this::class.simpleName}. This is a bug. Please report it.")
 
         // Needs to complete the initialisation so that we can properly get the value and end the content mode
-        plugin.launch {
+        server.minecraftServer?.launch {
             delay(200.milliseconds)
             try {
                 val value = value()

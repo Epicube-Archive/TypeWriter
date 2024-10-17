@@ -19,7 +19,7 @@ class Snippet<T : Any>(private val path: String, private val klass: KClass<T>, p
     private val snippetDatabase: SnippetDatabase by inject()
 
     init {
-        snippetDatabase.registerSnippet(path, defaultValue, comment)
+        snippetDatabase.registerSnippet(path, klass, defaultValue, comment)
     }
 
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): T {
