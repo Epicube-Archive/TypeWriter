@@ -2,6 +2,8 @@ package com.typewritermc.engine.paper.utils
 
 import com.google.gson.*
 import com.typewritermc.engine.paper.adapt.Location
+import com.typewritermc.engine.paper.adapt.deserializeItemFromBytes
+import com.typewritermc.engine.paper.adapt.serializeAsBytes
 import com.typewritermc.engine.paper.logger
 import net.minestom.server.MinecraftServer
 import net.minestom.server.item.ItemStack
@@ -21,11 +23,11 @@ class ItemStackSerializer : JsonSerializer<ItemStack>, JsonDeserializer<ItemStac
     override fun deserialize(jsonElement: JsonElement, type: Type?, context: JsonDeserializationContext?): ItemStack {
         val data = jsonElement.asString
         if (data.isEmpty()) return ItemStack.of(Material.AIR, 0)
-        return ItemStack.deserializeBytes(Base64.getDecoder().decode(data))
+        return deserializeItemFromBytes(Base64.getDecoder().decode(data))
     }
 
     override fun serialize(src: ItemStack, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        if (src.type == Material.AIR) return JsonPrimitive("")
+        if (src.material() == Material.AIR) return JsonPrimitive("")
         return JsonPrimitive(Base64.getEncoder().encodeToString(src.serializeAsBytes()))
     }
 }

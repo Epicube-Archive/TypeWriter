@@ -2,6 +2,7 @@ package com.typewritermc.engine.paper.entry.roadnetwork.content
 
 import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.ok
+import com.typewritermc.engine.paper.adapt.Location
 import com.typewritermc.engine.paper.content.ContentContext
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.components.bossBar
@@ -11,14 +12,13 @@ import com.typewritermc.engine.paper.entry.entries.*
 import com.typewritermc.engine.paper.entry.forceTriggerFor
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkEditorState
 import com.typewritermc.engine.paper.entry.triggerFor
+import com.typewritermc.engine.paper.utils.Color
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.Color
 
 class SelectedNegativeNodeContentMode(
     context: ContentContext,
@@ -98,7 +98,5 @@ class SelectedNegativeNodeContentMode(
         cycle++
     }
 
-    private fun showingLocation(node: RoadNode): Pos = node.location.clone().apply {
-        yaw = (cycle % 360).toFloat()
-    }
+    private fun showingLocation(node: RoadNode): Location = node.location.withYaw((cycle % 360).toFloat())
 }

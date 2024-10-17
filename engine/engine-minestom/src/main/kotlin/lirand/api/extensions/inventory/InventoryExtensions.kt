@@ -1,32 +1,23 @@
 package lirand.api.extensions.inventory
 
-import lirand.api.extensions.server.server
 import com.typewritermc.engine.paper.utils.asMini
+import net.kyori.adventure.text.Component
 import net.minestom.server.inventory.Inventory
+import net.minestom.server.inventory.InventoryType
 import net.minestom.server.item.ItemStack
-import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.InventoryHolder
 
 fun Inventory(
 	type: InventoryType,
-	owner: InventoryHolder? = null,
-	title: String? = null
+	title: Component
 ): Inventory {
-	return if (title != null)
-		server.createInventory(owner, type, title.asMini())
-	else
-		server.createInventory(owner, type)
+	return Inventory(type, title.asMini())
 }
 
 fun Inventory(
 	size: Int,
-	owner: InventoryHolder? = null,
-	title: String? = null
+	title: Component
 ): Inventory {
-	return if (title != null)
-		server.createInventory(owner, size, title.asMini())
-	else
-		server.createInventory(owner, size)
+	return Inventory(InventoryType.valueOf("CHEST_" + size % 9 + "_ROW"), title.asMini())
 }
 
 operator fun Inventory.get(slot: Int): ItemStack = getItemStack(slot)

@@ -118,7 +118,7 @@ class StagingManagerImpl : StagingManager, KoinComponent {
         if (pages.containsKey(id)) return failure("Page with that id already exists")
 
         // Add the version of this page to track migrations
-        data.addProperty("version", plugin.pluginMeta.version)
+        data.addProperty("version", plugin.version)
 
         pages[id] = data
         autoSaver()

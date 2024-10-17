@@ -12,9 +12,10 @@ data class SkinProperty(
 
 val Player.skin: SkinProperty
     get() {
-        val profile = playerProfile
-        if (!profile.hasTextures()) return SkinProperty()
-        val textures = profile.properties.firstOrNull { it.name == "textures" } ?: return SkinProperty()
+        if (this.skin == null) return SkinProperty()
 
-        return SkinProperty(textures.value, textures.signature ?: "")
+        val textures: String = this.skin?.textures() ?: ""
+        if (textures.isEmpty()) return SkinProperty()
+
+        return SkinProperty(this.skin?.textures() ?: "", this.skin?.signature() ?: "")
     }

@@ -285,7 +285,7 @@ internal class NetworkEdgesComponent(
                 player.sendPacket(ParticlePacket(
                     Particle.DUST.withProperties(edge.color.toPacketColor(), 1f),
                     true,
-                    location.toVector3d(),
+                    location.position,
                     Vec.ZERO,
                     0f,
                     1

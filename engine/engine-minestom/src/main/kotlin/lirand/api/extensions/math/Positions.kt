@@ -1,22 +1,22 @@
 package lirand.api.extensions.math
 
-import org.bukkit.Chunk
-import org.bukkit.Location
-import org.bukkit.World
-import org.bukkit.block.Block
+import com.typewritermc.engine.paper.adapt.Location
+import net.minestom.server.instance.Chunk
+import net.minestom.server.instance.Instance
+import net.minestom.server.instance.block.Block
 import kotlin.math.sqrt
 
 fun Location.asPosition() = LocationPosition(x, y, z, yaw, pitch)
 
 
-fun Block.asPosition() = BlockPosition(x, y, z)
+//fun Block.asPosition() = BlockPosition(x, y, z)
 fun Location.asBlockPosition() = BlockPosition(blockX, blockY, blockZ)
 
-fun BlockPosition.asBlock(world: World) = world.getBlockAt(x, y, z)
-fun BlockPosition.asLocation(world: World? = null) = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+fun BlockPosition.asBlock(world: Instance) = world.getBlock(x, y, z)
+fun BlockPosition.asLocation(world: Instance? = null) = Location(world, x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f)
 
-fun Chunk.asPosition() = ChunkPosition(x, z)
-fun ChunkPosition.asBukkitChunk(world: World) = world.getChunkAt(x, z)
+fun Chunk.asPosition() = ChunkPosition(chunkX, chunkZ)
+//fun ChunkPosition.asBukkitChunk(world: Instance) = world.getChunk(x, z)
 
 data class BlockPosition(
 	var x: Int,

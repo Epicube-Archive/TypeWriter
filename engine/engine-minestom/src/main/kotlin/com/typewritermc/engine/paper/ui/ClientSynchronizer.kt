@@ -16,6 +16,7 @@ import com.typewritermc.engine.paper.entry.triggerFor
 import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.utils.ThreadType.SYNC
 import com.typewritermc.loader.ExtensionLoader
+import lirand.api.extensions.server.onlinePlayers
 import net.minestom.server.entity.Player
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -154,7 +155,7 @@ class ClientSynchronizer : KoinComponent {
             // If we have no authentication, we can assume that it's a local server,
             // and we can fall back to the first player.
 
-            val onlinePlayers = server.onlinePlayers
+            val onlinePlayers = onlinePlayers
             if (onlinePlayers.isEmpty()) {
                 ack.sendResult(Result.failure(Exception("No players online to start content mode")))
                 return

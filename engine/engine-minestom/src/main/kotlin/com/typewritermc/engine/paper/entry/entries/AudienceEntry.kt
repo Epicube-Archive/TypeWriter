@@ -4,13 +4,13 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.entries.priority
 import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.extension.annotations.Tags
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.entry.AudienceManager
 import com.typewritermc.engine.paper.entry.ManifestEntry
-import com.typewritermc.engine.paper.plugin
 import lirand.api.extensions.events.unregister
+import lirand.api.extensions.server.onlinePlayers
 import lirand.api.extensions.server.server
 import net.minestom.server.entity.Player
-import org.bukkit.event.Listener
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.get
@@ -63,7 +63,7 @@ abstract class AudienceDisplay : Listener {
     var isActive = false
         private set
     private val playerIds: ConcurrentSkipListSet<UUID> = ConcurrentSkipListSet()
-    open val players: List<Player> get() = server.onlinePlayers.filter { it.uniqueId in playerIds }
+    open val players: List<Player> get() = onlinePlayers.filter { it.uuid in playerIds }
 
     open fun displayState(player: Player): AudienceDisplayState {
         if (player.uuid in playerIds) return AudienceDisplayState.IN_AUDIENCE
@@ -73,7 +73,7 @@ abstract class AudienceDisplay : Listener {
     open fun initialize() {
         if (isActive) return
         isActive = true
-        server.pluginManager.registerEvents(this, plugin)
+        server.registerEvents(this)
     }
 
     open fun dispose() {
@@ -113,7 +113,7 @@ abstract class AudienceFilter(
 ) : AudienceDisplay() {
     private val inverted = (ref.get() as? Invertible)?.inverted ?: false
     private val filteredPlayers: ConcurrentSkipListSet<UUID> = ConcurrentSkipListSet()
-    override val players: List<Player> get() = server.onlinePlayers.filter { it.uniqueId in filteredPlayers }
+    override val players: List<Player> get() = onlinePlayers.filter { it.uuid in filteredPlayers }
 
     protected val consideredPlayers: List<Player> get() = super.players
 

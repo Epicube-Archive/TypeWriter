@@ -3,6 +3,8 @@ package com.typewritermc.engine.paper.utils.item
 import com.typewritermc.core.books.pages.Colors
 import com.typewritermc.core.extension.annotations.AlgebraicTypeInfo
 import com.typewritermc.core.extension.annotations.Default
+import com.typewritermc.engine.paper.adapt.deserializeItemFromBytes
+import com.typewritermc.engine.paper.adapt.serializeAsBytes
 import com.typewritermc.engine.paper.utils.plainText
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemComponent
@@ -10,6 +12,7 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+
 
 @OptIn(ExperimentalEncodingApi::class)
 @AlgebraicTypeInfo("serialized_item", Colors.ORANGE, "mingcute:file-code-fill")
@@ -32,9 +35,7 @@ class SerializedItem(
     @delegate:Transient
     private val itemStack: ItemStack by lazy(LazyThreadSafetyMode.NONE) {
         val bytes = Base64.decode(bytes)
-        ItemStack.deserializeBytes(bytes).apply {
-            amount = this@SerializedItem.amount
-        }
+        deserializeItemFromBytes(bytes).withAmount(this@SerializedItem.amount)
     }
 
     override fun build(player: Player?): ItemStack = itemStack

@@ -20,7 +20,7 @@ class PositionProperty(
 ) : EntityProperty, Position(world, x, y, z, yaw, pitch) {
     fun distanceSqrt(other: Location): Double? {
         // TODO convert world to instance
-        if (world.identifier != other.world.uid.toString()) return null
+        if (world.identifier != other.world?.uid.toString()) return null
         return distanceSqrt(other.toPosition())
     }
 
@@ -110,7 +110,7 @@ class PositionProperty(
 }
 
 fun Location.toProperty(): PositionProperty {
-    return PositionProperty(World(world.uid.toString()), x, y, z, yaw, pitch)
+    return PositionProperty(World(world?.uid.toString()), x, y, z, yaw, pitch)
 }
 
 fun Position.toProperty(): PositionProperty {

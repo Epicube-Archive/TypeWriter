@@ -6,8 +6,9 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.typewritermc.core.utils.point.World
 import com.typewritermc.core.serialization.DataSerializer
-import lirand.api.extensions.server.server
+import net.minestom.server.MinecraftServer
 import java.lang.reflect.Type
+import java.util.*
 
 class WorldSerializer : DataSerializer<World> {
     override val type: Type = World::class.java
@@ -19,11 +20,12 @@ class WorldSerializer : DataSerializer<World> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): World {
         val world = json?.asString ?: ""
 
-        val bukkitWorld = server.getWorld(world)
-            ?: server.worlds.firstOrNull { it.name.equals(world, true) }
-            ?: server.worlds.firstOrNull()
-            ?: throw IllegalArgumentException("Could not find world '$world' for location, and no default world available.")
+        val instanceManager = MinecraftServer.getInstanceManager();
+        val bukkitWorld = instanceManager.getInstance(UUID.fromString(world))
+            ?: instanceManager.instances.firstOrNull { it.uniqueId.equals(world) }
+            ?: instanceManager.instances.firstOrNull()
+            ?: throw IllegalArgumentException("Could not find instance '$world' for location, and no default instance available.")
 
-        return World(bukkitWorld.uid.toString())
+        return World(bukkitWorld.uniqueId.toString())
     }
 }

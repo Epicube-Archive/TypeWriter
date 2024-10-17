@@ -25,9 +25,9 @@ import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.kyori.adventure.bossbar.BossBar
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import org.bukkit.event.player.PlayerItemHeldEvent
 import java.util.*
 
 fun ContentMode.cinematic(context: ContentContext) = +SimulateCinematicComponent(context)
@@ -109,9 +109,10 @@ class SimulateCinematicComponent(
     }
 
     @EventHandler
-    private fun onScroll(event: PlayerItemHeldEvent) {
-        if (event.player.uniqueId != scrollFrames) return
-        val delta = loopingDistance(event.previousSlot, event.newSlot, 8)
+    private fun onScroll(event: PlayerChangeHeldSlotEvent) {
+        if (event.player.uuid != scrollFrames) return
+        val previousSlot = event.player.heldSlot
+        val delta = loopingDistance(previousSlot.toInt(), event.slot.toInt(), 8)
         partialFrame += delta * 10
         event.player.playSound("block.note_block.hat", pitch = 1f + (delta * 0.1f), volume = 0.5f)
         event.isCancelled = true

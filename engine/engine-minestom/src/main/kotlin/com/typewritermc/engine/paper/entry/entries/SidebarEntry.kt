@@ -10,7 +10,6 @@ import com.typewritermc.core.extension.annotations.Placeholder
 import com.typewritermc.core.extension.annotations.Tags
 import com.typewritermc.engine.paper.adapt.ObjectiveMode
 import com.typewritermc.engine.paper.entry.*
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.extensions.placeholderapi.parsePlaceholders
 import com.typewritermc.engine.paper.utils.asMini
 import net.minestom.server.entity.Player
@@ -132,8 +131,7 @@ private class PlayerSidebarDisplay(
             Sidebar.NumberFormat.blank(),
         ))
 
-        val displayPacket = DisplayScoreboardPacket(1, SCOREBOARD_OBJECTIVE)
-        displayPacket.sendPacketTo(player)
+        player.sendPacket(DisplayScoreboardPacket(1, SCOREBOARD_OBJECTIVE))
 
         for ((index, line) in lines.withIndex().take(MAX_LINES)) {
             val lastLine = lastLines.getOrNull(index)

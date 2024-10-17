@@ -1,11 +1,11 @@
 package lirand.api.extensions.math
 
-import org.bukkit.Chunk
-import org.bukkit.Location
-import org.bukkit.block.Block
+import com.typewritermc.engine.paper.adapt.Location
+import net.minestom.server.instance.Chunk
+import net.minestom.server.instance.block.Block
 
 operator fun PosRange<*, BlockPosition>.contains(other: Location) = contains(other.asPosition())
-operator fun PosRange<*, BlockPosition>.contains(other: Block) = contains(other.asPosition())
+//operator fun PosRange<*, BlockPosition>.contains(other: Block) = contains(other.asPosition())
 operator fun PosRange<*, ChunkPosition>.contains(other: Chunk) = contains(other.asPosition())
 
 operator fun Location.rangeTo(other: Location): PosRange<Location, BlockPosition> {
@@ -18,7 +18,7 @@ operator fun Location.rangeTo(other: Location): PosRange<Location, BlockPosition
 	}
 }
 
-operator fun Block.rangeTo(other: Block): PosRange<Block, BlockPosition> {
+/*operator fun Block.rangeTo(other: Block): PosRange<Block, BlockPosition> {
 	return PosRange(this.asPosition(), other.asPosition()) {
 		RangeIteratorWithFactor<Block, BlockPosition>(
 			this, other,
@@ -26,17 +26,17 @@ operator fun Block.rangeTo(other: Block): PosRange<Block, BlockPosition> {
 			{ it.asPosition() }
 		)
 	}
-}
+}*/
 
-operator fun Chunk.rangeTo(other: Chunk): PosRange<Chunk, ChunkPosition> {
+/*operator fun Chunk.rangeTo(other: Chunk): PosRange<Chunk, ChunkPosition> {
 	return PosRange(this.asPosition(), other.asPosition()) {
 		RangeIteratorWithFactor<Chunk, ChunkPosition>(
 			this, other,
-			{ it.asBukkitChunk(world) },
+			{ it.asBukkitChunk(instance) },
 			{ it.asPosition() }
 		)
 	}
-}
+}*/
 
 class PosRange<T, P : Position<P>>(
 	val first: P,

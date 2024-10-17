@@ -1,7 +1,6 @@
 package com.typewritermc.engine.paper
 
 import com.github.shynixn.mccoroutine.minestom.launch
-import com.github.shynixn.mccoroutine.minestom.registerSuspendingEvents
 import com.google.gson.Gson
 import com.typewritermc.core.TypewriterCore
 import com.typewritermc.core.entries.Library
@@ -12,7 +11,6 @@ import com.typewritermc.engine.paper.entry.entries.CustomCommandEntry
 import com.typewritermc.engine.paper.entry.entries.createRoadNetworkParser
 import com.typewritermc.engine.paper.entry.roadnetwork.RoadNetworkManager
 import com.typewritermc.engine.paper.events.TypewriterUnloadEvent
-import com.typewritermc.engine.paper.extensions.bstats.BStatsMetrics
 import com.typewritermc.engine.paper.extensions.modrinth.Modrinth
 import com.typewritermc.engine.paper.extensions.placeholderapi.PlaceholderExpansion
 import com.typewritermc.engine.paper.facts.FactDatabase
@@ -57,16 +55,22 @@ import kotlin.time.Duration.Companion.seconds
 import com.typewritermc.core.extension.InitializableManager
 import com.typewritermc.engine.paper.adapt.JavaPlugin
 import com.typewritermc.engine.paper.adapt.Plugin
+import com.typewritermc.engine.paper.adapt.TypeWriterPlayer
 import com.typewritermc.engine.paper.adapt.event.AdaptBukkitEvents
-import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.loader.PaperDependencyChecker
 import com.typewritermc.engine.paper.utils.callEvent
+import net.minestom.server.MinecraftServer
+import net.minestom.server.network.player.PlayerConnection
+import java.util.*
 
 class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
+    override val version: String = "1.0.0-Minestom"
+
     override fun onLoad() {
         super.onLoad()
 
         AdaptBukkitEvents.register();
+        MinecraftServer.getConnectionManager().setPlayerProvider(::TypeWriterPlayer)
 
         val modules = module {
             single { this@TypewriterMinestom } withOptions
@@ -143,8 +147,6 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
         if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
             PlaceholderExpansion.register()
         }
-
-        BStatsMetrics.registerMetrics()
 
         // We want to initialize all the extensions after all the plugins have been enabled to make sure
         // that all the plugins are loaded.

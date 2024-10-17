@@ -1,5 +1,6 @@
 package com.typewritermc.engine.paper.utils
 
+import com.typewritermc.engine.paper.adapt.asTypeWriterPlayer
 import lirand.api.extensions.server.onlinePlayers
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.EquipmentSlot
@@ -7,6 +8,7 @@ import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.network.packet.server.play.SetSlotPacket
+import net.minestom.server.network.packet.server.play.TimeUpdatePacket
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 
@@ -27,9 +29,9 @@ enum class GenericPlayerStateProvider(private val store: Player.() -> Any, priva
     LEVEL({ level }, { level = it as Int }),
     ALLOW_FLIGHT({ isAllowFlying }, { isAllowFlying = it as Boolean }),
     FLYING({ isFlying }, { isFlying = it as Boolean }),
-    GAME_TIME({ playerTime }, {
-        resetPlayerTime()
-        WrapperPlayServerTimeUpdate(world.gameTime, playerTime).sendPacketTo(this)
+    GAME_TIME({ asTypeWriterPlayer().playerTime }, {
+        asTypeWriterPlayer().resetPlayerTime()
+        sendPacket(TimeUpdatePacket(instance.time, asTypeWriterPlayer().playerTime))
     }),
 
     // All Players that are visible to the player

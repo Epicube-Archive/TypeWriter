@@ -6,12 +6,14 @@ import com.typewritermc.core.extension.annotations.Help
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.paper.entry.entries.SoundIdEntry
 import com.typewritermc.engine.paper.entry.entries.SoundSourceEntry
-import com.typewritermc.engine.paper.extensions.packetevents.sendPacketTo
 import com.typewritermc.engine.paper.logger
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
 import net.kyori.adventure.sound.SoundStop
 import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.EntitySoundEffectPacket
+import net.minestom.server.network.packet.server.play.SoundEffectPacket
+import net.minestom.server.sound.SoundEvent
 import net.minestom.server.utils.NamespaceID
 import net.kyori.adventure.sound.Sound as AdventureSound
 
@@ -50,9 +52,14 @@ data class Sound(
                 }
                 audience.viewers.forEach { viewer ->
                     val emitter = entry.getEmitter(viewer)
-                    val packetSound = StaticSound(ResourceLocation(key.namespace(), key.key()), 16f)
-                    val category = SoundCategory.fromId(track.ordinal)
-                    WrapperPlayServerEntitySoundEffect(packetSound, category, emitter.entityId, volume, pitch) sendPacketTo viewer
+                    viewer.sendPacket(EntitySoundEffectPacket(
+                        SoundEvent.of(key, null),
+                        track,
+                        emitter.entityId,
+                        volume,
+                        pitch,
+                        0
+                    ))
                 }
             }
 

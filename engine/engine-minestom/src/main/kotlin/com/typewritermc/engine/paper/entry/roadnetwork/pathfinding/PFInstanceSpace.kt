@@ -2,9 +2,11 @@ package com.typewritermc.engine.paper.entry.roadnetwork.pathfinding
 
 import com.extollit.gaming.ai.path.model.IBlockObject
 import com.extollit.gaming.ai.path.model.IInstanceSpace
+import com.typewritermc.core.utils.point.World
+import net.minestom.server.instance.Instance
 import java.util.concurrent.ConcurrentHashMap
 
-class PFInstanceSpace(val world: World) : IInstanceSpace {
+class PFInstanceSpace(val world: Instance) : IInstanceSpace {
     private val chunkSpaces = ConcurrentHashMap<Long, PFColumnarSpace>()
 
     override fun blockObjectAt(x: Int, y: Int, z: Int): IBlockObject {
@@ -21,9 +23,8 @@ class PFInstanceSpace(val world: World) : IInstanceSpace {
     override fun columnarSpaceAt(cx: Int, cz: Int): PFColumnarSpace {
         val key = cx.toLong() and 4294967295L or ((cz.toLong() and 4294967295L) shl 32)
         return chunkSpaces.computeIfAbsent(key) {
-            val chunk = world.getChunkAt(cx, cz)
-            val snapshot = chunk.getChunkSnapshot(false, false, false)
-            PFColumnarSpace(world, snapshot, this)
+            val chunk = world.loadChunk(cx, cz)
+            PFColumnarSpace(World(world.uniqueId.toString()), chunk, this)
         }
     }
 }

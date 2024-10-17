@@ -22,6 +22,8 @@ import net.minestom.server.entity.metadata.display.ItemDisplayMeta
 import net.minestom.server.entity.metadata.other.InteractionMeta
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.minestom.server.network.packet.client.play.ClientInteractEntityPacket
+import net.minestom.server.network.packet.client.play.ClientInteractEntityPacket.InteractAt
 import kotlin.math.max
 
 const val NODE_SHOW_DISTANCE_SQUARED = 50 * 50
@@ -78,7 +80,7 @@ class NodesComponent<N>(
 
     @EventHandler
     private fun onFakeEntityInteract(event: AsyncFakeEntityInteract) {
-        if (event.hand != Hand.MAIN_HAND || event.action == WrapperPlayClientInteractEntity.InteractAction.INTERACT_AT) return
+        if (event.hand != Hand.MAIN || event.action is InteractAt) return
         val entityId = event.entityId
         nodes.values.firstOrNull { it.entityId == entityId }?.interact()
     }
@@ -124,7 +126,7 @@ private class NodeDisplay {
 
         onInteract = builder.interaction
         if (itemDisplay.isActive) {
-            itemDisplay.teleport(location.toPacketLocation())
+            itemDisplay.teleport(location.position)
         }
         if (interaction.isActive &&
             (interaction.position.x != location.x

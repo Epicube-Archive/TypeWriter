@@ -3,35 +3,35 @@ package com.typewritermc.engine.paper.entry.roadnetwork.pathfinding
 import com.extollit.gaming.ai.path.model.IBlockDescription
 import com.extollit.gaming.ai.path.model.IBlockObject
 import com.extollit.linalg.immutable.AxisAlignedBBox
+import net.minestom.server.collision.Shape
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.item.Material
-import org.bukkit.block.data.BlockData
-import org.bukkit.util.VoxelShape
+import net.minestom.server.instance.block.Block
+import net.minestom.server.registry.Registry.BlockEntry
 
 class PFBlock(
     val location: Pos,
-    val type: Material,
-    val data: BlockData,
+    val block: Block,
+    val data: BlockEntry,
 ) : IBlockDescription, IBlockObject {
     override fun bounds(): AxisAlignedBBox {
-        val collisionShape = data.getCollisionShape(location)
+        val collisionShape = data.collisionShape()
         return collisionShape.toAABB()
     }
 
     override fun isFenceLike(): Boolean {
-        if (type.key.key.contains("fence"))
+        if (block.name().lowercase().contains("fence"))
             return true
-        if (type.key.key.endsWith("wall"))
+        if (block.name().lowercase().endsWith("wall"))
             return true
         return false
     }
 
     override fun isClimbable(): Boolean {
-        return type == Material.LADDER || type.key.key.contains("vine")
+        return block.compare(Block.LADDER) || block.name().lowercase().contains("vine")
     }
 
     override fun isDoor(): Boolean {
-        return type.key.key.endsWith("door")
+        return block.name().lowercase().endsWith("door")
     }
 
     override fun isIntractable(): Boolean {
@@ -40,42 +40,44 @@ class PFBlock(
     }
 
     override fun isImpeding(): Boolean {
-        return type.isSolid
+        return block.isSolid
     }
 
     override fun isFullyBounded(): Boolean {
-        val voxelShape = data.getCollisionShape(location)
-        if (voxelShape.boundingBoxes.size != 1) return false
-        val boundingBox = voxelShape.boundingBoxes.first()
+        val voxelShape = data.collisionShape()
 
-        return boundingBox.minX == 0.0
-                && boundingBox.minY == 0.0
-                && boundingBox.minZ == 0.0
-                && boundingBox.widthX == 1.0
-                && boundingBox.height == 1.0
-                && boundingBox.widthZ == 1.0
+        // FIXME: PROBABLY NOT THE RIGHT WAY TO DO IT ??
+        val start = voxelShape.relativeStart()
+        val end = voxelShape.relativeEnd()
+
+        return start.x() == 0.0
+                && start.y() == 0.0
+                && start.z() == 0.0
+                && end.x() == 1.0
+                && end.y() == 1.0
+                && end.z() == 1.0
     }
 
     override fun isLiquid(): Boolean {
-        return type == Material.WATER || type == Material.LAVA
+        return data.isLiquid
     }
 
     override fun isIncinerating(): Boolean {
-        return type == Material.LAVA || type == Material.FIRE || type == Material.SOUL_FIRE || type == Material.MAGMA_BLOCK
+        return block.compare(Block.LAVA) || block.compare(Block.FIRE) || block.compare(Block.SOUL_FIRE) || block.compare(Block.MAGMA_BLOCK)
     }
 }
 
-private fun VoxelShape.toAABB(): AxisAlignedBBox {
-    val boundingBoxes = boundingBoxes
+private fun Shape.toAABB(): AxisAlignedBBox {
+    val start = relativeStart()
+    val end = relativeEnd()
 
-    if (boundingBoxes.isEmpty()) return AxisAlignedBBox(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-
+    // FIXME: PROBABLY NOT THE RIGHT WAY TO DO IT ??
     return AxisAlignedBBox(
-        boundingBoxes.minOf { it.minX },
-        boundingBoxes.minOf { it.minY },
-        boundingBoxes.minOf { it.minZ },
-        boundingBoxes.maxOf { it.maxX },
-        boundingBoxes.maxOf { it.maxY },
-        boundingBoxes.maxOf { it.maxZ },
+        start.x(),
+        start.y(),
+        start.z(),
+        end.x(),
+        end.y(),
+        end.z(),
     )
 }

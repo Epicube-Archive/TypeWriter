@@ -27,11 +27,11 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerChangeHeldSlotEvent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.network.packet.server.play.ParticlePacket
 import net.minestom.server.particle.Particle
-import org.bukkit.event.player.PlayerItemHeldEvent
 import org.koin.core.component.KoinComponent
 import java.util.*
 import kotlin.collections.component1
@@ -149,17 +149,17 @@ class SelectedRoadNodeContentMode(
             return
         }
 
-        if (player.inventory.heldItemSlot == 5) {
+        if (player.heldSlot.toInt() == 5) {
             edgeAddition(node)
             return
         }
 
-        if (player.inventory.heldItemSlot == 6) {
+        if (player.heldSlot.toInt() == 6) {
             edgeRemoval(node)
             return
         }
 
-        if (player.inventory.itemInMainHand.isEmpty) {
+        if (player.itemInMainHand.isAir) {
             ContentModeSwapTrigger(
                 context,
                 SelectedRoadNodeContentMode(context, player, ref, node.id, false),
@@ -285,7 +285,7 @@ private class SelectedNodePathsComponent(
         val node = nodeFetcher() ?: return emptyMap()
         val network = networkFetcher()
         val nodes = network.nodes.associateBy { it.id }
-        val instance = PFInstanceSpace(node.location.world)
+        val instance = PFInstanceSpace(node.location.world!!)
         return network.edges.filter { it.start == node.id }
             .mapNotNull { edge ->
                 val start = nodes[edge.start] ?: return@mapNotNull null
@@ -373,17 +373,18 @@ class NodeRadiusComponent(
         if (initiallyScrolling) {
             // When we start out already selecting, we want to make sure the player is holding the correct item
             // So that they can stop changing the radius
-            player.inventory.heldItemSlot = slot
+            player.setHeldItemSlot(slot.toByte())
             scrolling = player.uuid
         }
         plugin.registerEvents(this)
     }
 
     @EventHandler
-    private fun onScroll(event: PlayerItemHeldEvent) {
+    private fun onScroll(event: PlayerChangeHeldSlotEvent) {
         val player = event.player
-        if (player.uniqueId != scrolling) return
-        val delta = loopingDistance(event.previousSlot, event.newSlot, 8)
+        val previousSlot = player.heldSlot
+        if (player.uuid != scrolling) return
+        val delta = loopingDistance(previousSlot.toInt(), event.slot.toInt(), 8)
         val radiusMultiplier = if (player.isSneaking) 0.1 else 0.5
         editRadius(delta * radiusMultiplier)
         val sound = if (player.isSneaking) {
