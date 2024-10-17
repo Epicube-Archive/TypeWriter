@@ -1,4 +1,3 @@
-package com.typewritermc.engine.minestom.adapt.event;
+package com.typewritermc.engine.minestom.adapt.event
 
-public interface Listener {
-}
+interface Listener

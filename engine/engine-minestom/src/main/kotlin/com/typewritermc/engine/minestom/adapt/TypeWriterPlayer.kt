@@ -6,10 +6,16 @@ import net.minestom.server.network.player.PlayerConnection
 import java.util.*
 
 class TypeWriterPlayer(
-    override val uuid: UUID,
-    override val username: String,
+    uniqueId: UUID,
+    name: String,
     playerConnection: PlayerConnection
-) : Player(uuid, username, playerConnection), OfflinePlayer {
+) : Player(uniqueId, name, playerConnection), OfflinePlayer {
+
+    override val uniqueId: UUID
+        get() = super.getUuid()
+
+    override val name: String
+        get() = super.getUsername()
 
     private var _playerTime: Long = 0
     var playerTime: Long

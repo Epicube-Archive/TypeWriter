@@ -8,14 +8,14 @@ import net.minestom.server.event.trait.PlayerEvent
 import net.minestom.server.instance.block.Block
 
 class PlayerInteractEvent(
-    val player: Player,
+    private val _player: Player,
     val hand: Hand,
     val action: Action,
     val clickedBlockPosition: BlockVec?,
     val clickedBlock: Block?,
     private var cancelled: Boolean
 ) : PlayerEvent, CancellableEvent {
-    override fun getPlayer() = player
+    override fun getPlayer() = _player
 
     override fun isCancelled(): Boolean {
         return cancelled

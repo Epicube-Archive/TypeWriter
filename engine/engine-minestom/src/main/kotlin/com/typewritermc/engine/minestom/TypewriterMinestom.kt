@@ -66,9 +66,13 @@ import java.util.*
 class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
     override val version: String = "1.0.0-Minestom"
 
-    fun initialize(minecraftServer: MinecraftServer) {
-        server.minecraftServer = minecraftServer
-        onLoad()
+    companion object {
+        fun initialize(minecraftServer: MinecraftServer): TypewriterMinestom {
+            server.minecraftServer = minecraftServer
+            val plugin = TypewriterMinestom()
+            plugin.onLoad()
+            return plugin
+        }
     }
 
     override fun onLoad() {
@@ -139,6 +143,7 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
     override suspend fun onEnableAsync() {
         CommandAPI.onEnable()
         com.typewritermc.engine.minestom.typeWriterCommand()
+    suspend fun onEnableAsync() {
 
         get<InteractionHandler>().initialize()
         get<FactDatabase>().initialize()
@@ -197,6 +202,7 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
 
     override suspend fun onDisableAsync() {
         CommandAPI.onDisable()
+    suspend fun onDisableAsync() {
         get<StagingManager>().shutdown()
         get<EntityHandler>().shutdown()
         get<ChatHistoryHandler>().shutdown()
