@@ -1,6 +1,6 @@
 package lirand.api.extensions.inventory
 
-import com.typewritermc.engine.paper.utils.asMini
+import com.typewritermc.engine.minestom.utils.asMini
 import net.kyori.adventure.text.Component
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.inventory.InventoryType

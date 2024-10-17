@@ -1,7 +1,7 @@
 package com.typewritermc.utils
 
-import com.typewritermc.engine.paper.utils.CronExpression
-import com.typewritermc.engine.paper.utils.CronExpression.*
+import com.typewritermc.engine.minestom.utils.CronExpression
+import com.typewritermc.engine.minestom.utils.CronExpression.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.time.*

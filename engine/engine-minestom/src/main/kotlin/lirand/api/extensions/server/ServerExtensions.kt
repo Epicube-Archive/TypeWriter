@@ -1,6 +1,6 @@
 package lirand.api.extensions.server
 
-import com.typewritermc.engine.paper.adapt.Server
+import com.typewritermc.engine.minestom.adapt.Server
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 

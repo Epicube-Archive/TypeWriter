@@ -1,6 +1,6 @@
 package lirand.api
 
-import com.typewritermc.engine.paper.adapt.Plugin
+import com.typewritermc.engine.minestom.adapt.Plugin
 
 class LirandAPI internal constructor(internal val plugin: Plugin) {
 

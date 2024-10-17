@@ -1,0 +1,113 @@
+package com.typewritermc.engine.minestom.utils
+
+import com.typewritermc.core.entries.Query
+import com.typewritermc.core.extension.annotations.Default
+import com.typewritermc.core.extension.annotations.Help
+import com.typewritermc.core.utils.point.Position
+import com.typewritermc.engine.minestom.entry.entries.SoundIdEntry
+import com.typewritermc.engine.minestom.entry.entries.SoundSourceEntry
+import com.typewritermc.engine.minestom.logger
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.audience.ForwardingAudience
+import net.kyori.adventure.sound.SoundStop
+import net.minestom.server.entity.Player
+import net.minestom.server.network.packet.server.play.EntitySoundEffectPacket
+import net.minestom.server.network.packet.server.play.SoundEffectPacket
+import net.minestom.server.sound.SoundEvent
+import net.minestom.server.utils.NamespaceID
+import net.kyori.adventure.sound.Sound as AdventureSound
+
+data class Sound(
+    val soundId: SoundId = SoundId.EMPTY,
+    @Help("The source of the location to play the sound from. (Defaults to player's location)")
+    val soundSource: SoundSource = SelfSoundSource,
+    @Help("Corresponds to the Minecraft sound category")
+    val track: AdventureSound.Source = AdventureSound.Source.MASTER,
+    @Help("A value of 1.0 is normal volume.")
+    @Default("1.0")
+    val volume: Float = 1.0f,
+    @Help("A value of 1.0 is normal pitch.")
+    @Default("1.0")
+    val pitch: Float = 1.0f,
+) {
+    companion object {
+        val EMPTY = Sound()
+    }
+
+    val soundStop: SoundStop?
+        get() = soundId.namespacedKey?.let { SoundStop.named(it) }
+
+    fun play(audience: Audience) {
+        val key = this.soundId.namespacedKey ?: return
+        val sound = AdventureSound.sound(key, track, volume, pitch)
+
+        when (soundSource) {
+            is SelfSoundSource -> audience.playSound(sound)
+            is EmitterSoundSource -> {
+                val entryId = soundSource.entryId
+                val entry = Query.findById<SoundSourceEntry>(entryId)
+                if (entry == null) {
+                    logger.warning("Could not find sound source entry with id $entryId")
+                    return
+                }
+                audience.viewers.forEach { viewer ->
+                    val emitter = entry.getEmitter(viewer)
+                    viewer.sendPacket(EntitySoundEffectPacket(
+                        SoundEvent.of(key, null),
+                        track,
+                        emitter.entityId,
+                        volume,
+                        pitch,
+                        0
+                    ))
+                }
+            }
+
+            is LocationSoundSource -> {
+                val location = soundSource.position
+                audience.playSound(sound, location.x, location.y, location.z)
+            }
+        }
+    }
+}
+
+fun Audience.playSound(sound: Sound) = sound.play(this)
+fun Audience.stopSound(sound: Sound) = sound.soundStop?.let { this.stopSound(it) }
+
+sealed interface SoundId {
+    companion object {
+        val EMPTY = DefaultSoundId(null)
+    }
+
+    val namespacedKey: NamespaceID?
+}
+
+class DefaultSoundId(override val namespacedKey: NamespaceID?) : SoundId {
+    constructor(key: String) : this(if (key.isEmpty()) null else NamespaceID.from(key))
+}
+
+class EntrySoundId(val entryId: String) : SoundId {
+    override val namespacedKey: NamespaceID?
+        get() {
+            val entry = Query.findById<SoundIdEntry>(entryId)
+            if (entry == null) {
+                logger.warning("Could not find sound entry with id $entryId")
+                return null
+            }
+            return NamespaceID.from(entry.soundId)
+        }
+}
+
+sealed interface SoundSource
+
+data object SelfSoundSource : SoundSource
+class EmitterSoundSource(val entryId: String) : SoundSource
+
+class LocationSoundSource(val position: Position) : SoundSource
+
+val Audience.viewers: List<Player>
+    get() = when (this) {
+        is Player -> listOf(this)
+        is ForwardingAudience -> audiences().flatMap { it.viewers }
+        else -> throw IllegalArgumentException("Cannot get viewers from audience of type ${this::class.simpleName}")
+    }

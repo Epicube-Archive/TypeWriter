@@ -1,6 +1,6 @@
 package com.typewritermc.utils
 
-import com.typewritermc.engine.paper.utils.DurationParser
+import com.typewritermc.engine.minestom.utils.DurationParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,6 @@
 package lirand.api.architecture
 
-import com.typewritermc.engine.paper.adapt.JavaPlugin
+import com.typewritermc.engine.minestom.adapt.JavaPlugin
 import lirand.api.LirandAPI
 
 abstract class AbstractKotlinPlugin : JavaPlugin() {

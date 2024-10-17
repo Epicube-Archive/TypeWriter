@@ -1,6 +1,6 @@
 package lirand.api.extensions.math
 
-import com.typewritermc.engine.paper.adapt.Location
+import com.typewritermc.engine.minestom.adapt.Location
 import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.block.Block
 
