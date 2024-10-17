@@ -2,6 +2,7 @@ package com.typewritermc.engine.paper.content
 
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
+import com.typewritermc.engine.paper.adapt.event.bukkit.PlayerInteractEvent
 import com.typewritermc.engine.paper.content.components.IntractableItem
 import com.typewritermc.engine.paper.content.components.ItemInteraction
 import com.typewritermc.engine.paper.content.components.ItemInteractionType
@@ -20,11 +21,9 @@ import lirand.api.extensions.events.unregister
 import lirand.api.extensions.server.registerEvents
 import net.minestom.server.entity.Player
 import net.minestom.server.event.inventory.InventoryPreClickEvent
+import net.minestom.server.event.item.ItemDropEvent
+import net.minestom.server.event.player.PlayerSwapItemEvent
 import net.minestom.server.item.ItemStack
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerDropItemEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.koin.java.KoinJavaComponent
 import java.util.concurrent.ConcurrentLinkedDeque
 
@@ -147,15 +146,15 @@ class ContentEditor(
         if (event.player != player) return
         // The even triggers twice. Both for the main hand and offhand.
         // We only want to trigger once.
-        if (event.hand != org.bukkit.inventory.EquipmentSlot.HAND) return // Disable off-hand interactions
-        val slot = player.inventory.heldItemSlot
+        if (event.hand != Player.Hand.MAIN) return // Disable off-hand interactions
+        val slot = player.heldSlot.toInt()
         val item = items[slot] ?: return
         val type = when (event.action) {
-            Action.LEFT_CLICK_AIR,
-            Action.LEFT_CLICK_BLOCK -> if (event.player.isSneaking) ItemInteractionType.SHIFT_LEFT_CLICK else ItemInteractionType.LEFT_CLICK
+            PlayerInteractEvent.Action.LEFT_CLICK_AIR,
+            PlayerInteractEvent.Action.LEFT_CLICK_BLOCK -> if (event.player.isSneaking) ItemInteractionType.SHIFT_LEFT_CLICK else ItemInteractionType.LEFT_CLICK
 
-            Action.RIGHT_CLICK_AIR,
-            Action.RIGHT_CLICK_BLOCK -> if (event.player.isSneaking) ItemInteractionType.SHIFT_RIGHT_CLICK else ItemInteractionType.RIGHT_CLICK
+            PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+            PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK -> if (event.player.isSneaking) ItemInteractionType.SHIFT_RIGHT_CLICK else ItemInteractionType.RIGHT_CLICK
 
             else -> return
         }
@@ -164,18 +163,18 @@ class ContentEditor(
     }
 
     @EventHandler
-    fun onDropItem(event: PlayerDropItemEvent) {
+    fun onDropItem(event: ItemDropEvent) {
         if (event.player != player) return
-        val slot = player.inventory.heldItemSlot
+        val slot = player.heldSlot.toInt()
         val item = items[slot] ?: return
         item.action(ItemInteraction(ItemInteractionType.DROP, slot))
         event.isCancelled = true
     }
 
     @EventHandler
-    fun onSwapItem(event: PlayerSwapHandItemsEvent) {
+    fun onSwapItem(event: PlayerSwapItemEvent) {
         if (event.player != player) return
-        val slot = player.inventory.heldItemSlot
+        val slot = player.heldSlot.toInt()
         val item = items[slot] ?: return
         item.action(ItemInteraction(ItemInteractionType.SWAP, slot))
         event.isCancelled = true

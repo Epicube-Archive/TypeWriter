@@ -2,6 +2,7 @@ package com.typewritermc.engine.paper.content.components
 
 import com.typewritermc.engine.paper.adapt.event.EventHandler
 import com.typewritermc.engine.paper.adapt.event.Listener
+import com.typewritermc.engine.paper.adapt.event.bukkit.PlayerToggleSneakEvent
 import com.typewritermc.engine.paper.content.ContentMode
 import com.typewritermc.engine.paper.content.inLastContentMode
 import com.typewritermc.engine.paper.entry.entries.SystemTrigger
@@ -33,7 +34,7 @@ class ExitComponent(
 
     @EventHandler
     private fun onShift(event: PlayerToggleSneakEvent) {
-        if (event.player.uniqueId != playerId) return
+        if (event.player.uuid != playerId) return
         // Only count shifting down
         if (!event.isSneaking) return
         if (System.currentTimeMillis() - lastShift < 500) {

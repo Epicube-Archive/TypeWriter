@@ -1,6 +1,5 @@
 package com.typewritermc.engine.paper
 
-import com.github.retrooper.packetevents.PacketEvents
 import com.github.shynixn.mccoroutine.minestom.launch
 import com.github.shynixn.mccoroutine.minestom.registerSuspendingEvents
 import com.google.gson.Gson
@@ -58,12 +57,17 @@ import kotlin.time.Duration.Companion.seconds
 import com.typewritermc.core.extension.InitializableManager
 import com.typewritermc.engine.paper.adapt.JavaPlugin
 import com.typewritermc.engine.paper.adapt.Plugin
+import com.typewritermc.engine.paper.adapt.event.AdaptBukkitEvents
+import com.typewritermc.engine.paper.adapt.event.Listener
 import com.typewritermc.engine.paper.loader.PaperDependencyChecker
 import com.typewritermc.engine.paper.utils.callEvent
 
-class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent, Listener {
+class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent {
     override fun onLoad() {
         super.onLoad()
+
+        AdaptBukkitEvents.register();
+
         val modules = module {
             single { this@TypewriterMinestom } withOptions
                     {
@@ -127,14 +131,6 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent, Listener {
         CommandAPI.onEnable()
         typeWriterCommand()
 
-        if (!server.pluginManager.isPluginEnabled("packetevents")) {
-            logger.warning("PacketEvents is not enabled, Typewriter will not work without it. Shutting down...")
-            server.pluginManager.disablePlugin(this)
-            return
-        }
-
-        PacketEvents.getAPI().settings.downsampleColors(false)
-
         get<InteractionHandler>().initialize()
         get<FactDatabase>().initialize()
         get<ChatHistoryHandler>().initialize()
@@ -149,7 +145,6 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent, Listener {
         }
 
         BStatsMetrics.registerMetrics()
-        server.pluginManager.registerSuspendingEvents(this, this)
 
         // We want to initialize all the extensions after all the plugins have been enabled to make sure
         // that all the plugins are loaded.
@@ -198,7 +193,6 @@ class TypewriterMinestom : AbstractKotlinPlugin(), KoinComponent, Listener {
     val isFloodgateInstalled: Boolean by lazy { server.pluginManager.isPluginEnabled("Floodgate") }
 
     override suspend fun onDisableAsync() {
-        HandlerList.unregisterAll(this as Listener)
         CommandAPI.onDisable()
         get<StagingManager>().shutdown()
         get<EntityHandler>().shutdown()
