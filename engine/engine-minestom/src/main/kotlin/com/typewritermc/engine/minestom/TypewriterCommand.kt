@@ -15,376 +15,494 @@ import com.typewritermc.engine.minestom.utils.ThreadType
 import com.typewritermc.engine.minestom.utils.asMini
 import com.typewritermc.engine.minestom.utils.msg
 import com.typewritermc.engine.minestom.utils.sendMini
-import dev.jorel.commandapi.CommandTree
-import dev.jorel.commandapi.StringTooltip
-import dev.jorel.commandapi.arguments.Argument
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.CustomArgument
-import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException
-import dev.jorel.commandapi.arguments.CustomArgument.MessageBuilder
-import dev.jorel.commandapi.arguments.StringArgument
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.kotlindsl.*
 import net.kyori.adventure.inventory.Book
-import net.minestom.server.command.CommandSender
+import net.minestom.server.command.*
+import net.minestom.server.command.builder.*
+import net.minestom.server.command.builder.arguments.*
+import net.minestom.server.command.builder.condition.CommandCondition
 import net.minestom.server.entity.Player
+import net.minestom.server.MinecraftServer
+import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import org.koin.java.KoinJavaComponent.get
 import java.time.format.DateTimeFormatter
 
-fun typeWriterCommand() = commandTree("typewriter") {
-    withAliases("tw")
+class TypewriterCommand : Command("typewriter", "tw") {
 
-    reloadCommands()
-
-    factsCommands()
-
-    clearChatCommand()
-
-    connectCommand()
-
-    cinematicCommand()
-
-    triggerCommand()
-    fireCommand()
-
-
-    questCommands()
-
-    roadNetworkCommands()
-
-    manifestCommands()
-}
-
-private fun CommandTree.reloadCommands() = literalArgument("reload") {
-    withPermission("typewriter.reload")
-    anyExecutor { sender, _ ->
-        sender.msg("Reloading configuration...")
-        ThreadType.DISPATCHERS_ASYNC.launch {
-            plugin.reload()
-            sender.msg("Configuration reloaded!")
-        }
+    init {
+        addSubcommand(reloadCommands())
+        addSubcommand(factsCommands())
+        addSubcommand(clearChatCommand())
+        addSubcommand(connectCommand())
+        addSubcommand(cinematicCommand())
+        addSubcommand(triggerCommand())
+        addSubcommand(fireCommand())
+        addSubcommand(questCommands())
+        addSubcommand(roadNetworkCommands())
+        addSubcommand(manifestCommands())
     }
-}
 
-private fun CommandTree.factsCommands() = literalArgument("facts") {
-    withPermission("typewriter.facts")
-
-    literalArgument("set") {
-        withPermission("typewriter.facts.set")
-        argument(entryArgument<WritableFactEntry>("fact")) {
-            integerArgument("value") {
-                optionalTarget {
-                    anyExecutor { sender, args ->
-                        val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                        val fact = args["fact"] as WritableFactEntry
-                        val value = args["value"] as Int
-                        fact.write(target, value)
-                        sender.msg("Fact <blue>${fact.formattedName}</blue> set to $value for ${target.name}.")
-                    }
-                }
+    private fun reloadCommands(): Command {
+        val command = Command("reload")
+        command.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.reload")
+        }
+        command.setDefaultExecutor { sender, _ ->
+            sender.msg("Reloading configuration...")
+            ThreadType.DISPATCHERS_ASYNC.launch {
+                //plugin.reload()
+                sender.msg("Configuration reloaded!")
             }
         }
+        return command
     }
 
-    literalArgument("reset") {
-        withPermission("typewriter.facts.reset")
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                val entries = Query.find<WritableFactEntry>().toList()
-                if (entries.none()) {
-                    sender.msg("There are no facts available.")
-                    return@anyExecutor
-                }
-
-                for (entry in entries) {
-                    entry.write(target, 0)
-                }
-                sender.msg("All facts for ${target.name} have been reset.")
-            }
+    private fun factsCommands(): Command {
+        val factsCommand = Command("facts")
+        factsCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.facts")
         }
-    }
 
-    optionalTarget {
-        anyExecutor { sender, args ->
-            val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
+        val setCommand = Command("set")
+        setCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.facts.set")
+        }
+
+        val factArgument = entryArgument<WritableFactEntry>("fact")
+        val valueArgument = ArgumentType.Integer("value")
+        val targetArgument = optionalPlayerArgument("target")
+
+        setCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val fact = context.get(factArgument)
+            val value = context.get(valueArgument)
+            fact.write(target, value)
+            sender.msg("Fact <blue>${fact.formattedName}</blue> set to $value for ${target.username}.")
+        }, factArgument, valueArgument, targetArgument)
+
+        setCommand.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val fact = context.get(factArgument)
+            val value = context.get(valueArgument)
+            fact.write(target, value)
+            sender.msg("Fact <blue>${fact.formattedName}</blue> set to $value for yourself.")
+        }, factArgument, valueArgument)
+
+        factsCommand.addSubcommand(setCommand)
+
+        val resetCommand = Command("reset")
+        resetCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.facts.reset")
+        }
+
+        resetCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entries = Query.find<WritableFactEntry>().toList()
+            if (entries.isEmpty()) {
+                sender.msg("There are no facts available.")
+                return@addSyntax
+            }
+            for (entry in entries) {
+                entry.write(target, 0)
+            }
+            sender.msg("All facts for ${target.username} have been reset.")
+        }, targetArgument)
+
+        resetCommand.addSyntax({ sender, _ ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entries = Query.find<WritableFactEntry>().toList()
+            if (entries.isEmpty()) {
+                sender.msg("There are no facts available.")
+                return@addSyntax
+            }
+            for (entry in entries) {
+                entry.write(target, 0)
+            }
+            sender.msg("All facts for yourself have been reset.")
+        })
+
+        factsCommand.addSubcommand(resetCommand)
+
+        factsCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender) ?: sender as? Player
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
 
             val factEntries = Query.find<ReadableFactEntry>().toList()
-            if (factEntries.none()) {
+            if (factEntries.isEmpty()) {
                 sender.msg("There are no facts available.")
-                return@anyExecutor
+                return@addSyntax
             }
 
             sender.sendMini("\n\n")
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy")
-            sender.msg("${target.name} has the following facts:\n")
+            sender.msg("${target.username} has the following facts:\n")
 
             for (entry in factEntries) {
                 val data = entry.readForPlayersGroup(target)
                 sender.sendMini(
                     "<hover:show_text:'${
-                        entry.comment.replace(
-                            Regex(" +"),
-                            " "
-                        ).replace("'", "\\'")
-                    }\n\n<gray><i>Click to modify'><click:suggest_command:'/tw facts set ${entry.name} ${data.value} ${target.name}'><gray> - </gray><blue>${entry.formattedName}:</blue> ${data.value} <gray><i>(${
-                        formatter.format(
-                            data.lastUpdate
-                        )
+                        entry.comment.replace(Regex(" +"), " ").replace("'", "\\'")
+                    }\n\n<gray><i>Click to modify'><click:suggest_command:'/tw facts set ${entry.name} ${data.value} ${target.username}'><gray> - </gray><blue>${entry.formattedName}:</blue> ${data.value} <gray><i>(${
+                        formatter.format(data.lastUpdate)
                     })</i></gray>"
                 )
             }
-        }
-    }
-}
+        }, targetArgument)
 
-private fun CommandTree.clearChatCommand() = literalArgument("clearChat") {
-    withPermission("typewriter.clearChat")
-    playerExecutor { player, _ ->
-        player.chatHistory.let {
-            it.clear()
-            it.resendMessages(player)
-        }
+        return factsCommand
     }
-}
 
-private fun CommandTree.connectCommand() {
-    val communicationHandler: CommunicationHandler = get(CommunicationHandler::class.java)
-    literalArgument("connect") {
-        withPermission("typewriter.connect")
-        consoleExecutor { console, _ ->
+    private fun clearChatCommand(): Command {
+        val command = Command("clearChat")
+        command.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.clearChat") && sender is Player
+        }
+        command.setDefaultExecutor { sender, _ ->
+            val player = sender as Player
+            player.chatHistory.let {
+                it.clear()
+                it.resendMessages(player)
+            }
+        }
+        return command
+    }
+
+    private fun connectCommand(): Command {
+        val communicationHandler: CommunicationHandler = get(CommunicationHandler::class.java)
+        val command = Command("connect")
+        command.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.connect")
+        }
+        command.addSyntax({ sender, _ ->
             if (communicationHandler.server == null) {
-                console.msg("The server is not hosting the websocket. Try and enable it in the config.")
-                return@consoleExecutor
+                sender.msg("The server is not hosting the websocket. Try and enable it in the config.")
+                return@addSyntax
             }
 
-            val url = communicationHandler.generateUrl(playerId = null)
-            console.msg("Connect to<blue> $url </blue>to start the connection.")
-        }
-        playerExecutor { player, _ ->
-            if (communicationHandler.server == null) {
-                player.msg("The server is not hosting the websocket. Try and enable it in the config.")
-                return@playerExecutor
-            }
-
-            val url = communicationHandler.generateUrl(player.uniqueId)
+            val url = communicationHandler.generateUrl((sender as? Player)?.uuid)
 
             val bookTitle = "<blue>Connect to the server</blue>".asMini()
             val bookAuthor = "<blue>Typewriter</blue>".asMini()
 
             val bookPage = """
-				|<blue><bold>Connect to Panel</bold></blue>
-				|
-				|<#3e4975>Click on the link below to connect to the panel. Once you are connected, you can start writing.</#3e4975>
-				|
-				|<hover:show_text:'<gray>Click to open the link'><click:open_url:'$url'><blue>[Link]</blue></click></hover>
-				|
-				|<gray><i>Because of security reasons, this link will expire in 5 minutes.</i></gray>
-			""".trimMargin().asMini()
+                |<blue><bold>Connect to Panel</bold></blue>
+                |
+                |<#3e4975>Click on the link below to connect to the panel. Once you are connected, you can start writing.</#3e4975>
+                |
+                |<hover:show_text:'<gray>Click to open the link'><click:open_url:'$url'><blue>[Link]</blue></click></hover>
+                |
+                |<gray><i>Because of security reasons, this link will expire in 5 minutes.</i></gray>
+            """.trimMargin().asMini()
 
             val book = Book.book(bookTitle, bookAuthor, bookPage)
-            player.openBook(book)
+            (sender as? Player)?.openBook(book)
+        })
+        return command
+    }
+
+    private fun cinematicCommand(): Command {
+        val command = Command("cinematic")
+
+        val startCommand = Command("start")
+        startCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.cinematic.start")
+        }
+
+        val pageArgument = pages("cinematic", PageType.CINEMATIC)
+        val targetArgument = optionalPlayerArgument("target")
+
+        startCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val page = context.get(pageArgument)
+            CinematicStartTrigger(page.id, emptyList()) triggerFor target
+        }, pageArgument, targetArgument)
+
+        startCommand.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val page = context.get(pageArgument)
+            CinematicStartTrigger(page.id, emptyList()) triggerFor target
+        }, pageArgument)
+
+        command.addSubcommand(startCommand)
+
+        val stopCommand = Command("stop")
+        stopCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.cinematic.stop")
+        }
+
+        stopCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            CINEMATIC_END triggerFor target
+        }, targetArgument)
+
+        stopCommand.addSyntax({ sender, _ ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            CINEMATIC_END triggerFor target
+        })
+
+        command.addSubcommand(stopCommand)
+
+        return command
+    }
+
+    private fun triggerCommand(): Command {
+        val command = Command("trigger")
+        command.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.trigger")
+        }
+
+        val entryArgument = entryArgument<TriggerableEntry>("entry")
+        val targetArgument = optionalPlayerArgument("target")
+
+        command.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(entryArgument)
+            EntryTrigger(entry) triggerFor target
+        }, entryArgument, targetArgument)
+
+        command.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(entryArgument)
+            EntryTrigger(entry) triggerFor target
+        }, entryArgument)
+
+        return command
+    }
+
+    private fun fireCommand(): Command {
+        val command = Command("fire")
+        command.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.fire")
+        }
+
+        val entryArgument = entryArgument<FireTriggerEventEntry>("entry")
+        val targetArgument = optionalPlayerArgument("target")
+
+        command.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(entryArgument)
+            entry.triggers triggerEntriesFor target
+        }, entryArgument, targetArgument)
+
+        command.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(entryArgument)
+            entry.triggers triggerEntriesFor target
+        }, entryArgument)
+
+        return command
+    }
+
+    private fun questCommands(): Command {
+        val command = Command("quest")
+
+        val trackCommand = Command("track")
+        trackCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.quest.track")
+        }
+
+        val questArgument = entryArgument<QuestEntry>("quest")
+        val targetArgument = optionalPlayerArgument("target")
+
+        trackCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val quest = context.get(questArgument)
+            target.trackQuest(quest.ref())
+            sender.msg("You are now tracking <blue>${quest.display(target)}</blue>.")
+        }, questArgument, targetArgument)
+
+        trackCommand.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val quest = context.get(questArgument)
+            target.trackQuest(quest.ref())
+            sender.msg("You are now tracking <blue>${quest.display(target)}</blue>.")
+        }, questArgument)
+
+        command.addSubcommand(trackCommand)
+
+        val untrackCommand = Command("untrack")
+        untrackCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.quest.untrack")
+        }
+
+        untrackCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            target.unTrackQuest()
+            sender.msg("You are no longer tracking any quests.")
+        }, targetArgument)
+
+        untrackCommand.addSyntax({ sender, _ ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            target.unTrackQuest()
+            sender.msg("You are no longer tracking any quests.")
+        })
+
+        command.addSubcommand(untrackCommand)
+
+        return command
+    }
+
+    private fun roadNetworkCommands(): Command {
+        val command = Command("roadNetwork")
+
+        val editCommand = Command("edit")
+        editCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.roadNetwork.edit")
+        }
+
+        val networkArgument = entryArgument<RoadNetworkEntry>("network")
+        val targetArgument = optionalPlayerArgument("target")
+
+        editCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender)
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(networkArgument)
+            val data = mapOf("entryId" to entry.id)
+            val contentContext = ContentContext(data)
+            ContentModeTrigger(
+                contentContext,
+                RoadNetworkContentMode(contentContext, target)
+            ) triggerFor target
+        }, networkArgument, targetArgument)
+
+        editCommand.addSyntax({ sender, context ->
+            val target = sender as? Player ?: run {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val entry = context.get(networkArgument)
+            val data = mapOf("entryId" to entry.id)
+            val contentContext = ContentContext(data)
+            ContentModeTrigger(
+                contentContext,
+                RoadNetworkContentMode(contentContext, target)
+            ) triggerFor target
+        }, networkArgument)
+
+        command.addSubcommand(editCommand)
+
+        return command
+    }
+
+    private fun manifestCommands(): Command {
+        val command = Command("manifest")
+
+        val inspectCommand = Command("inspect")
+        inspectCommand.condition = CommandCondition { sender, _ ->
+            sender.hasPermission("typewriter.manifest.inspect")
+        }
+
+        val targetArgument = optionalPlayerArgument("target")
+
+        inspectCommand.addSyntax({ sender, context ->
+            val target = context.getPlayer(targetArgument, sender) ?: sender as? Player
+            if (target == null) {
+                sender.msg("<red>You must specify a target to execute this command on.")
+                return@addSyntax
+            }
+            val inEntries = Query.findWhere<AudienceEntry> { target.inAudience(it) }.sortedBy { it.name }.toList()
+            if (inEntries.isEmpty()) {
+                sender.msg("You are not in any audience entries.")
+                return@addSyntax
+            }
+
+            sender.sendMini("\n\n")
+            sender.msg("You are in the following audience entries:")
+            for (entry in inEntries) {
+                sender.sendMini(
+                    "<hover:show_text:'<gray>${entry.id}'><click:copy_to_clipboard:${entry.id}><gray> - </gray><blue>${entry.formattedName}</blue></click></hover>"
+                )
+            }
+        }, targetArgument)
+
+        return command
+    }
+
+    private fun optionalPlayerArgument(name: String): Argument<*> {
+        return ArgumentType.Word(name).setDefaultValue("")
+    }
+
+    private fun CommandContext.getPlayer(argument: Argument<*>, sender: CommandSender): Player? {
+        if (!this.has(argument)) {
+            return sender as? Player
+        }
+        val playerName = this.get(argument) as String
+        return MinecraftServer.getConnectionManager().getOnlinePlayerByUsername(playerName)
+    }
+
+    private inline fun <reified E : Entry> entryArgument(name: String): Argument<E> {
+        return ArgumentType.Word(name).map { input ->
+            Query.findById(E::class, input) ?: Query.findByName(E::class, input)
+            ?: throw ArgumentSyntaxException("Could not find entry: $input", input, -1)
+        }
+    }
+
+    private fun pages(name: String, type: PageType): Argument<Page> {
+        return ArgumentType.Word(name).map { input ->
+            val pages = Query.findPagesOfType(type).toList()
+            pages.firstOrNull { it.id == input || it.name == input }
+                ?: throw ArgumentSyntaxException("Page does not exist: $input", input, -1)
         }
     }
 }
-
-private fun CommandTree.cinematicCommand() = literalArgument("cinematic") {
-    literalArgument("start") {
-        withPermission("typewriter.cinematic.start")
-
-        argument(pages("cinematic", PageType.CINEMATIC)) {
-            optionalTarget {
-                anyExecutor { sender, args ->
-                    val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                    val page = args["cinematic"] as Page
-                    CinematicStartTrigger(page.id, emptyList()) triggerFor target
-                }
-            }
-        }
-    }
-
-    literalArgument("stop") {
-        withPermission("typewriter.cinematic.stop")
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                CINEMATIC_END triggerFor target
-            }
-        }
-    }
-}
-
-private fun CommandTree.triggerCommand() = literalArgument("trigger") {
-    withPermission("typewriter.trigger")
-
-    argument(entryArgument<TriggerableEntry>("entry")) {
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                val entry = args["entry"] as TriggerableEntry
-                EntryTrigger(entry) triggerFor target
-            }
-        }
-    }
-}
-
-private fun CommandTree.fireCommand() = literalArgument("fire") {
-    withPermission("typewriter.fire")
-
-    argument(entryArgument<FireTriggerEventEntry>("entry")) {
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                val entry = args["entry"] as FireTriggerEventEntry
-                entry.triggers triggerEntriesFor target
-            }
-        }
-    }
-}
-
-private fun CommandTree.questCommands() = literalArgument("quest") {
-    literalArgument("track") {
-        withPermission("typewriter.quest.track")
-
-        argument(entryArgument<QuestEntry>("quest")) {
-            optionalTarget {
-                anyExecutor { sender, args ->
-                    val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                    val quest = args["quest"] as QuestEntry
-                    target.trackQuest(quest.ref())
-                    sender.msg("You are now tracking <blue>${quest.display(target)}</blue>.")
-                }
-            }
-        }
-    }
-
-
-    literalArgument("untrack") {
-        withPermission("typewriter.quest.untrack")
-
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                target.unTrackQuest()
-                sender.msg("You are no longer tracking any quests.")
-            }
-        }
-    }
-}
-
-private fun CommandTree.roadNetworkCommands() = literalArgument("roadNetwork") {
-    literalArgument("edit") {
-        withPermission("typewriter.roadNetwork.edit")
-
-        argument(entryArgument<RoadNetworkEntry>("network")) {
-            optionalTarget {
-                anyExecutor { sender, args ->
-                    val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                    val entry = args["network"] as RoadNetworkEntry
-                    val data = mapOf(
-                        "entryId" to entry.id
-                    )
-                    val context = ContentContext(data)
-                    ContentModeTrigger(
-                        context,
-                        RoadNetworkContentMode(context, target)
-                    ) triggerFor target
-                }
-            }
-        }
-    }
-}
-
-private fun CommandTree.manifestCommands() = literalArgument("manifest") {
-    literalArgument("inspect") {
-        withPermission("typewriter.manifest.inspect")
-
-        optionalTarget {
-            anyExecutor { sender, args ->
-                val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                val inEntries = Query.findWhere<AudienceEntry> { target.inAudience(it) }.sortedBy { it.name }.toList()
-                if (inEntries.none()) {
-                    sender.msg("You are not in any audience entries.")
-                    return@anyExecutor
-                }
-
-                sender.sendMini("\n\n")
-                sender.msg("You are in the following audience entries:")
-                for (entry in inEntries) {
-                    sender.sendMini(
-                        "<hover:show_text:'<gray>${entry.id}'><click:copy_to_clipboard:${entry.id}><gray> - </gray><blue>${entry.formattedName}</blue></click></hover>"
-                    )
-                }
-            }
-        }
-    }
-
-    literalArgument("page") {
-        argument(pages("page", PageType.MANIFEST)) {
-            optionalTarget {
-                anyExecutor { sender, args ->
-                    val target = args.targetOrSelfPlayer(sender) ?: return@anyExecutor
-                    val page = args["page"] as Page
-                    val audienceEntries =
-                        Query.findWhereFromPage<AudienceEntry>(page.id) { true }.sortedBy { it.name }.toList()
-
-                    if (audienceEntries.isEmpty()) {
-                        sender.msg("No audience entries found on page ${page.name}")
-                        return@anyExecutor
-                    }
-
-                    val entryStates = audienceEntries.groupBy { target.audienceState(it) }
-
-                    sender.sendMini("\n\n")
-                    sender.msg("These are the audience entries on page <i>${page.name}</i>:")
-                    for (state in AudienceDisplayState.entries) {
-                        val entries = entryStates[state] ?: continue
-                        val color = state.color
-                        sender.sendMini("\n<b><$color>${state.displayName}</$color></b>")
-
-                        for (entry in entries) {
-                            sender.sendMini(
-                                "<hover:show_text:'<gray>${entry.id}'><click:copy_to_clipboard:${entry.id}><gray> - </gray><$color>${entry.formattedName}</$color></click></hover>"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun CommandArguments.targetOrSelfPlayer(commandSender: CommandSender): Player? {
-    val target = this["target"] as? Player
-    if (target != null) return target
-    val self = commandSender as? Player
-    if (self != null) return self
-    commandSender.msg("<red>You must specify a target to execute this command on.")
-    return null
-}
-
-fun Argument<*>.optionalTarget(block: Argument<*>.() -> Unit) = playerArgument("target", optional = true, block)
-
-inline fun <reified E : Entry> entryArgument(name: String): Argument<E> = CustomArgument(StringArgument(name)) { info ->
-    Query.findById(E::class, info.input)
-        ?: Query.findByName(E::class, info.input)
-        ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Could not find entry: ").appendArgInput())
-}.replaceSuggestions(ArgumentSuggestions.stringsWithTooltips { _ ->
-    Query.find<E>().map {
-        StringTooltip.ofString(it.name, it.id)
-    }.toList().toTypedArray()
-})
-
-fun pages(name: String, type: PageType): Argument<Page> = CustomArgument(StringArgument(name)) { info ->
-    val pages = Query.findPagesOfType(type).toList()
-    val page = pages.firstOrNull { it.id == info.input || it.name == info.input }
-    if (page == null) {
-        throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Page does not exist."))
-    }
-    page
-}.replaceSuggestions(ArgumentSuggestions.stringsWithTooltips { _ ->
-    val pages = Query.findPagesOfType(type).toList()
-    pages.map {
-        StringTooltip.ofString(it.name, it.name)
-    }.toList().toTypedArray()
-})
